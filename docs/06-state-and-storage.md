@@ -58,7 +58,7 @@ db.version(1).stores({
 
 Write a decision turn in one Dexie transaction: append the entry, then update `decisions.state` and `updated_at`. If the transaction fails, nothing changes.
 
-Keys: the OpenRouter key goes in `ui` under `openrouter_key`. It is never exported, never logged and never placed in a URL.
+Keys: there are none in the browser. Model and Jev calls go through the Worker (`07`, Where calls run). The session cookie is `HttpOnly`, so scripts never see it, and nothing about it is stored in IndexedDB or exported.
 
 ## Rewind
 

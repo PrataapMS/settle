@@ -4,11 +4,12 @@ You are implementing Settle, a local-first decision helper: a conversation on th
 
 ## Read first, in this order
 
-1. `README.md`: what is in this kit
+1. `README.md` and `docs/README.md`: what Settle is, and what is in each folder
 2. `plan/PLAN.md`: phases and tasks; work on one task at a time, in order
 3. `docs/02-architecture.md`: stack, module layout, the turn sequence
 4. `docs/04-engine-rules.md`: the rules the engine must reproduce exactly
-5. The doc for the task at hand (each task names its docs)
+5. `docs/10-security-and-privacy.md`: the security controls every API change must keep
+6. The doc for the task at hand (each task names its docs)
 
 ## Non-negotiable rules
 
@@ -18,10 +19,11 @@ You are implementing Settle, a local-first decision helper: a conversation on th
 4. **Validate every model output** with Zod, then the invariants. One repair call at most. Nothing is written to the log unless it passes.
 5. **The log is append-only.** State is derived by `replay(log)`. Never mutate past entries.
 6. **Messages that don't move the decision never change state.** Only routes `new_decision`, `adds_evidence`, `changes_preference` and `challenges_analysis` can produce a decision turn; user overrides are logged with `source: "user"`. Free-form meta questions may call the model read-only (no schema, nothing written to state).
-7. **Secrets:** never put API keys in source, in `VITE_*` variables, in logs or in exports. Development keys go in `.env.local` and the Vite proxy.
+7. **Secrets stay in the Worker.** The browser never holds an API key and never calls OpenRouter, Jev or any third party (except the Turnstile widget); it calls same-origin `/api/*` only. Keys live in `.dev.vars` (gitignored) locally and in `wrangler secret` in deployed environments. Never in source, `wrangler.jsonc` `vars`, `VITE_*` variables, logs, error responses or exports. Never log message text.
 8. **Render model text as text.** No `dangerouslySetInnerHTML` for model output.
 9. **Schemas:** keep the Zod schemas and `/schemas/*.json` in parity (there is a test). The JSON files are what the model sees.
-10. **Prompts** live in `/prompts`, copied into `src/llm/prompts/` (or imported with `?raw`). Bump the version tag on every change.
+10. **Prompts** live in `/prompts` and are imported by the Worker with `?raw` (`worker/llm/prompts.ts`). Bump the version tag on every change.
+11. **Every model-backed endpoint goes through `withGuards`** (origin check, size cap, session, rate limits, quota reserve and settle). The browser sends data, never prompts, schemas, model parameters or non-allowlisted model ids. Security controls in `docs/10` are not optional; changing one needs a decisions-log entry.
 
 ## Working style
 
@@ -37,12 +39,13 @@ You are implementing Settle, a local-first decision helper: a conversation on th
 
 | Command | Does |
 |---|---|
-| `pnpm dev` | Vite dev server with the OpenRouter proxy (needs `.env.local`) |
-| `pnpm dev:mock` | Dev server with `VITE_LLM=mock` (no key needed) |
+| `pnpm dev` | Vite dev server with the Worker running in `workerd`, live models (needs `.dev.vars`) |
+| `pnpm dev:mock` | Same, with the Worker in `LLM_MODE=mock` (no keys needed) |
 | `pnpm test` | Vitest: unit, golden, schema parity, components |
 | `pnpm test:e2e` | Playwright with the mock LLM, plus axe checks |
 | `pnpm eval` | Router and scenario evals against live models (costs credits) |
-| `pnpm lint` / `pnpm typecheck` | ESLint, `tsc --noEmit` |
+| `pnpm lint` / `pnpm typecheck` | ESLint, `tsc -b` |
+| `pnpm check:kit` | Reference-engine selftest, both fixture checks, hash vectors |
 | `python3 tools/reference_engine.py --check <conv> <expected>` | Confirms expected fixtures are current |
 | `python3 tools/build_schemas.py` | Regenerates `/schemas` from their definitions |
 
@@ -52,3 +55,4 @@ You are implementing Settle, a local-first decision helper: a conversation on th
 - `pnpm lint`, `pnpm typecheck` and `pnpm test` are green.
 - New behaviour has tests; UI work is checked in all four themes at desktop width and at 390 px.
 - No secrets, no `console.log` left in, no unused exports.
+- Any new or changed `/api` behaviour has Worker tests for its security paths (`docs/09`, Worker and security).

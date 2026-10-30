@@ -11,7 +11,7 @@ Settle advises. It never acts: there is no "execute" step, and anything that com
 1. **The engine owns the numbers.** The model proposes judgements and facts; deterministic code computes totals, gates, evidence strength, the action ceiling and every delta. A confident tone can never raise a score.
 2. **Only relevant messages change the decision.** A turn check runs first. Vague, off-topic and meta messages are logged but never touch the state.
 3. **Every change is visible.** Each decision turn produces a new numbered state version (v1, v2, …). The panel shows what changed and why, and any earlier version can be viewed.
-4. **Local and private by default.** No Settle account. Everything lives in the browser. Export is one file.
+4. **Local and private by default.** No Settle account. Every decision lives in the browser; the server keeps no conversation data. Export is one file.
 5. **Readable first.** The panel must be scannable in seconds: headline direction, four score tiles, then collapsible sections.
 
 ## Users and scope
@@ -54,6 +54,7 @@ Midnight (default), Light, Dark, Paper; comfortable or compact density. Preferen
 | Latency | Turn check under 600 ms p95 on Jev, under 1.5 s on the fallback. First reasoning token or progress state under 1 s; full decision turn under 25 s p95. |
 | Reliability | Zero invariant failures reach the UI. A failed turn leaves the previous state intact. |
 | Accessibility | WCAG 2.2 AA: keyboard reachable, visible focus, 4.5:1 text contrast in all four themes, no colour-only meaning, reduced motion respected. |
-| Privacy | No analytics by default. Network calls only to OpenRouter, TypeSafe (if enabled) and the app host. |
+| Privacy | No analytics by default. The browser talks only to the app's own origin (and Turnstile). The Worker forwards each turn to OpenRouter or TypeSafe and keeps no message text. |
+| Security | No API key in the browser. Public anonymous use is bounded by Turnstile sessions, rate limits and hard spend caps (`10-security-and-privacy.md`). |
 | Offline | Existing decisions open and export offline. Sending a message needs a connection. |
 | Storage | Works with 100 decisions of 30 turns each without noticeable slowdown. |

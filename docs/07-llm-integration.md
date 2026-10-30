@@ -10,13 +10,15 @@
 | Record guard (optional) | Jev | After each validated decision turn |
 | Intuition check (optional) | Jev | After each decision turn, if enabled |
 
+All of these calls are made by the Worker behind `/api` (`02-architecture.md`, API); `/commands` are handled in the browser with no network call.
+
 ## OpenRouter
 
-### Request
+### Request (sent by the Worker)
 
 ```http
 POST https://openrouter.ai/api/v1/chat/completions
-Authorization: Bearer <key>
+Authorization: Bearer <OPENROUTER_API_KEY>
 Content-Type: application/json
 HTTP-Referer: https://<your-app-host>        (optional, app attribution)
 X-OpenRouter-Title: Settle                   (optional; X-Title also accepted)
@@ -33,7 +35,7 @@ X-OpenRouter-Title: Settle                   (optional; X-Title also accepted)
     "type": "json_schema",
     "json_schema": {"name": "settle_decision_turn", "strict": true, "schema": { "...": "schemas/decision-turn-output.schema.json without $schema/title" }}
   },
-  "provider": {"require_parameters": true},
+  "provider": {"require_parameters": true, "data_collection": "deny"},
   "max_tokens": 6000,
   "temperature": 0.3
 }
@@ -55,65 +57,49 @@ v1 is non-streaming: one call returns the whole record, and the UI shows a progr
 | Condition | Action |
 |---|---|
 | Network error, 429, 5xx | Retry up to 2 times (1 s, then 3 s, with jitter). OpenRouter already falls back across providers on 5xx and rate limits. |
-| No response after 45 s | Abort with `AbortController`, then offer Retry |
-| 401 (bad key) or 402 (out of credits) | No retry; open key settings with the message |
+| No response after 45 s | The Worker aborts with `AbortController` and answers 504; the browser offers Retry |
+| 401 (bad key) or 402 (out of credits) | No retry; answer 503 `service_unavailable` and log `alert=upstream_auth`. The browser never sees the upstream message |
 | Invalid JSON, Zod failure or invariant failure | One repair call (`prompts/repair.md`), then give up as `failed` |
 
-Confirm the exact meaning of each error code against OpenRouter's error-handling docs during spike S1, and map them in `llm/openrouter.ts`.
+Confirm the exact meaning of each error code against OpenRouter's error-handling docs during spike S1, and map them in `worker/llm/openrouter.ts`. Retries run in the Worker; each attempt is metered.
 
-### Keys: local development
+### Where calls run and where keys live
 
-Never put a key in client code or in `VITE_*` variables (Vite inlines those into the bundle). Use the dev server as a proxy:
+Every OpenRouter and Jev call is made by the Cloudflare Worker (`worker/llm/`). The browser calls same-origin `/api/*` endpoints (`02-architecture.md`, API) and never sees a key, a system prompt or an upstream response body. There is no OAuth, no pasted key and no key in IndexedDB (D18 supersedes D10).
 
-```ts
-// vite.config.ts
-import { defineConfig, loadEnv } from 'vite';
+| Secret | Where it lives | Who reads it |
+|---|---|---|
+| `OPENROUTER_API_KEY` | `wrangler secret put` per environment; `.dev.vars` locally | `worker/llm/openrouter.ts` only |
+| `JEV_API_KEY` | same | `worker/llm/router/jev.ts`, `guard.ts` |
+| `TURNSTILE_SECRET_KEY` | same | `worker/security/turnstile.ts` |
+| `SESSION_SECRET`, `SESSION_SECRET_PREVIOUS` | same (32 random bytes, base64) | `worker/security/session.ts` |
+| `IP_HASH_SECRET` | same | `worker/security/limits.ts`, `quota.ts` |
 
-export default defineConfig(({ mode }) => {
-  // Vite does not put .env.local into process.env while loading the config: load it explicitly.
-  // The empty prefix loads all variables, but only into this Node process, never into the client bundle.
-  const env = loadEnv(mode, process.cwd(), '');
-  return {
-    server: {
-      proxy: {
-        '/or': {
-          target: 'https://openrouter.ai/api/v1',
-          changeOrigin: true,
-          rewrite: (p) => p.replace(/^\/or/, ''),
-          configure: (proxy) => {
-            proxy.on('proxyReq', (req) => req.setHeader('Authorization', `Bearer ${env.OPENROUTER_API_KEY}`));
-          },
-        },
-      },
-    },
-    // ...plugins
-  };
-});
+- `.dev.vars` is gitignored; `.dev.vars.example` lists the names with empty values. `wrangler.jsonc` `vars` hold only non-secret settings (limits, model allowlist, Turnstile site key).
+- Use separate OpenRouter keys for development, staging and production, each with its own credit limit set in the OpenRouter dashboard. The production key's monthly limit is the last line of defence on spend (`10-security-and-privacy.md`, Spend).
+- In development, `pnpm dev` runs the Worker inside Vite (`@cloudflare/vite-plugin`), reading `.dev.vars`. Check the wiring with an authenticated call (a 1-token frame turn); `/models` works without a key, so it proves nothing.
+- The Worker reads `usage.cost` from each response and commits it to the quota meters before answering.
+
+### Provider preferences
+
+The Worker adds to every request:
+
+```json
+"provider": {"require_parameters": true, "data_collection": "deny"}
 ```
 
-`.env.local` (gitignored): `OPENROUTER_API_KEY=sk-or-…`. In development, the client calls `/or/chat/completions`. Check the proxy with an authenticated call, such as a 1-token chat completion: `/models` works without a key, so it proves nothing.
+`data_collection: "deny"` restricts routing to providers that don't store or train on prompts. Spike S1 checks that the chosen models still have a provider under this rule, and whether `zdr: true` (zero data retention) is available for them; if it is, turn it on.
 
-### Keys: users in production (no Settle account)
+### Models (server-side allowlist)
 
-OpenRouter OAuth PKCE gives each user their own key, billed to their own OpenRouter credits:
-
-1. Generate `code_verifier` (random, 43 to 128 characters) and `code_challenge = base64url(sha256(verifier))`. Store the verifier in `sessionStorage`.
-2. Redirect to `https://openrouter.ai/auth?callback_url=<origin>/oauth/callback&code_challenge=<challenge>&code_challenge_method=S256&state=<random>`.
-3. On `/oauth/callback?code=…&state=…`, check `state`, then `POST https://openrouter.ai/api/v1/auth/keys` with `{code, code_verifier, code_challenge_method: "S256"}`.
-4. Store the returned `key` in the `ui` store. Codes are single-use and expire after 10 minutes.
-5. Localhost callbacks work on any port, so this can be tested locally.
-
-Settings also offers "Paste a key" for people who already have one, and "Disconnect", which deletes the stored key.
-
-Spike S2 confirms that browser requests to `openrouter.ai/api/v1/chat/completions` pass CORS from your origin. If they don't, add a minimal Netlify Function that forwards the user's key without storing it.
-
-### Models (settings, with defaults)
+The Worker holds the allowlist in `wrangler.jsonc` `vars` (`MODEL_ALLOWLIST`). Settings shows its labels; the browser sends only an allowlisted id, and anything else is rejected with 400.
 
 | Setting | Default | Notes |
 |---|---|---|
 | Reasoning model | `anthropic/claude-sonnet-5.5` | Must list `response_format` / structured outputs on its OpenRouter page |
 | Router fallback model | a small, fast model, e.g. `anthropic/claude-haiku-5.5` | Check exact ids on openrouter.ai/models |
-| Temperature | 0.3 (reasoning), 0 (router) | |
+| Temperature | 0.3 (reasoning), 0 (router) | Fixed in the Worker |
+| `max_tokens` | 6000 (frame and decision turns), 300 (router), 600 (meta) | Fixed in the Worker; also bounds cost per call |
 
 Model and prompt versions are written into every log entry, so evals can compare them.
 
@@ -121,13 +107,14 @@ Model and prompt versions are written into every log entry, so evals can compare
 
 Jev returns typed choices with calibrated probabilities instead of text, which fits the turn check, the record guard and the intuition check (`prompts/jev-questions.md`). It is in early access: the published latency was measured from the US West Coast, and pricing may be subsidised.
 
-- Put it behind the `Router` interface (`llm/router/jev.ts`). Its config: endpoint, key, timeout 1.5 s.
+- Put it behind the `Router` interface (`worker/llm/router/jev.ts`). Its config: endpoint (a var), key (a secret), timeout 1.5 s.
 - If it is disabled, times out or errors, call `ModelRouter` (OpenRouter with `prompts/router.md` and `schemas/route.schema.json`). The user never sees the difference, but `route.source` records it.
-- Keep the Jev key out of the client bundle, the same way as the OpenRouter key: dev proxy locally, and a small function in production unless TypeSafe offers a user-auth flow.
-- Spike S3 confirms the request and response shape against TypeSafe's docs before any code depends on it.
+- The Jev key is a Worker secret, like the OpenRouter key. Jev calls are metered and rate limited like model calls.
+- Spike S3 confirms the request and response shape against TypeSafe's docs before any code depends on it, and decides whether Jev ships in v1 (D19). Jev becomes the default turn check only if, measured from the Worker: accuracy on `fixtures/router-cases.json` is at least 90%, p95 latency is at most 600 ms, cost per check is below the fallback model's, and TypeSafe's terms allow server-side use for anonymous public users. Otherwise `ModelRouter` stays the default and Jev stays behind a flag.
 
 ## Context sent per turn
 
 - Frame JSON plus state JSON (about 2 to 4 KB) plus the last 2 decision turns' prose. Never the whole thread: cost per turn stays flat as the thread grows.
 - The user's message as the user turn, unchanged.
 - Never include: keys, other decisions, telemetry, or the full record history.
+- The Worker caps what it accepts (`10-security-and-privacy.md`, Input limits) and rebuilds the context from the validated request, so the browser cannot add extra messages.

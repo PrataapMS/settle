@@ -8,6 +8,7 @@
 | Golden | Vitest | Replay `fixtures/*/conversation.json`; compare every produced file with `fixtures/*/expected/*.json` as canonical JSON | Every PR; failures block merge |
 | Schema parity | Vitest | Zod schemas → JSON Schema, compared structurally with `/schemas/*.json` | Every PR |
 | Component | Vitest + Testing Library | Turn cards, clarify card, panel sections render from a fixture state; accordion state; copy buttons call the clipboard | Every PR |
+| Worker and security | Vitest with `@cloudflare/vitest-pool-workers` (runs in `workerd` with real Durable Object and rate-limit bindings) | Every `/api` endpoint: Zod rejection, size caps, origin and content-type checks, session mint and verify (Turnstile test keys), 401/403/413/415/429/503 paths, quota reserve and settle, global budget cut-off, concurrency, security headers on assets and API, no secret or message text in responses or log calls, mock refuses to run in production | Every PR |
 | End to end | Playwright | Full flows with a mock reasoner and router (fixture-driven): golden path, clarify, meta, rewind, export and import, themes; axe accessibility checks in all four themes | Every PR (mock), nightly (live, optional) |
 | Router eval | Node script | `fixtures/router-cases.json` through the full routing path (`ruleRouter` for "/" messages first, then Jev or the fallback model) | Before changing router prompt or model |
 | Scenario evals | Node script | `evals/scenarios.md` against the live stack | Before release; after any prompt or model change |
@@ -31,7 +32,7 @@ Add new golden fixtures for every engine bug found later: reproduce the bug as a
 
 ## Mock reasoner and router
 
-`src/llm/mock.ts` implements `Reasoner` and `Router` from fixture conversations, selected with `VITE_LLM=mock`. The whole UI (phase 3) is built and tested against it before any key exists.
+Two mocks share one fixture-backed core: `src/api/mock.ts` implements the browser `Gateway` for unit and component tests, and `worker/llm/mock.ts` answers the real `/api` endpoints when the Worker runs with `LLM_MODE=mock` (`pnpm dev:mock`, Playwright). End-to-end tests therefore exercise the real security path (session, origin checks, limits) with no key. The whole UI (phase 3) is built and tested against them before any key exists.
 
 - **Router:** if the message equals a `user_text` in the loaded fixture conversation, return that event's `route`. Else, if it is in `fixtures/router-cases.json`, return the expected route with confidence 0.9. Otherwise return `too_vague` at 0.9.
 - **Reasoner:** return the `output` of the fixture event whose `user_text` matches. For a fixture `failed` event, return an output whose first score is 7, both times, so the repair path fails and a `failed` entry is logged.
