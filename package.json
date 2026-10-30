@@ -12,7 +12,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
-    "check:kit": "python3 -I tools/reference_engine.py --selftest && python3 -I tools/reference_engine.py --check fixtures/rent-or-buy/conversation.json fixtures/rent-or-buy/expected && python3 -I tools/reference_engine.py --check fixtures/rent-or-buy-edits/conversation.json fixtures/rent-or-buy-edits/expected && node tools/check_hashes.mjs fixtures/canonical-vectors.json"
+    "check:kit": "python3 -I tools/reference_engine.py --selftest && python3 -I tools/reference_engine.py --check fixtures/rent-or-buy/conversation.json fixtures/rent-or-buy/expected && python3 -I tools/reference_engine.py --check fixtures/rent-or-buy-edits/conversation.json fixtures/rent-or-buy-edits/expected && node tools/check_hashes.mjs fixtures/canonical-vectors.json",
+    "scan:dist": "node tools/scan_dist.mjs dist",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
     "react": "^19.3.1",

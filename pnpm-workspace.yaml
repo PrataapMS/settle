@@ -1,0 +1,3 @@
+# Supply-chain settings (docs/10). pnpm blocks dependency install scripts by default;
+# allow one only by name, after review, under onlyBuiltDependencies.
+minimumReleaseAge: 1440

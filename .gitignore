@@ -35,3 +35,9 @@ playwright-report
 blob-report
 __pycache__
 *.pyc
+
+# Cloudflare Worker: local secrets and state
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.wrangler

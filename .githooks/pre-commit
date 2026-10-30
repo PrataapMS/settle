@@ -1,0 +1,10 @@
+#!/bin/sh
+# Scans staged changes for secrets. CI runs gitleaks on every push regardless.
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --redact --no-banner || {
+    echo "gitleaks found a possible secret; commit blocked. Remove it, or see docs/12 if it is a false positive." >&2
+    exit 1
+  }
+else
+  echo "gitleaks is not installed (brew install gitleaks); skipping the local secret scan." >&2
+fi
