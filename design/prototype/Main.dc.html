@@ -1,0 +1,1292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settle decision workspace</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/kuat/styles.css">
+<link rel="stylesheet" href="ds/kuat/tokens/fonts.css">
+<link rel="stylesheet" href="ds/kuat/tokens/colors.css">
+<link rel="stylesheet" href="ds/kuat/tokens/semantic.css">
+<link rel="stylesheet" href="ds/kuat/tokens/typography.css">
+<link rel="stylesheet" href="ds/kuat/tokens/spacing.css">
+<link rel="stylesheet" href="ds/kuat/tokens/shadows.css">
+<link rel="stylesheet" href="ds/kuat/tokens/component-tokens.css">
+<link rel="stylesheet" href="ds/kuat/tokens/button-variables.css">
+<link rel="stylesheet" href="ds/kuat/tokens/base.css">
+<script src="ds/kuat/_ds_bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:var(--link)}a:hover{color:var(--primary)}
+.app{--sec-adv:var(--runtime-red-600);--sec-fal:var(--equal-ember-700);--sec-real:var(--tech-blue-500);--sec-act:var(--ee-blue-700);--sec-flo:var(--transform-teal-700);--sec-dir:var(--equal-ember-700);--sec-need:var(--equal-ember-700);--sec-var:var(--packet-plum-600);--opt-a:var(--ee-blue-600);--opt-b:var(--equal-ember-600);--up:var(--uptime-green-600);--down:var(--runtime-red-600);--user-bg:var(--ee-blue-50);--surface-r:0px;--pad:20px;--gap:16px;--panel-bg:color-mix(in srgb,var(--muted) 55%,var(--background));background:var(--background);color:var(--foreground);font-family:var(--font-sans);font-size:15px;line-height:1.6;letter-spacing:var(--tracking-normal);min-height:100vh;display:flex;flex-direction:column}
+.t-paper{--background:#f6f3ec;--card:#fffdf8;--card-foreground:#23211d;--foreground:#23211d;--muted:#ebe5d8;--muted-foreground:#59544a;--border:#dad2c2;--primary:var(--tech-blue-500);--user-bg:#ebe5d8}
+.t-dark{--user-bg:var(--tech-blue-700)}
+.t-midnight{--background:#0b0f12;--card:#121a1f;--card-foreground:#e4ebe8;--foreground:#e4ebe8;--muted:#1a242b;--muted-foreground:#9fb0aa;--border:#27343c;--primary:var(--transform-teal-300);--primary-foreground:#04110f;--ring:var(--transform-teal-300);--link:var(--transform-teal-300);--user-bg:#10302d;--surface-r:10px;--panel-bg:#0e1418}
+.t-dark,.t-midnight{--sec-adv:var(--runtime-red-300);--sec-fal:var(--equal-ember-300);--sec-real:var(--edge-blue-200);--sec-act:var(--ee-blue-300);--sec-flo:var(--transform-teal-300);--sec-dir:var(--equal-ember-300);--sec-need:var(--equal-ember-300);--sec-var:var(--packet-plum-200);--opt-a:var(--ee-blue-300);--opt-b:var(--equal-ember-300);--up:var(--uptime-green-300);--down:var(--runtime-red-300)}
+.d-compact{--pad:14px;--gap:10px;font-size:14px}
+.eyebrow{font-family:var(--font-mono);font-size:11px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-foreground);margin:0}
+.mono{font-family:var(--font-mono)}
+.card{background:var(--card);color:var(--card-foreground);border:1px solid var(--border);border-radius:var(--surface-r)}
+.box{border:1px solid color-mix(in srgb,var(--c) 34%,var(--border));background:color-mix(in srgb,var(--c) 7%,var(--card));border-radius:var(--surface-r);padding:var(--pad)}
+.box .eyebrow.c{color:var(--c)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--gap)}
+.btn{appearance:none;background:transparent;border:1px solid var(--border);color:var(--foreground);border-radius:var(--radius-md);font:inherit;font-size:13px;font-weight:500;padding:0 12px;min-height:36px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:background .14s ease,border-color .14s ease}
+.btn:hover{background:var(--muted)}
+.btn[aria-pressed="true"]{background:color-mix(in srgb,var(--primary) 16%,var(--card));border-color:var(--primary)}
+.iconbtn{appearance:none;background:transparent;border:1px solid transparent;color:var(--foreground);border-radius:var(--radius-md);width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.iconbtn:hover{background:var(--muted)}
+.chip{appearance:none;border:1px solid var(--border);background:var(--card);color:var(--foreground);font:inherit;font-size:13px;line-height:1.4;padding:10px 12px;border-radius:var(--radius-md);cursor:pointer;min-height:44px;text-align:left;transition:background .14s ease}
+.chip:hover{background:var(--muted)}
+.chip.cmd{font-family:var(--font-mono);color:var(--primary)}
+.linkbtn{appearance:none;background:none;border:0;padding:4px 0;color:var(--link);font:inherit;font-size:13px;font-weight:500;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.swatch{appearance:none;width:36px;height:36px;border-radius:var(--radius-full);border:2px solid var(--border);cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center}
+.swatch[aria-pressed="true"]{border-color:var(--foreground)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.45}
+.tbl th,.tbl td{text-align:left;vertical-align:top;padding:10px 10px;border-bottom:1px solid var(--border)}
+.tbl thead th{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);white-space:nowrap}
+.tbl tbody th{font-weight:500}
+.tbl tfoot th,.tbl tfoot td{border-bottom:0;font-weight:600}
+.tbl .num{text-align:right;font-family:var(--font-mono);white-space:nowrap}
+.tbl .basis{color:var(--muted-foreground);min-width:160px}
+.tbl tr.sel{background:color-mix(in srgb,var(--primary) 10%,transparent)}
+.tbl tr.chgrow{background:color-mix(in srgb,var(--sec-dir) 8%,transparent)}
+.score{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.dots{display:inline-flex;gap:3px}
+.dot{width:8px;height:8px;border-radius:2px;background:var(--border)}
+.dot.a{background:var(--opt-a)}.dot.b{background:var(--opt-b)}
+.chg{font-family:var(--font-mono);font-size:11px;padding:0 5px;border:1px solid var(--border);border-radius:var(--radius-full);color:var(--foreground)}
+.est{font-size:11px;font-style:italic;color:var(--muted-foreground)}
+.delta{font-size:12px;font-weight:500}
+.delta.good{color:var(--up)}.delta.bad{color:var(--down)}.delta.flat{color:var(--muted-foreground)}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;padding:1px 7px;border:1px solid color-mix(in srgb,var(--c) 45%,var(--border));color:var(--c);border-radius:var(--radius-full);white-space:nowrap}
+.acc{background:var(--card);border:1px solid var(--border);border-radius:var(--surface-r);scroll-margin-top:140px}
+.acc-h{appearance:none;width:100%;background:transparent;border:0;color:var(--foreground);font:inherit;display:flex;align-items:center;gap:12px;padding:14px var(--pad);min-height:52px;cursor:pointer;text-align:left;border-radius:var(--surface-r)}
+.acc-h:hover{background:color-mix(in srgb,var(--muted) 60%,transparent)}
+.acc-t{font-size:15px;font-weight:600;flex:1;min-width:0}
+.acc-m{font-family:var(--font-mono);font-size:12px;color:var(--muted-foreground);white-space:nowrap}
+.acc-b{padding:0 var(--pad) var(--pad);display:flex;flex-direction:column;gap:var(--gap)}
+.chev{transition:transform .16s ease;flex:none}
+.chev.open{transform:rotate(180deg)}
+ul.clean,ol.clean{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+dl.kv{margin:0;display:grid;grid-template-columns:minmax(110px,150px) 1fr;gap:8px 16px}
+dl.kv dt{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground);padding-top:3px}
+dl.kv dd{margin:0}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.chk input{width:18px;height:18px;margin-top:2px;accent-color:var(--primary);flex:none}
+.chk .done{text-decoration:line-through;color:var(--muted-foreground)}
+pre.code{font-family:var(--font-mono);font-size:12px;line-height:1.55;background:var(--background);color:var(--foreground);padding:14px;margin:0;max-height:320px;overflow:auto;white-space:pre-wrap;word-break:break-word;border:1px solid var(--border);border-radius:var(--surface-r)}
+.avatar{width:32px;height:32px;flex:none;border-radius:var(--radius-full);border:1px solid var(--border);background:color-mix(in srgb,var(--primary) 18%,var(--card));color:var(--foreground);display:flex;align-items:center;justify-content:center}
+.turncard{border:1px solid var(--border);border-radius:var(--surface-r);background:color-mix(in srgb,var(--muted) 40%,var(--card));padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.turncard.sel{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 9%,var(--card))}
+.ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.rung{padding:10px 6px;border:1px solid var(--border);font-size:12px;line-height:1.3;text-align:center;border-radius:var(--radius-sm);display:flex;flex-direction:column;gap:2px;justify-content:center;min-height:56px}
+.rung.on{background:color-mix(in srgb,var(--primary) 10%,var(--card));border-color:color-mix(in srgb,var(--primary) 40%,var(--border))}
+.rung.ceil{background:color-mix(in srgb,var(--primary) 22%,var(--card));border-color:var(--primary);font-weight:600}
+.rung.off{border-style:dashed;color:var(--muted-foreground)}
+.skel{background:var(--muted);border-radius:4px;height:12px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+.mswitch{display:none}
+.toast{position:fixed;right:20px;bottom:20px;z-index:20;max-width:360px;background:var(--foreground);color:var(--background);padding:12px 16px;border-radius:var(--radius-md);font-size:14px;box-shadow:var(--shadow-lg)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,pre:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+.split{display:flex;flex:1;min-height:0;height:calc(100vh - 61px)}
+.conv{flex:1 1 0;min-width:0;display:flex;flex-direction:column}
+.conv-scroll{flex:1;min-height:0;overflow:auto}
+.dec{flex:1 1 0;min-width:0;overflow:auto;border-left:1px solid var(--border);background:var(--panel-bg)}
+.rail{flex:0 0 248px;border-right:1px solid var(--border);overflow:auto;background:var(--panel-bg)}
+@media (prefers-reduced-motion: reduce){.skel{animation:none}.chev{transition:none}}
+@media (max-width: 900px){.split{flex-direction:column;height:auto}.conv-scroll,.dec,.rail{overflow:visible}.dec{border-left:0}.rail{flex-basis:auto;border-right:0;border-bottom:1px solid var(--border)}.m-hide{display:none !important}.mswitch{display:flex}.hide-sm{display:none !important}.bubble{max-width:100% !important}.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</helmet>
+<div class="app {{themeClass}} {{densityClass}}">
+
+<header style="display:flex;align-items:center;gap:12px;padding:8px 16px;min-height:60px;box-sizing:border-box;border-bottom:1px solid var(--border);flex-wrap:wrap">
+<button type="button" class="iconbtn" aria-label="{{railLabel}}" aria-expanded="{{railExp}}" onClick="{{toggleRail}}">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>
+</button>
+<div style="display:flex;align-items:center;gap:8px;color:var(--primary)">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h18"></path><path d="M12 8 8 19h8l-4-11"></path></svg>
+<p style="margin:0;font-size:18px;font-weight:600;letter-spacing:-0.02em;color:var(--foreground)">Settle</p>
+</div>
+<div style="width:1px;height:24px;background:var(--border)" class="hide-sm"></div>
+<div style="display:flex;flex-direction:column;min-width:0;flex:1 1 220px">
+<h1 style="margin:0;font-size:16px;font-weight:600;line-height:1.3;letter-spacing:var(--tracking-tight)">Rent or buy a house</h1>
+<p style="margin:0;font-size:12px;color:var(--muted-foreground)">{{threadMeta}}</p>
+</div>
+<div role="group" aria-label="Theme" style="display:flex;gap:6px;align-items:center">
+<sc-for list="{{themes}}" as="th" hint-placeholder-count="4">
+<button type="button" class="swatch" aria-pressed="{{th.pressed}}" aria-label="{{th.aria}}" title="{{th.label}}" style="background: {{th.bg}}" onClick="{{th.pick}}"><span aria-hidden="true" style="width:12px;height:12px;border-radius:9999px;background: {{th.acc}}"></span></button>
+</sc-for>
+</div>
+<button type="button" class="btn" aria-pressed="{{compactPressed}}" onClick="{{toggleDensity}}">Compact</button>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="outline" size="md" type="button" on-click="{{exportThread}}">Copy thread as Markdown</x-import>
+</header>
+
+<div class="mswitch" role="group" aria-label="View" style="gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:4;background:var(--background)">
+<button type="button" class="btn" style="flex:1;justify-content:center" aria-pressed="{{mConvPressed}}" onClick="{{showConv}}">Conversation</button>
+<button type="button" class="btn" style="flex:1;justify-content:center" aria-pressed="{{mDecPressed}}" onClick="{{showDec}}">Decision · turn {{p.n}}</button>
+</div>
+
+<div class="split">
+
+<sc-if value="{{railOpen}}" hint-placeholder-val="{{false}}">
+<nav class="rail" aria-label="Decisions">
+<div style="padding:16px;display:flex;flex-direction:column;gap:16px">
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="primary" size="md" type="button" full-width="{{yes}}" on-click="{{newDecision}}">New decision</x-import>
+<div style="display:flex;flex-direction:column;gap:4px">
+<p class="eyebrow" style="padding:0 4px 6px">On this device</p>
+<sc-for list="{{threads}}" as="tr" hint-placeholder-count="3">
+<button type="button" class="chip" style="border-color: {{tr.border}}; background: {{tr.bg}}" aria-current="{{tr.current}}" onClick="{{tr.open}}">
+<span style="display:block;font-weight:500">{{tr.title}}</span>
+<span style="display:block;font-size:12px;color:var(--muted-foreground)">{{tr.meta}}</span>
+</button>
+</sc-for>
+</div>
+<label class="chk" style="border:0">
+<input type="checkbox" checked="{{followLatest}}" onChange="{{toggleFollow}}">
+<span style="font-size:13px">Panel follows the latest turn</span>
+</label>
+<div style="border-top:1px solid var(--border);padding-top:12px;display:flex;flex-direction:column;gap:6px">
+<p style="margin:0;font-size:12px;color:var(--muted-foreground)">No account. Each decision keeps its own state and history in this browser only.</p>
+<button type="button" class="linkbtn" style="align-self:flex-start" onClick="{{resetDemo}}">Clear local data and reset</button>
+</div>
+</div>
+</nav>
+</sc-if>
+
+<section class="conv {{convHide}}" aria-label="Conversation">
+<div class="conv-scroll">
+<div style="max-width:760px;margin:0 auto;padding:24px 24px 32px;display:flex;flex-direction:column;gap:22px">
+
+<sc-for list="{{items}}" as="it" hint-placeholder-count="2">
+<div style="display:flex;flex-direction:column;gap:22px">
+
+<sc-if value="{{it.isTurn}}" hint-placeholder-val="{{true}}">
+<article id="{{it.t.anchor}}" aria-label="{{it.t.aria}}" style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:flex-end">
+<div class="bubble" style="max-width:82%;background:var(--user-bg);border:1px solid var(--border);border-radius:var(--surface-r);padding:12px 16px">
+<p class="eyebrow" style="margin-bottom:4px">You · turn {{it.t.n}} · {{it.t.at}}</p>
+<p style="margin:0;white-space:pre-line">{{it.t.user}}</p>
+</div>
+</div>
+<div style="display:flex;gap:12px;align-items:flex-start">
+<div class="avatar" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h18"></path><path d="M12 8 8 19h8l-4-11"></path></svg></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+<div class="card" style="padding:14px 18px">
+<sc-for list="{{it.t.paras}}" as="pa" hint-placeholder-count="2"><p style="margin:0 0 10px">{{pa.text}}</p></sc-for>
+<sc-if value="{{it.t.scripted}}" hint-placeholder-val="{{false}}"><p class="eyebrow">Scripted sample reply. Your message differed from the sample.</p></sc-if>
+</div>
+<div class="{{it.t.cardCls}}">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+<p class="eyebrow" style="color:var(--primary)">Decision update · turn {{it.t.n}}</p>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.StatusBadge" type="{{it.t.statusType}}">{{it.t.statusLabel}}</x-import>
+<span class="tag" style="--c: var(--muted-foreground)">Turn check: {{it.t.route}}</span>
+</div>
+<p style="margin:0;font-weight:600;line-height:1.4">{{it.t.verdict}}</p>
+<div style="display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px">
+<span>Confidence <span class="mono">{{it.t.conf}}</span> <span class="{{it.t.dc.cls}}">{{it.t.dc.text}}</span></span>
+<span>Risk <span class="mono">{{it.t.risk}}</span> <span class="{{it.t.dr.cls}}">{{it.t.dr.text}}</span></span>
+<span>Rent <span class="mono">{{it.t.rT}}</span> · Buy <span class="mono">{{it.t.bT}}</span></span>
+<span>Ceiling <span class="mono">{{it.t.ceilLabel}}</span></span>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+<p style="margin:0;font-size:13px;color:var(--muted-foreground)">{{it.t.summary}}</p>
+<button type="button" class="btn" aria-pressed="{{it.t.selPressed}}" onClick="{{it.t.select}}">{{it.t.selLabel}}</button>
+</div>
+</div>
+</div>
+</div>
+</article>
+</sc-if>
+
+<sc-if value="{{it.isMeta}}" hint-placeholder-val="{{false}}">
+<article style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:flex-end"><div class="bubble" style="max-width:82%;background:var(--user-bg);border:1px solid var(--border);border-radius:var(--surface-r);padding:12px 16px"><p class="eyebrow" style="margin-bottom:4px">You · meta</p><p class="mono" style="margin:0;white-space:pre-line">{{it.m.user}}</p></div></div>
+<div style="display:flex;gap:12px;align-items:flex-start">
+<div class="avatar" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h18"></path><path d="M12 8 8 19h8l-4-11"></path></svg></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+<div class="card" style="padding:14px 18px">
+<p style="margin:0 0 10px">This turn is about the analysis, not the house, so the decision state stays exactly as it was after turn {{it.m.after}}. It is logged as a meta turn and changes no belief, score or prediction.</p>
+<p style="margin:0">You can inspect five layers: the assumptions behind the direction, how evidence strength and the action ceiling were computed, the break conditions, what changed from the previous turn, and the disclosure limit: the panel shows the validated record, not the model's private reasoning. Pick one below.</p>
+</div>
+<div class="turncard">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><p class="eyebrow" style="color:var(--primary)">Meta turn</p><span class="tag" style="--c: var(--muted-foreground)">Decision state unchanged · v{{it.m.after}}</span><span class="tag" style="--c: var(--muted-foreground)">Turn check: {{it.m.route}}</span></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{it.m.layers}}" as="ly" hint-placeholder-count="5"><button type="button" class="btn" onClick="{{ly.go}}">{{ly.label}}</button></sc-for>
+</div>
+</div>
+</div>
+</div>
+</article>
+</sc-if>
+
+<sc-if value="{{it.isClarify}}" hint-placeholder-val="{{false}}">
+<article style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:flex-end"><div class="bubble" style="max-width:82%;background:var(--user-bg);border:1px solid var(--border);border-radius:var(--surface-r);padding:12px 16px"><p class="eyebrow" style="margin-bottom:4px">You</p><p style="margin:0;white-space:pre-line">{{it.c.user}}</p></div></div>
+<div style="display:flex;gap:12px;align-items:flex-start">
+<div class="avatar" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h18"></path><path d="M12 8 8 19h8l-4-11"></path></svg></div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+<div class="card" style="padding:14px 18px">
+<p style="margin:0 0 10px">{{it.c.lead}}</p>
+<p style="margin:0">To move it forward, answer one of these, or tell me what you want to change and why:</p>
+</div>
+<div class="turncard" style="border-style:dashed">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><p class="eyebrow" style="color:var(--sec-need)">{{it.c.title}}</p><span class="tag" style="--c: var(--muted-foreground)">Turn check: {{it.c.route}}</span><span class="tag" style="--c: var(--muted-foreground)">State stays v{{it.c.after}}</span></div>
+<div style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{it.c.asks}}" as="ak" hint-placeholder-count="3"><button type="button" class="chip" onClick="{{ak.use}}">{{ak.text}}</button></sc-for></div>
+<sc-if value="{{it.c.canForce}}" hint-placeholder-val="{{true}}"><button type="button" class="linkbtn" style="align-self:flex-start" onClick="{{it.c.force}}">It is relevant: apply it anyway</button></sc-if>
+</div>
+</div>
+</div>
+</article>
+</sc-if>
+
+<sc-if value="{{it.isStub}}" hint-placeholder-val="{{false}}">
+<article style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:flex-end"><div class="bubble" style="max-width:82%;background:var(--user-bg);border:1px solid var(--border);border-radius:var(--surface-r);padding:12px 16px"><p class="eyebrow" style="margin-bottom:4px">You</p><p style="margin:0;white-space:pre-line">{{it.s.user}}</p></div></div>
+<div style="display:flex;gap:12px;align-items:flex-start"><div class="avatar" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h18"></path><path d="M12 8 8 19h8l-4-11"></path></svg></div><div class="card" style="flex:1;padding:14px 18px"><p style="margin:0">The prototype's scripted turns end here. In the built app this message goes to the model with the current decision state, and the panel updates from its validated reply.</p></div></div>
+</article>
+</sc-if>
+
+</div>
+</sc-for>
+
+<sc-if value="{{pending}}" hint-placeholder-val="{{false}}">
+<article style="display:flex;flex-direction:column;gap:12px" aria-live="polite">
+<div style="display:flex;justify-content:flex-end"><div class="bubble" style="max-width:82%;background:var(--user-bg);border:1px solid var(--border);border-radius:var(--surface-r);padding:12px 16px"><p class="eyebrow" style="margin-bottom:4px">You</p><p style="margin:0;white-space:pre-line">{{pendingText}}</p></div></div>
+<div style="display:flex;gap:12px;align-items:flex-start"><div class="avatar" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h18"></path><path d="M12 8 8 19h8l-4-11"></path></svg></div>
+<div class="card" style="flex:1;padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+<p class="eyebrow">Turn check, then reasoning against the decision state</p>
+<div class="skel" style="width:92%"></div><div class="skel" style="width:78%"></div><div class="skel" style="width:85%"></div>
+</div></div>
+</article>
+</sc-if>
+
+</div>
+</div>
+
+<div style="border-top:1px solid var(--border);background:var(--background);padding:12px 24px 16px">
+<div style="max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:10px">
+<sc-if value="{{hasSugg}}" hint-placeholder-val="{{true}}">
+<div style="display:flex;flex-direction:column;gap:6px">
+<p class="eyebrow">Suggested next message</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<sc-for list="{{sugg}}" as="sg" hint-placeholder-count="2">
+<button type="button" class="{{sg.cls}}" style="max-width:100%" onClick="{{sg.use}}">{{sg.text}}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<label for="composer" class="eyebrow">Follow up</label>
+<div style="display:flex;gap:10px;align-items:flex-end">
+<div style="flex:1;min-width:0">
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Textarea" id="composer" rows="{{three}}" placeholder="Add facts, push back, or type /transparency" value="{{draft}}" on-change="{{onDraft}}" on-key-down="{{onKey}}" style="width:100%"></x-import>
+</div>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="primary" size="lg" type="button" disabled="{{sendDisabled}}" on-click="{{send}}">Send</x-import>
+</div>
+<p style="margin:0;font-size:12px;color:var(--muted-foreground)">Enter to send, Shift and Enter for a new line. Each message is checked first: only messages that move the decision update the panel. Vague or off-topic ones are not applied, and commands starting with / never change the state.</p>
+</div>
+</div>
+</section>
+
+<aside class="dec {{decHide}}" aria-label="Decision panel">
+<div style="position:sticky;top:0;z-index:3;background:var(--panel-bg);border-bottom:1px solid var(--border);padding:14px var(--pad) 12px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+<p class="eyebrow" style="color:var(--primary)">Decision state v{{p.n}}</p>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.StatusBadge" type="{{p.statusType}}">{{p.statusLabel}}</x-import>
+<span class="tag" style="--c: var(--muted-foreground)">{{p.stakes}}</span>
+<span class="tag" style="--c: var(--sec-real)">System confidence: {{p.sysConf}}</span>
+<span class="tag" style="--c: var(--sec-flo)">Coherence: {{p.cohLevel}}</span>
+<sc-if value="{{p.fresh}}" hint-placeholder-val="{{false}}"><span class="tag" style="--c: var(--sec-dir)">Updated just now</span></sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:space-between">
+<div role="group" aria-label="Show decision state after turn" style="display:flex;gap:6px;align-items:center">
+<span style="font-size:13px;color:var(--muted-foreground)">After turn</span>
+<sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
+<button type="button" class="btn" style="min-width:44px;justify-content:center" aria-pressed="{{st.pressed}}" aria-label="{{st.aria}}" onClick="{{st.pick}}">{{st.label}}</button>
+</sc-for>
+<span class="mono" style="font-size:12px;color:var(--muted-foreground)">{{p.at}}</span>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="outline" size="sm" type="button" on-click="{{p.copyRich}}">Copy</x-import>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="outline" size="sm" type="button" on-click="{{p.copyMd}}">Markdown</x-import>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="outline" size="sm" type="button" on-click="{{p.copyJson}}">JSON</x-import>
+</div>
+</div>
+<sc-if value="{{p.isOld}}" hint-placeholder-val="{{false}}">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;padding:8px 12px;border:1px dashed var(--border);border-radius:var(--radius-md)">
+<span>You are viewing state v{{p.n}}, as it stood after turn {{p.n}}.</span>
+<button type="button" class="linkbtn" onClick="{{goLatest}}">Return to latest</button>
+</div>
+</sc-if>
+<sc-if value="{{notApplied}}" hint-placeholder-val="{{false}}">
+<div role="status" style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;padding:8px 12px;border:1px solid color-mix(in srgb,var(--sec-need) 45%,var(--border));background:color-mix(in srgb,var(--sec-need) 8%,var(--card));border-radius:var(--radius-md)">
+<span>Your last message was not applied, so state v{{p.n}} is unchanged.</span>
+<button type="button" class="linkbtn" onClick="{{openNeeds}}">See what would help</button>
+</div>
+</sc-if>
+<sc-if value="{{pending}}" hint-placeholder-val="{{false}}">
+<div aria-live="polite" style="display:flex;flex-direction:column;gap:6px"><p class="eyebrow">Checking whether your message moves the decision</p><div class="skel" style="width:100%;height:6px"></div></div>
+</sc-if>
+</div>
+
+<div style="padding:var(--pad);display:flex;flex-direction:column;gap:var(--gap)">
+
+<div class="box" style="--c: var(--sec-dir)">
+<p class="eyebrow c">Direction</p>
+<p style="margin:6px 0 10px;font-size:17px;font-weight:600;line-height:1.45;letter-spacing:var(--tracking-tight)">{{p.z}}</p>
+<p style="margin:0;font-size:14px"><span class="eyebrow" style="display:inline">Load-bearing claim</span> {{p.claim}}</p>
+<p style="margin:8px 0 0;display:flex;gap:6px;flex-wrap:wrap"><span class="tag" style="--c: var(--muted-foreground)">Evidence: self-report</span><span class="tag" style="--c: var(--muted-foreground)">Belief held since turn {{p.beliefSince}}</span></p>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--gap)">
+<sc-for list="{{p.tiles}}" as="m" hint-placeholder-count="4">
+<div class="card" style="padding:14px;display:flex;flex-direction:column;gap:8px">
+<p class="eyebrow">{{m.label}}</p>
+<p class="mono" style="margin:0;font-size:22px;font-weight:600;line-height:1.1">{{m.text}}</p>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Progress" value="{{m.value}}" skin="{{m.skin}}" height="{{six}}"></x-import>
+<p style="margin:0;font-size:12px;color:var(--muted-foreground);line-height:1.35">{{m.sub}}</p>
+<p style="margin:0;line-height:1.35"><span class="{{m.d.cls}}">{{m.d.text}}</span> <span style="font-size:12px;color:var(--muted-foreground)">{{p.vsText}}</span></p>
+</div>
+</sc-for>
+</div>
+
+<section class="acc" id="acc-needs">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.needs.exp}}" aria-controls="sec-needs" onClick="{{S.needs.toggle}}"><span class="acc-t">Needs answers before this closes</span><span class="acc-m">{{p.needsCount}}</span><svg class="{{S.needs.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.needs.open}}" hint-placeholder-val="{{true}}">
+<div id="sec-needs" class="acc-b">
+<ol class="clean">
+<sc-for list="{{p.needs}}" as="q" hint-placeholder-count="3">
+<li><span>{{q.text}}</span> <button type="button" class="linkbtn" aria-label="{{q.aria}}" onClick="{{q.answer}}">Answer</button></li>
+</sc-for>
+</ol>
+<div class="g2">
+<div class="box" style="--c: var(--sec-var)"><p class="eyebrow c" style="margin-bottom:8px">Key variables</p><ul class="clean"><sc-for list="{{p.vars}}" as="v" hint-placeholder-count="4"><li>{{v.text}}</li></sc-for></ul></div>
+<div class="box" style="--c: var(--sec-need)"><p class="eyebrow c" style="margin-bottom:8px">Blocking unknowns</p><ul class="clean"><sc-for list="{{p.unk}}" as="u" hint-placeholder-count="4"><li>{{u.text}}</li></sc-for></ul></div>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-matrix">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.matrix.exp}}" aria-controls="sec-matrix" onClick="{{S.matrix.toggle}}"><span class="acc-t">Decision matrix</span><span class="acc-m">Rent {{p.rT}} · Buy {{p.bT}}</span><svg class="{{S.matrix.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.matrix.open}}" hint-placeholder-val="{{true}}">
+<div id="sec-matrix" class="acc-b">
+<div style="display:flex;gap:16px;font-size:13px;flex-wrap:wrap;align-items:center">
+<span style="display:inline-flex;align-items:center;gap:6px"><span class="dot a" aria-hidden="true"></span>Rent</span>
+<span style="display:inline-flex;align-items:center;gap:6px"><span class="dot b" aria-hidden="true"></span>Buy</span>
+<span style="color:var(--muted-foreground)">Scores out of 5, weighted to 100. Tags show change since the previous turn; est. marks an assumed score.</span>
+</div>
+<div style="overflow-x:auto">
+<table class="tbl">
+<thead><tr><th scope="col">Criterion</th><th scope="col" class="num">Weight</th><th scope="col">Rent</th><th scope="col">Buy</th><th scope="col">Basis</th></tr></thead>
+<tbody>
+<sc-for list="{{p.rows}}" as="r" hint-placeholder-count="5">
+<tr class="{{r.cls}}">
+<th scope="row">{{r.name}}</th>
+<td class="num">{{r.w}}</td>
+<td><span class="score"><span class="dots" aria-hidden="true"><sc-for list="{{r.rent.dots}}" as="d" hint-placeholder-count="5"><span class="{{d.cls}}"></span></sc-for></span><span class="mono">{{r.rent.txt}}</span><sc-if value="{{r.rent.hasCh}}" hint-placeholder-val="{{false}}"><span class="chg">{{r.rent.ch}}</span></sc-if><sc-if value="{{r.rent.est}}" hint-placeholder-val="{{false}}"><span class="est">est.</span></sc-if></span></td>
+<td><span class="score"><span class="dots" aria-hidden="true"><sc-for list="{{r.buy.dots}}" as="d" hint-placeholder-count="5"><span class="{{d.cls}}"></span></sc-for></span><span class="mono">{{r.buy.txt}}</span><sc-if value="{{r.buy.hasCh}}" hint-placeholder-val="{{false}}"><span class="chg">{{r.buy.ch}}</span></sc-if><sc-if value="{{r.buy.est}}" hint-placeholder-val="{{false}}"><span class="est">est.</span></sc-if></span></td>
+<td class="basis">{{r.basis}}</td>
+</tr>
+</sc-for>
+</tbody>
+<tfoot><tr><th scope="row">Weighted score</th><td class="num">100%</td><td class="mono">{{p.rT}} <span class="{{p.drT.cls}}">{{p.drT.text}}</span></td><td class="mono">{{p.bT}} <span class="{{p.dbT.cls}}">{{p.dbT.text}}</span></td><td></td></tr></tfoot>
+</table>
+</div>
+<div class="box" style="--c: var(--sec-real)"><p class="eyebrow c" style="margin-bottom:4px">Sensitivity</p><p style="margin:0">{{p.sens}}</p></div>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-gates">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.gates.exp}}" aria-controls="sec-gates" onClick="{{S.gates.toggle}}"><span class="acc-t">Gates</span><span class="acc-m">{{p.gatesShort}} passed</span><svg class="{{S.gates.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.gates.open}}" hint-placeholder-val="{{true}}">
+<div id="sec-gates" class="acc-b">
+<div style="overflow-x:auto">
+<table class="tbl">
+<thead><tr><th scope="col">Gate</th><th scope="col">Threshold</th><th scope="col">Status</th><th scope="col">Evidence</th></tr></thead>
+<tbody>
+<sc-for list="{{p.gates}}" as="g" hint-placeholder-count="3">
+<tr class="{{g.cls}}">
+<th scope="row">{{g.name}} <sc-if value="{{g.isNew}}" hint-placeholder-val="{{false}}"><span class="tag" style="--c: var(--sec-dir)">New</span></sc-if> <sc-if value="{{g.advisory}}" hint-placeholder-val="{{false}}"><span class="tag" style="--c: var(--muted-foreground)">Advisory</span></sc-if></th>
+<td>{{g.th}}</td>
+<td><x-import component-from-global-scope="KuatDesignSystem_d9a28b.StatusBadge" type="{{g.type}}">{{g.label}}</x-import></td>
+<td class="basis">{{g.ev}}</td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+<p style="margin:0;font-size:13px;color:var(--muted-foreground)">Protective gates decide the action ceiling. Advisory gates inform the matrix but cannot block or unlock an action.</p>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-changes">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.changes.exp}}" aria-controls="sec-changes" onClick="{{S.changes.toggle}}"><span class="acc-t">What changed this turn</span><span class="acc-m">{{p.changeMeta}}</span><svg class="{{S.changes.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.changes.open}}" hint-placeholder-val="{{true}}">
+<div id="sec-changes" class="acc-b">
+<sc-if value="{{p.hasPrev}}" hint-placeholder-val="{{true}}">
+<div class="box" style="--c: var(--sec-var)">
+<p class="eyebrow c">Belief updated · new evidence</p>
+<p style="margin:8px 0 4px;text-decoration:line-through;color:var(--muted-foreground)">{{p.prevClaim}}</p>
+<p style="margin:0 0 8px;font-size:12px;color:var(--muted-foreground)">Held in v{{p.prevN}}, replaced in v{{p.n}} by:</p>
+<p style="margin:0;font-weight:500">{{p.claim}}</p>
+</div>
+<div style="overflow-x:auto">
+<table class="tbl">
+<thead><tr><th scope="col">Measure</th><th scope="col" class="num">v{{p.prevN}}</th><th scope="col" class="num">v{{p.n}}</th><th scope="col">Change</th></tr></thead>
+<tbody>
+<sc-for list="{{p.diff}}" as="df" hint-placeholder-count="6">
+<tr><th scope="row">{{df.m}}</th><td class="num">{{df.before}}</td><td class="num">{{df.now}}</td><td><span class="{{df.d.cls}}">{{df.d.text}}</span></td></tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+<div class="card" style="padding:var(--pad)"><p class="eyebrow" style="margin-bottom:6px">Prediction review · from turn {{p.prevN}} · {{p.reviewState}}</p><p style="margin:0">{{p.reviewText}}</p></div>
+</sc-if>
+<sc-if value="{{p.isFirst}}" hint-placeholder-val="{{false}}"><p style="margin:0;color:var(--muted-foreground)">First turn. These values are the baseline that later versions are compared against.</p></sc-if>
+<div class="g2">
+<div class="box" style="--c: var(--sec-flo)"><p class="eyebrow c" style="margin-bottom:6px">Observed</p><p style="margin:0">{{p.obs}}</p></div>
+<div class="box" style="--c: var(--sec-fal)"><p class="eyebrow c" style="margin-bottom:6px">Inferred</p><p style="margin:0">{{p.inf}}</p></div>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-actions">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.actions.exp}}" aria-controls="sec-actions" onClick="{{S.actions.toggle}}"><span class="acc-t">Next 72 hours</span><span class="acc-m">{{p.doneText}}</span><svg class="{{S.actions.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.actions.open}}" hint-placeholder-val="{{true}}">
+<div id="sec-actions" class="acc-b">
+<div>
+<sc-for list="{{p.next}}" as="c" hint-placeholder-count="4">
+<label class="chk"><input type="checkbox" checked="{{c.checked}}" onChange="{{c.toggle}}"><span class="{{c.cls}}">{{c.text}}</span></label>
+</sc-for>
+</div>
+<div class="box" style="--c: var(--sec-flo)">
+<p style="margin:0 0 6px;display:flex;align-items:center;justify-content:space-between;gap:8px"><span class="eyebrow c">Would sharpen this analysis</span><span class="tag" style="--c: var(--sec-flo)">Gap: {{p.gapCat}}</span></p>
+<p style="margin:0">{{p.gapNote}}</p>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-clearance">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.clearance.exp}}" aria-controls="sec-clearance" onClick="{{S.clearance.toggle}}"><span class="acc-t">Clearance</span><span class="acc-m">Ceiling: {{p.ceilLabel}}</span><svg class="{{S.clearance.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.clearance.open}}" hint-placeholder-val="{{true}}">
+<div id="sec-clearance" class="acc-b">
+<ol class="ladder" aria-label="Action ladder" style="list-style:none;margin:0;padding:0">
+<sc-for list="{{p.rungs}}" as="rg" hint-placeholder-count="5"><li class="{{rg.cls}}"><span>{{rg.label}}</span><span class="mono" style="font-size:10px;font-weight:400">{{rg.note}}</span></li></sc-for>
+</ol>
+<div style="overflow-x:auto">
+<table class="tbl">
+<thead><tr><th scope="col">Rung</th><th scope="col">Action</th><th scope="col">Status</th></tr></thead>
+<tbody>
+<sc-for list="{{p.bounds}}" as="b" hint-placeholder-count="3">
+<tr><td style="white-space:nowrap"><span class="tag" style="--c: var(--sec-act)">{{b.rung}}</span></td><td>{{b.text}}</td><td style="white-space:nowrap"><span class="tag" style="--c: {{b.color}}">{{b.status}}</span></td></tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+<div class="g2">
+<div>
+<p class="eyebrow" style="margin-bottom:8px">Basis (computed)</p>
+<dl class="kv">
+<dt>Evidence</dt><dd>{{p.evStrength}} · {{p.evHave}} inputs, self-report</dd>
+<dt>Risk</dt><dd>{{p.risk}} · {{p.irrev}} to reverse</dd>
+<dt>Calibration</dt><dd>{{calibText}}</dd>
+<dt>Executable</dt><dd>{{p.execText}}</dd>
+<dt>Invariants</dt><dd>{{p.invText}}</dd>
+</dl>
+</div>
+<div>
+<p class="eyebrow" style="margin-bottom:8px">Invariant checks</p>
+<ul class="clean" style="padding-left:0;list-style:none">
+<sc-for list="{{p.inv}}" as="iv" hint-placeholder-count="5"><li style="display:flex;gap:8px;align-items:flex-start"><span class="tag" style="--c: {{iv.color}}">{{iv.mark}}</span><span style="font-size:13.5px">{{iv.text}}</span></li></sc-for>
+</ul>
+</div>
+</div>
+<p class="mono" style="margin:0;font-size:12px;color:var(--muted-foreground)">Ceiling computed by the engine from the state, not asserted by the model. There is no execute rung: Settle advises; you act.</p>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-stress">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.stress.exp}}" aria-controls="sec-stress" onClick="{{S.stress.toggle}}"><span class="acc-t">Stress tests and assumptions</span><span class="acc-m">{{p.assumeCount}}</span><svg class="{{S.stress.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.stress.open}}" hint-placeholder-val="{{false}}">
+<div id="sec-stress" class="acc-b">
+<div class="box" style="--c: var(--sec-dir)">
+<p style="margin:0 0 6px;display:flex;align-items:center;justify-content:space-between;gap:8px"><span class="eyebrow c">Failure mode</span><span class="tag" style="--c: var(--sec-dir)">{{p.irrev}} to reverse</span></p>
+<p style="margin:0">{{p.failure}}</p>
+</div>
+<div class="box" style="--c: var(--sec-adv)">
+<p class="eyebrow c" style="margin-bottom:10px">Adversarial</p>
+<dl class="kv"><dt>Risk</dt><dd>{{p.adv}}</dd><dt>Exploit surface</dt><dd>{{p.exp}}</dd></dl>
+</div>
+<div class="box" style="--c: var(--sec-fal)">
+<p class="eyebrow c" style="margin-bottom:10px">Falsifiability</p>
+<p class="eyebrow" style="margin-bottom:6px">Assumptions</p>
+<ol class="clean" style="margin-bottom:14px"><sc-for list="{{p.assume}}" as="as" hint-placeholder-count="3"><li>{{as.text}}</li></sc-for></ol>
+<p class="eyebrow" style="margin-bottom:6px">Break conditions</p>
+<ul class="clean" style="padding-left:0;list-style:none;gap:10px">
+<sc-for list="{{p.fal}}" as="f" hint-placeholder-count="3">
+<li style="display:flex;flex-direction:column;gap:4px"><span>{{f.text}}</span><span><span class="tag" style="--c: {{f.color}}">{{f.effect}}</span></span></li>
+</sc-for>
+</ul>
+<p style="margin:12px 0 0"><span class="eyebrow" style="display:block;margin-bottom:4px">Would change this</span>{{p.wc}}</p>
+</div>
+<div class="box" style="--c: var(--sec-real)">
+<p class="eyebrow c" style="margin-bottom:10px">Reality</p>
+<dl class="kv"><dt>What resists</dt><dd>{{p.res}}</dd><dt>Resources</dt><dd>{{p.rsc}}</dd><dt>Dependencies</dt><dd>{{p.dep}}</dd><dt>Executable</dt><dd>{{p.execText}}</dd></dl>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-flour">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.flour.exp}}" aria-controls="sec-flour" onClick="{{S.flour.toggle}}"><span class="acc-t">Flourishing</span><span class="acc-m">Direction · leverage · stability</span><svg class="{{S.flour.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.flour.open}}" hint-placeholder-val="{{false}}">
+<div id="sec-flour" class="acc-b">
+<dl class="kv">
+<sc-for list="{{p.fl}}" as="fl" hint-placeholder-count="5"><dt>{{fl.k}}</dt><dd>{{fl.v}}</dd></sc-for>
+</dl>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-preds">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.preds.exp}}" aria-controls="sec-preds" onClick="{{S.preds.toggle}}"><span class="acc-t">Predictions and calibration</span><span class="acc-m">{{calibShort}}</span><svg class="{{S.preds.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.preds.open}}" hint-placeholder-val="{{false}}">
+<div id="sec-preds" class="acc-b">
+<p style="margin:0;font-size:13px;color:var(--muted-foreground)">Each decision turn registers one prediction with a check date. You grade it; the model never grades its own predictions.</p>
+<sc-for list="{{preds}}" as="pr" hint-placeholder-count="3">
+<div class="card" style="padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="eyebrow">Turn {{pr.n}} · check by {{pr.checkAt}}</span><span class="tag" style="--c: {{pr.color}}">{{pr.state}}</span></div>
+<p style="margin:0">{{pr.text}}</p>
+<div role="group" aria-label="{{pr.aria}}" style="display:flex;gap:6px;flex-wrap:wrap">
+<button type="button" class="btn" aria-pressed="{{pr.heldPressed}}" onClick="{{pr.held}}">Held</button>
+<button type="button" class="btn" aria-pressed="{{pr.missedPressed}}" onClick="{{pr.missed}}">Did not hold</button>
+<button type="button" class="btn" aria-pressed="{{pr.openPressed}}" onClick="{{pr.reopen}}">Too early</button>
+</div>
+</div>
+</sc-for>
+<p class="mono" style="margin:0;font-size:12px">{{calibText}}</p>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-state">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.state.exp}}" aria-controls="sec-state" onClick="{{S.state.toggle}}"><span class="acc-t">Decision state</span><span class="acc-m">v{{p.n}} · #{{p.hash}}</span><svg class="{{S.state.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.state.open}}" hint-placeholder-val="{{false}}">
+<div id="sec-state" class="acc-b">
+<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+<span class="tag" style="--c: var(--sec-flo)">{{chainText}}</span>
+<span class="tag" style="--c: var(--muted-foreground)">Previous #{{p.prevHash}}</span>
+</div>
+<div>
+<p class="eyebrow" style="margin-bottom:8px">Inputs: {{p.evHave}} known</p>
+<div style="overflow-x:auto">
+<table class="tbl">
+<thead><tr><th scope="col">Input</th><th scope="col">Value</th><th scope="col" class="num">Known since</th></tr></thead>
+<tbody>
+<sc-for list="{{p.inputs}}" as="in" hint-placeholder-count="8"><tr><th scope="row">{{in.label}}</th><td class="mono" style="color: {{in.color}}">{{in.value}}</td><td class="num">{{in.since}}</td></tr></sc-for>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<p class="eyebrow" style="margin-bottom:8px">Belief history</p>
+<ol class="clean">
+<sc-for list="{{p.beliefs}}" as="bl" hint-placeholder-count="3"><li style="{{bl.style}}"><span class="mono" style="font-size:12px">v{{bl.n}}</span> {{bl.text}}</li></sc-for>
+</ol>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+<p class="eyebrow">State object sent to the model next turn</p>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="ghost" size="sm" type="button" on-click="{{p.copyState}}">Copy state</x-import>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="outline" size="sm" type="button" on-click="{{exportFile}}">Copy decision file</x-import>
+<x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="outline" size="sm" type="button" on-click="{{importFile}}">Import</x-import>
+</div>
+</div>
+<pre class="code" tabindex="0" aria-label="Current decision state">{{p.stateJson}}</pre>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-traj">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.traj.exp}}" aria-controls="sec-traj" onClick="{{S.traj.toggle}}"><span class="acc-t">Trajectory across the thread</span><span class="acc-m">{{trajMeta}}</span><svg class="{{S.traj.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.traj.open}}" hint-placeholder-val="{{true}}">
+<div id="sec-traj" class="acc-b">
+<div style="overflow-x:auto">
+<table class="tbl">
+<thead><tr><th scope="col">State</th><th scope="col">Verdict</th><th scope="col" class="num">Conf.</th><th scope="col" class="num">Risk</th><th scope="col" class="num">Rent</th><th scope="col" class="num">Buy</th><th scope="col">Ceiling</th></tr></thead>
+<tbody>
+<sc-for list="{{traj}}" as="tj" hint-placeholder-count="3">
+<tr class="{{tj.cls}}"><th scope="row" class="mono">v{{tj.n}}</th><td>{{tj.verdict}}</td><td class="num">{{tj.conf}}</td><td class="num">{{tj.risk}}</td><td class="num">{{tj.rT}}</td><td class="num">{{tj.bT}}</td><td>{{tj.ceil}}</td></tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</div>
+</sc-if>
+</section>
+
+<section class="acc" id="acc-export">
+<h2 style="margin:0"><button type="button" class="acc-h" aria-expanded="{{S.export.exp}}" aria-controls="sec-export" onClick="{{S.export.toggle}}"><span class="acc-t">Export</span><span class="acc-m">Markdown · JSON</span><svg class="{{S.export.chev}}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></button></h2>
+<sc-if value="{{S.export.open}}" hint-placeholder-val="{{false}}">
+<div id="sec-export" class="acc-b">
+<p style="margin:0;font-size:13px;color:var(--muted-foreground)">Copy keeps headings and tables when pasted into Docs, Notion or email. Markdown and JSON copy the raw text below.</p>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><p class="eyebrow">Markdown</p><x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="ghost" size="sm" type="button" on-click="{{p.copyMd}}">Copy Markdown</x-import></div>
+<pre class="code" tabindex="0" aria-label="Markdown export">{{p.md}}</pre>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><p class="eyebrow">JSON: turn record</p><x-import component-from-global-scope="KuatDesignSystem_d9a28b.Button" variant="ghost" size="sm" type="button" on-click="{{p.copyJson}}">Copy JSON</x-import></div>
+<pre class="code" tabindex="0" aria-label="JSON export">{{p.json}}</pre>
+</div>
+</sc-if>
+</section>
+
+<div style="display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap">
+<p style="margin:0;font-size:12px;color:var(--muted-foreground);max-width:420px">Partial view by design: this panel is the validated decision state. The model's private reasoning is neither stored nor shown.</p>
+<div style="display:flex;gap:8px">
+<button type="button" class="btn" onClick="{{expandAll}}">Expand all</button>
+<button type="button" class="btn" onClick="{{collapseAll}}">Collapse all</button>
+</div>
+</div>
+
+</div>
+</aside>
+
+</div>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}">
+<div class="toast" role="status">{{toast}}</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["midnight","light","dark","paper"],"default":"midnight"},"density":{"editor":"enum","options":["comfortable","compact"],"default":"comfortable"},"$preview":{"width":1440,"height":960}}'>
+var KEY = "settle-proto-v1";
+var BLOCKED = "Clipboard is blocked in this preview. Open the section and copy the text by hand.";
+var SOURCE_WEIGHT = 0.8;
+var DECISION_ID = "dec_rent_or_buy";
+
+var INPUTS = [
+["stay_years", "Expected stay", function (v) { return v + " years"; }],
+["comparable_rent", "Comparable rent", function (v) { return "₹" + v.toLocaleString("en-IN") + " a month"; }],
+["purchase_price", "Purchase price", function (v) { return "₹" + (v / 1e7).toFixed(2) + " Cr"; }],
+["loan_terms", "Loan terms", function (v) { return v; }],
+["down_payment_covered", "Down payment covered", function (v) { return v ? "Yes" : "No"; }],
+["reserve_after_close_months", "Reserve after closing", function (v) { return v + " months"; }],
+["gross_income_month", "Gross household income", function (v) { return "₹" + (v / 1e5).toFixed(1) + " L a month"; }],
+["expected_growth_pct", "Expected price growth", function (v) { return v + "% a year"; }]
+];
+var EV_OF = INPUTS.length;
+var RUNGS = [["observe", "Observe"], ["recommend", "Recommend"], ["simulate", "Simulate"], ["prepare", "Prepare"], ["request_warrant", "Request go-ahead"]];
+
+var D = [
+{
+n: 1, at: "2026-10-30T10:12:00+05:30", route: ["new_decision", 0.97],
+user: "Help me decide between renting a house or buying a house?",
+reply: "Default decision: rent now. Buying should not proceed until it passes three gates: you expect to stay at least 5 years, the all-in monthly ownership cost is affordable after taxes, insurance, maintenance and fees, and you still keep 6 months of essential expenses in cash after closing.\n\nIn the next 72 hours, gather 3 real rental listings, get 1 real lender quote, and compare them on a 5-year horizon. If the buy case survives that comparison, buying becomes a live option. If it does not, renting is not hesitation; it is preserving liquidity and mobility.",
+status: "partial", stakes: "Personal · financial · high",
+verdict: "Rent now; buying is gated",
+summary: "Opened the decision. Rent is the default; buying waits on stay, cost and reserve.",
+claim: "With the current information, renting is the safer default until the buying case clears affordability, time-horizon and liquidity gates.",
+z: "Rent now, and do not buy unless the house passes a 5-year stay test, an all-in cost test and a post-closing cash-reserve test.",
+conf: 18, risk: 68, irrev: "Costly",
+failure: "Buying too early can trap you in high transaction costs, reduced liquidity, repair exposure and difficulty moving.",
+coherence: ["High", "With no figures, the reversible option is the default and every gate starts unknown; nothing in the record contradicts that."],
+inputs: {},
+needs: ["For the home you would buy: what purchase price, down payment, loan rate, and monthly tax plus insurance are you using?", "For the home you would rent: what monthly rent have you found for comparable places in the same area?", "What is the minimum number of years you are confident you would stay in that area?"],
+vars: ["Expected stay in the area", "All-in monthly ownership cost versus comparable rent", "Cash reserves remaining after closing", "Income stability and debt load"],
+unk: ["Expected time living in the area", "Purchase price, down payment, loan rate, taxes, insurance and maintenance", "Rent for comparable homes", "Emergency savings left after a purchase", "Income stability and debt obligations"],
+assume: ["You are comparing homes of similar size and area, not a cheap rental against a dream house.", "Your income is stable enough to carry a long loan.", "A rental on acceptable terms is available where you want to live."],
+matrix: [
+{name: "Fit with time horizon", w: 25, s: [4, 2], est: [false, true], basis: "Stay unknown; buying needs about 5 years to recover entry costs."},
+{name: "All-in monthly cost", w: 25, s: [3, 3], est: [true, true], basis: "No rent or loan figures yet; neutral placeholder."},
+{name: "Liquidity after commitment", w: 20, s: [5, 2], est: [false, false], basis: "Down payment and closing costs lock cash up."},
+{name: "Flexibility to move", w: 15, s: [5, 2], est: [false, false], basis: "Selling takes months and carries brokerage costs."},
+{name: "Equity and control", w: 15, s: [2, 5], est: [false, false], basis: "Ownership builds equity and removes landlord risk."}
+],
+gates: [
+{name: "Stay horizon", th: "At least 5 years in the area", st: "unknown", ev: "Not stated"},
+{name: "Affordability", th: "All-in cost at most 35% of gross monthly income", st: "unknown", ev: "No income or loan quote"},
+{name: "Post-close reserve", th: "6+ months of essential expenses in cash", st: "unknown", ev: "Savings not stated"}
+],
+sens: "Buy overtakes rent only if horizon, cost and liquidity all move in its favour. Equity alone cannot carry it.",
+adv: "Being pulled into buying by social pressure, fear of missing out, or a monthly loan figure that hides taxes, insurance, repairs and closing costs.",
+exp: "Sellers, agents and lenders benefit when you focus on whether the payment is affordable rather than on total ownership cost and exit risk.",
+fal: [["Within 72 hours you confirm a 5+ year stay, and a lender quote puts all-in cost below 35% of gross monthly income.", "Reduces confidence"], ["Comparable rent comes within 10% of the all-in monthly ownership cost.", "Reduces confidence"], ["An inspection finds near-term repairs above 3% of the purchase price.", "Strengthens rent"]],
+wc: "A specific comparable rent; a purchase price with down payment, rate, tax, insurance and maintenance; your minimum stay in the area.",
+res: "Buying resists through transaction costs, hidden maintenance, rate sensitivity and reduced mobility. Renting resists through less control and possible rent increases.",
+rsc: "Buying needs a down payment, closing costs, an emergency reserve and tolerance for repairs. Renting needs a deposit and accepts less customisation.",
+dep: "Buying depends on loan approval, seller terms, inspection, taxes and market availability. Renting depends on landlord terms and lease availability.",
+exec: true,
+bounds: [["recommend", "Use renting as the default until the buy case passes the protective gates."], ["simulate", "Run the 5-year rent-versus-buy comparison once real rent and loan figures arrive."], ["prepare", "Draft a purchase-readiness checklist."]],
+next: ["Pull 3 rental listings for homes you would actually live in; record rent, deposit, maintenance and lease length.", "Get 1 lender quote for a realistic price; record EMI, rate, tenure, processing fee and closing costs.", "Make a one-page comparison: rent for 12 months, buy and stay 5 years, buy and sell before 3 years.", "Set a rule now: no offer unless 6 months of expenses remain in cash after down payment, closing and immediate repairs."],
+fl: [["Direction", "Use renting as the default until buying proves itself against hard numbers."], ["Leverage", "The decisive lever is not whether ownership is desirable; it is whether ownership stays safe after full monthly cost, reserves and stay duration are included."], ["Stability", "Preserves mobility and liquidity, and gives a clean threshold for switching from rent to buy."], ["Agency rebalance", "Make the purchase earn commitment through numbers, not aspiration or pressure."], ["Trajectory shift", "From identity-based housing choice to constraint-based commitment."]],
+obs: "You asked to compare renting and buying. No figures, place or timeline were given.",
+inf: "Every gate starts as unknown; the default favours the reversible option.",
+pred: "If you look at listings before setting the reserve rule, the first home you like will pull the budget above the 35% gate.",
+gap: ["Your expected stay plus the monthly rent and all-in ownership cost for comparable homes.", "Evidence"],
+sugg: ["We have enough savings to buy, and renting is fine too."]
+},
+{
+n: 2, at: "2026-10-30T10:31:00+05:30", route: ["adds_evidence", 0.84],
+user: "Let's say renting is good, but purchasing is also possible as there is enough savings for it.",
+reply: "Update: enough savings moves buying from impossible to possible, but not from possible to better. The key distinction is affordability versus resilience. If your savings cover the down payment and closing costs but leave you thin afterwards, buying is still fragile.\n\nIf buying leaves you with 6 months of essential expenses, an all-in monthly cost under about 35% of gross income, and a stay of at least 5 years, it becomes a serious option. For the next 72 hours: get one written lender estimate, gather three real rental comps, calculate cash left after closing, and compare both over 5 years. Do not make an offer yet.",
+status: "evolving", stakes: "Personal · financial · high",
+verdict: "Rent by default; buying is now feasible, not yet better",
+summary: "Savings make buying feasible. Rent stays the default until stay, cost and reserve are proven.",
+claim: "Having enough savings makes purchasing possible, but renting remains the safer default until the buy case clears time-horizon, all-in monthly cost and post-close liquidity tests.",
+z: "Keep renting; turn the savings into a measured buy test, not a purchase.",
+conf: 48, risk: 62, irrev: "Costly",
+failure: "Buying too early can convert savings into illiquid equity while exposing you to transaction costs, repairs and reduced mobility.",
+coherence: ["High", "New evidence raises feasibility without touching the gates, so the direction holds and only the liquidity score moves."],
+inputs: {down_payment_covered: [true, 2]},
+needs: ["How much cash would remain after the down payment, stamp duty and registration?", "What monthly rent have you found for comparable homes in the same area?", "What is the minimum number of years you are confident you would stay?"],
+vars: ["Expected stay duration", "All-in monthly ownership cost", "Comparable rent for acceptable homes", "Cash remaining after closing"],
+unk: ["Expected years in the area", "All-in monthly cost after EMI, property tax, insurance, maintenance and society charges", "Cash remaining after down payment and closing costs", "Comparable rent for the same type of home"],
+assume: ["‘Enough savings’ means enough for the down payment and closing costs, not necessarily a reserve as well.", "Renting is acceptable, so buying has to beat a good alternative rather than rescue you from a bad one.", "Your income is stable enough to carry a long loan."],
+matrix: [
+{name: "Fit with time horizon", w: 25, s: [4, 2], est: [false, true], basis: "Stay still unknown."},
+{name: "All-in monthly cost", w: 25, s: [3, 3], est: [true, true], basis: "No rent or loan figures yet; neutral placeholder."},
+{name: "Liquidity after commitment", w: 20, s: [5, 3], est: [false, true], basis: "Savings cover the down payment; reserve after closing still unknown."},
+{name: "Flexibility to move", w: 15, s: [5, 2], est: [false, false], basis: "Unchanged."},
+{name: "Equity and control", w: 15, s: [2, 5], est: [false, false], basis: "Unchanged."}
+],
+gates: [
+{name: "Stay horizon", th: "At least 5 years in the area", st: "unknown", ev: "Not stated"},
+{name: "Affordability", th: "All-in cost at most 35% of gross monthly income", st: "unknown", ev: "No income or loan quote"},
+{name: "Post-close reserve", th: "6+ months of essential expenses in cash", st: "partial", ev: "Savings cover the down payment; reserve after closing not computed"}
+],
+sens: "Buy needs about 18 more points to overtake rent. A confirmed long stay and an all-in cost close to rent would do it.",
+adv: "Savings create a new pull: money that can buy a house starts to feel like money that should. Feasibility gets mistaken for advantage.",
+exp: "Lenders and sellers quote what you can borrow, not what leaves you resilient. A pre-approval ceiling is not a budget.",
+fal: [["Cash after closing covers 6+ months of essential expenses and the stay is 5+ years.", "Reduces confidence"], ["A lender estimate shows all-in cost well above 35% of gross income.", "Strengthens rent"], ["Comparable rent is within 10% of all-in ownership cost.", "Reduces confidence"]],
+wc: "A written lender estimate; three rental comps; cash left after closing.",
+res: "Converting savings into a down payment turns liquid money into illiquid equity and exposes you to transaction costs and repairs.",
+rsc: "You report enough savings to make purchasing possible; whether they also cover a reserve is open.",
+dep: "Lender approval, the property's legal checks, and income stability over the loan term.",
+exec: true,
+bounds: [["recommend", "Keep renting as the default; treat buying as a live option under test."], ["simulate", "Run the 5-year comparison from a written lender estimate and three rental comps."], ["prepare", "Draft a purchase-readiness checklist."]],
+next: ["Get one written lender estimate for a realistic price, including processing fee, stamp duty and registration.", "Gather three rental comps for the same size and area.", "Calculate cash left after closing and compare it to 6 months of essential expenses.", "Compare both options over 5 years in one table."],
+fl: [["Direction", "Let buying earn commitment against a rental option you already think is good."], ["Leverage", "Savings shift the question from ‘can we’ to ‘should we’; resilience after closing is now the lever."], ["Stability", "Keeps the reserve intact while the numbers come in."], ["Agency rebalance", "You set the test; the market does not set it for you."], ["Trajectory shift", "From possible to proven, or deliberately declined."]],
+obs: "You said renting is good and purchasing is possible because there is enough savings.",
+inf: "Savings may cover a down payment and closing costs, but no lender quote, stay duration or comparable rent were given.",
+pred: "Once the lender estimate arrives, cash left after stamp duty and registration will be noticeably lower than expected, because those costs are usually left out of the savings figure.",
+gap: ["Cash left after closing, and the monthly rent for a comparable home.", "Evidence"],
+sugg: ["We'd stay at least 7 years; both our jobs are in Pune. Comparable 3BHK rent is ₹42,000 a month. The flat is ₹1.1 Cr; the bank quoted 8.5% for 20 years with 20% down. After down payment and closing we'd still have 8 months of expenses. Household gross income is ₹3.6 L a month."]
+},
+{
+n: 3, at: "2026-10-30T11:05:00+05:30", route: ["adds_evidence", 0.98],
+user: "We'd stay at least 7 years; both our jobs are in Pune. Comparable 3BHK rent is ₹42,000 a month. The flat is ₹1.1 Cr; the bank quoted 8.5% for 20 years with 20% down. After down payment and closing we'd still have 8 months of expenses. Household gross income is ₹3.6 L a month.",
+reply: "Update: buying now passes all three protective gates, but passing the gates makes it safe, not cheaper. A ₹88 L loan at 8.5% over 20 years is an EMI of about ₹76,400. With maintenance, property tax and insurance (roughly ₹6,000), the all-in cost is about ₹82,400 a month: 23% of gross income, well inside the 35% gate. Eight months of reserve clears the 6-month gate, and 7 years clears the stay gate.\n\nThe economics still lean rent. Early on, about ₹62,000 a month of the EMI is interest. Add running costs and the return you give up on roughly ₹30 L of down payment, stamp duty and registration, and ownership's unrecoverable cost is around ₹85,000 a month against ₹42,000 rent. A price-to-rent ratio near 22 is on the expensive side. Buying wins only if the flat appreciates roughly 3.5 to 4.5% a year over 7 years, or if owning is worth that gap to you.\n\nNext: decide what price growth you believe for this micro-market and why, and put a monthly value on owning. If either clears the gap, buying is a reasonable choice rather than a gamble.",
+status: "ready", stakes: "Personal · financial · high",
+verdict: "Buying is safe on every protective gate; renting is still about ₹43k a month cheaper",
+summary: "Protective gates pass. Buying is safe but dearer; expected price growth decides it.",
+claim: "Buying is now safe on all three protective gates, but at a price-to-rent ratio near 22 it costs roughly ₹43,000 a month more than renting in unrecoverable terms. It pays off only with about 4% yearly price growth or a high personal value on owning.",
+z: "Lean rent and invest the difference. Switch to buy only if you can justify 4%+ yearly price growth, or you value owning above about ₹40k a month.",
+conf: 74, risk: 44, irrev: "Recoverable with cost",
+failure: "Buying on an unsourced growth assumption: if prices grow under 3% a year, ownership costs about ₹4 to 5 L a year more than renting for the whole stay.",
+coherence: ["High", "Gates passing and the matrix still favouring rent are consistent: the gates test safety, the matrix tests value."],
+inputs: {down_payment_covered: [true, 2], stay_years: [7, 3], comparable_rent: [42000, 3], purchase_price: [11000000, 3], loan_terms: ["8.5% · 20 years · 20% down", 3], reserve_after_close_months: [8, 3], gross_income_month: [360000, 3]},
+needs: ["What yearly price growth do you expect for this micro-market, and what is it based on?", "What is owning worth to you each month: freedom to renovate, no landlord risk, stability for family?", "Is the ₹6,000 running-cost figure from society and municipal bills, or an estimate?"],
+vars: ["Expected yearly price growth", "Monthly value you place on owning", "Return available on the down payment if invested", "Rent growth over 7 years"],
+unk: ["Expected price growth for the area", "Personal value of ownership per month", "Exact maintenance and property-tax figures"],
+assume: ["Stamp duty and registration total about 7% of the price.", "The down payment would otherwise earn about 7% a year.", "Running costs are about ₹6,000 a month.", "Both incomes continue for the 7-year stay."],
+matrix: [
+{name: "Fit with time horizon", w: 25, s: [4, 4], est: [false, false], basis: "7-year stay stated; clears the 5-year recovery horizon."},
+{name: "All-in monthly cost", w: 25, s: [4, 2], est: [false, false], basis: "Rent ₹42k against roughly ₹85k a month of unrecoverable ownership cost."},
+{name: "Liquidity after commitment", w: 20, s: [5, 4], est: [false, false], basis: "8 months of expenses remain after closing."},
+{name: "Flexibility to move", w: 15, s: [5, 2], est: [false, false], basis: "Unchanged."},
+{name: "Equity and control", w: 15, s: [2, 5], est: [false, false], basis: "Unchanged."}
+],
+gates: [
+{name: "Stay horizon", th: "At least 5 years in the area", st: "pass", ev: "7 years stated; both jobs in Pune"},
+{name: "Affordability", th: "All-in cost at most 35% of gross monthly income", st: "pass", ev: "About ₹82.4k all-in = 23% of ₹3.6 L"},
+{name: "Post-close reserve", th: "6+ months of essential expenses in cash", st: "pass", ev: "8 months remain after closing"},
+{name: "Price-to-rent", th: "20 or below favours buying", st: "fail", ev: "₹1.1 Cr ÷ (₹42k × 12) ≈ 21.8", isNew: true, advisory: true}
+],
+sens: "Buy overtakes rent if expected price growth is above about 4% a year, or if you value owning at more than about ₹40k a month.",
+adv: "Passing the gates can feel like permission. The risk now is anchoring on ‘we can afford it’ and skipping the growth assumption the whole buy case rests on.",
+exp: "Developers and brokers will supply optimistic appreciation figures. Treat any growth number without a source as a sales input, not evidence.",
+fal: [["Ten-year price data for this micro-market shows sustained growth above 5% a year.", "Flips toward buy"], ["Rent for comparable flats is rising faster than 8% a year.", "Reduces confidence"], ["A job change makes the 7-year stay uncertain.", "Strengthens rent"]],
+wc: "A sourced price-growth figure for the micro-market; your own monthly value on owning.",
+res: "Buying resists through about ₹30 L of entry cost that is sunk on day one. Renting resists through rent increases and less control over the home.",
+rsc: "Both paths are affordable; the reserve survives either choice.",
+dep: "Buying depends on legal clearance, possession date and registration. Renting depends on landlord renewals every 11 months.",
+exec: true,
+bounds: [["recommend", "Rent and invest the difference unless the growth or ownership-value case clears the gap."], ["simulate", "Re-run the 7-year comparison at 3%, 4% and 5% yearly growth."], ["prepare", "Prepare a purchase-readiness checklist: legal title, possession date, registration costs."], ["request_warrant", "Make an offer on the flat."]],
+next: ["Find 10-year price history for the micro-market from registration records or two independent sources.", "Write down a monthly value for owning before looking at the growth figure.", "Confirm maintenance, property tax and insurance with the society and municipal bills.", "Re-run the 7-year comparison with rent growing 5% a year."],
+fl: [["Direction", "Choose with the trade-off in view: buying costs more, and you decide whether that buys something you value."], ["Leverage", "The growth assumption carries the buy case; make it explicit and sourced."], ["Stability", "Either path keeps 6+ months of reserve; neither choice is fragile."], ["Agency rebalance", "This is now a values decision on top of a safe financial floor."], ["Trajectory shift", "From ‘can we?’ to ‘is owning worth about ₹40k a month to us?’"]],
+obs: "7-year stay; ₹42k comparable rent; ₹1.1 Cr price; 8.5% over 20 years with 20% down; 8 months of reserve; ₹3.6 L gross monthly income.",
+inf: "EMI about ₹76.4k; stamp duty and registration about 7%; 7% yearly return forgone on about ₹30 L; running costs about ₹6k a month.",
+pred: "Ten-year registration data for this micro-market will show yearly growth below the figure brokers quote.",
+gap: ["A sourced yearly price-growth figure for this micro-market.", "Evidence"],
+sugg: ["Prices here grew about 6% a year over the last decade.", "Owning is worth about ₹20,000 a month to us."]
+}
+];
+
+var STATUS = {partial: ["warning", "Partial"], evolving: ["info", "Evolving"], ready: ["success", "Ready to decide"]};
+var ROUTES = {new_decision: "New decision", adds_evidence: "Adds evidence", changes_preference: "Changes a preference", challenges_analysis: "Challenges the analysis", meta: "About the analysis", too_vague: "Too vague to apply", off_topic: "Not about this decision"};
+var APPLIES = {new_decision: true, adds_evidence: true, changes_preference: true, challenges_analysis: true};
+var SIGNAL = /\d|₹|%|rent|buy|house|home|flat|loan|emi|saving|stay|year|month|price|income|growth|own|lease|mortgage|afford|reserve|cost/i;
+function routeLabel(r) { return ROUTES[r[0]] + " · " + Math.round(r[1] * 100) + "%"; }
+function classify(text, shown) {
+  if (text.charAt(0) === "/") return ["meta", 0.99];
+  if (shown < D.length && text === D[shown].user) return D[shown].route;
+  var words = text.split(/\s+/).filter(Boolean).length;
+  if (!SIGNAL.test(text)) return words < 6 ? ["too_vague", 0.93] : ["off_topic", 0.88];
+  if (words < 5) return ["too_vague", 0.81];
+  return ["adds_evidence", 0.86];
+}
+var GATE = {pass: ["success", "Pass"], partial: ["warning", "Partial"], fail: ["error", "Fail"], unknown: ["neutral", "Unknown"]};
+var EFFECT = {"Reduces confidence": "var(--sec-fal)", "Strengthens rent": "var(--sec-act)", "Flips toward buy": "var(--sec-adv)"};
+var THEMES = [
+{id: "midnight", label: "Midnight", bg: "#0b0f12", acc: "#6bc9ca", cls: "t-midnight"},
+{id: "light", label: "EE light", bg: "#ffffff", acc: "#1795d4", cls: "t-light"},
+{id: "dark", label: "EE dark", bg: "#212526", acc: "#26a8e3", cls: "dark t-dark"},
+{id: "paper", label: "Paper", bg: "#f6f3ec", acc: "#22567c", cls: "t-paper"}
+];
+var SECS = ["needs", "matrix", "gates", "changes", "actions", "clearance", "stress", "flour", "preds", "state", "traj", "export"];
+var OPEN_DEFAULT = {needs: true, matrix: true, gates: true, changes: true, actions: true, clearance: true, stress: false, flour: false, preds: false, state: false, traj: true, export: false};
+var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function total(t, k) { var s = 0; t.matrix.forEach(function (c) { s += c.w * c.s[k]; }); return Math.round(s / 5); }
+function gates(t) { var p = 0, pa = 0; t.gates.forEach(function (g) { if (g.st === "pass") p++; if (g.st === "partial") pa++; }); return {pass: p, partial: pa, of: t.gates.length, short: p + " of " + t.gates.length + (pa ? " · " + pa + " partial" : "")}; }
+function evHave(t) { return Object.keys(t.inputs).length; }
+function evStrength(t) { return Math.round(evHave(t) / EV_OF * SOURCE_WEIGHT * 100); }
+function ceiling(t) {
+  var prot = t.gates.filter(function (g) { return !g.advisory; });
+  var allPass = prot.every(function (g) { return g.st === "pass"; });
+  if (allPass && t.risk <= 50 && t.exec) return "prepare";
+  if (evHave(t) >= 3) return "simulate";
+  return "recommend";
+}
+function rungIdx(id) { for (var i = 0; i < RUNGS.length; i++) if (RUNGS[i][0] === id) return i; return 0; }
+function rungLabel(id) { return RUNGS[rungIdx(id)][1]; }
+function invariants(t, prevHash, storedPrev) {
+  var w = t.matrix.reduce(function (a, c) { return a + c.w; }, 0);
+  var inRange = t.matrix.every(function (c) { return c.s.every(function (x) { return x >= 1 && x <= 5; }); });
+  var gatesOk = t.gates.every(function (g) { return g.th && g.ev; });
+  return [
+    {text: "Matrix weights sum to 100 (" + w + ")", ok: w === 100},
+    {text: "Every score is between 1 and 5", ok: inRange},
+    {text: "Every gate has a threshold and evidence", ok: gatesOk},
+    {text: "Risk is stored once; record and clearance read the same value", ok: true},
+    {text: "Chain link matches the previous state", ok: prevHash === storedPrev}
+  ];
+}
+function fnv(str) { var h = 0x811c9dc5; for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return ("0000000" + h.toString(16)).slice(-8); }
+function fmt(iso) { var d = new Date(iso); if (isNaN(d)) return ""; return d.getDate() + " " + MONTHS[d.getMonth()] + ", " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); }
+function fmtDay(iso, addH) { var d = new Date(new Date(iso).getTime() + (addH || 0) * 3600000); if (isNaN(d)) return ""; return d.getDate() + " " + MONTHS[d.getMonth()]; }
+function addHours(iso, h) { return new Date(new Date(iso).getTime() + h * 3600000).toISOString(); }
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function dlt(cur, old, goodUp, unit) {
+  if (old == null) return {text: "Baseline", cls: "delta flat"};
+  var d = cur - old;
+  if (!d) return {text: "No change", cls: "delta flat"};
+  var tone = goodUp == null ? "flat" : ((goodUp ? d > 0 : d < 0) ? "good" : "bad");
+  return {text: (d > 0 ? "Up " : "Down ") + Math.abs(d) + unit, cls: "delta " + tone};
+}
+
+function stateObj(t, prev, at, grades, prevHash) {
+  var beliefs = D.slice(0, t.n).map(function (x) { return {v: x.n, text: x.claim}; });
+  var inputs = {};
+  INPUTS.forEach(function (k) { var v = t.inputs[k[0]]; inputs[k[0]] = v ? {value: v[0], since: v[1]} : null; });
+  var preds = D.slice(0, t.n).map(function (x) { return {id: "p" + x.n, made_in: x.n, text: x.pred, check_at: addHours(x.at, 72), status: grades["p" + x.n] || "open"}; });
+  var g = {held: 0, missed: 0};
+  preds.forEach(function (p) { if (p.status === "held") g.held++; if (p.status === "missed") g.missed++; });
+  var s = {
+    format: "settle-state", version: 1, decision_id: DECISION_ID, title: "Rent or buy a house",
+    v: t.n, updated_at: at, prev_hash: prevHash,
+    belief: {text: t.claim, since: t.n, history: beliefs.slice(0, -1)},
+    direction: t.z, options: ["rent", "buy"],
+    inputs: inputs,
+    matrix: t.matrix.map(function (c) { return {criterion: c.name, weight: c.w, rent: c.s[0], buy: c.s[1]}; }),
+    gates: t.gates.map(function (x) { return {gate: x.name, status: x.st, protective: !x.advisory}; }),
+    assumptions: t.assume,
+    predictions: preds,
+    calibration: {resolved: g.held + g.missed, held: g.held, missed: g.missed, graded_by: (g.held + g.missed) ? "user" : "none"},
+    ceiling: ceiling(t)
+  };
+  return s;
+}
+function contract(t, at, checks) {
+  var g = gates(t);
+  return {
+    source: "settle", generated_at: at, decision_id: DECISION_ID, turn: t.n, kind: "decision",
+    status: t.status, stakes_register: t.stakes.toLowerCase(), verdict: t.verdict, summary: t.summary,
+    claim: t.claim, direction: t.z,
+    evidence: {strength: evStrength(t) / 100, type: "self_report", inputs_known: evHave(t), inputs_required: EV_OF, observed: t.obs, inferred: t.inf},
+    scores: {confidence: t.conf, risk: t.risk},
+    risk: {irreversibility_window: t.irrev.toLowerCase(), failure_mode: t.failure},
+    options: ["rent", "buy"],
+    matrix: t.matrix.map(function (c) { return {criterion: c.name, weight: c.w, scores: {rent: c.s[0], buy: c.s[1]}, assumed: {rent: c.est[0], buy: c.est[1]}, basis: c.basis}; }),
+    totals: {rent: total(t, 0), buy: total(t, 1)}, sensitivity: t.sens,
+    gates: t.gates.map(function (x) { return {gate: x.name, threshold: x.th, status: x.st, protective: !x.advisory, evidence: x.ev}; }),
+    needs_answers: t.needs, key_variables: t.vars, blocking_unknowns: t.unk,
+    adversarial: {risk: t.adv, exploit_surface: t.exp},
+    falsifiability: {assumptions: t.assume, break_conditions: t.fal.map(function (f) { return {event: f[0], effect: f[1].toLowerCase().replace(/ /g, "_")}; }), what_would_change_this: t.wc},
+    reality: {resists: t.res, resources: t.rsc, dependencies: t.dep, executable_under_constraints: t.exec},
+    action_bounds: t.bounds.map(function (b) { return {level: b[0], action: b[1]}; }),
+    next_72h: t.next.map(function (x, i) { return {task: x, done: !!(checks && checks[t.n + "-" + i])}; }),
+    flourishing: t.fl.reduce(function (o, f) { o[f[0].toLowerCase().replace(/ /g, "_")] = f[1]; return o; }, {}),
+    forward_disclosure: {note: t.gap[0], gap_category: t.gap[1].toLowerCase()},
+    prediction: {text: t.pred, check_after_hours: 72},
+    coherence: {level: t.coherence[0].toLowerCase(), reason: t.coherence[1]},
+    clearance: {ceiling: ceiling(t), ladder: RUNGS.map(function (r) { return r[0]; }), computed_by: "engine"},
+    suggested_followups: t.sugg
+  };
+}
+function mdTurn(t, checks) {
+  var g = gates(t), L = [];
+  L.push("## v" + t.n + ": " + t.verdict, "");
+  L.push("**Status:** " + STATUS[t.status][1] + " · Confidence " + t.conf + "% · Risk " + t.risk + "% (" + t.irrev.toLowerCase() + ") · Evidence " + evStrength(t) + "% · Gates " + g.short + " · Ceiling " + rungLabel(ceiling(t)), "");
+  L.push("**Direction:** " + t.z, "", "**Load-bearing claim:** " + t.claim, "");
+  L.push("### Decision matrix", "", "| Criterion | Weight | Rent | Buy | Basis |", "|---|---:|---:|---:|---|");
+  t.matrix.forEach(function (c) { L.push("| " + c.name + " | " + c.w + "% | " + c.s[0] + "/5 | " + c.s[1] + "/5 | " + c.basis + " |"); });
+  L.push("| **Weighted score** | 100% | **" + total(t, 0) + "** | **" + total(t, 1) + "** | |", "", t.sens, "");
+  L.push("### Gates", "", "| Gate | Threshold | Status | Evidence |", "|---|---|---|---|");
+  t.gates.forEach(function (x) { L.push("| " + x.name + (x.advisory ? " (advisory)" : "") + " | " + x.th + " | " + GATE[x.st][1] + " | " + x.ev + " |"); });
+  L.push("", "### Needs answers", "");
+  t.needs.forEach(function (q, i) { L.push((i + 1) + ". " + q); });
+  L.push("", "### Next 72 hours", "");
+  t.next.forEach(function (x, i) { L.push("- [" + (checks && checks[t.n + "-" + i] ? "x" : " ") + "] " + x); });
+  L.push("", "### Clearance", "");
+  t.bounds.forEach(function (b) { L.push("- **" + rungLabel(b[0]) + ":** " + b[1]); });
+  L.push("", "### Assumptions", "");
+  t.assume.forEach(function (a) { L.push("- " + a); });
+  L.push("", "### Stress tests", "", "- **Failure mode:** " + t.failure, "- **Adversarial risk:** " + t.adv, "- **Exploit surface:** " + t.exp);
+  t.fal.forEach(function (f) { L.push("- **Break condition (" + f[1].toLowerCase() + "):** " + f[0]); });
+  L.push("- **Reality:** " + t.res, "", "**Prediction to check:** " + t.pred, "", "**Would sharpen this (" + t.gap[1].toLowerCase() + "):** " + t.gap[0]);
+  return L.join("\n");
+}
+function htmlTurn(t, checks) {
+  var g = gates(t), h = [];
+  var td = "border:1px solid #ccc;padding:6px 8px;text-align:left;vertical-align:top";
+  function row(cells, head) { var tag = head ? "th" : "td"; return "<tr>" + cells.map(function (c) { return "<" + tag + " style='" + td + "'>" + c + "</" + tag + ">"; }).join("") + "</tr>"; }
+  h.push("<h2>v" + t.n + ": " + esc(t.verdict) + "</h2>");
+  h.push("<p><b>Status:</b> " + STATUS[t.status][1] + " · Confidence " + t.conf + "% · Risk " + t.risk + "% · Evidence " + evStrength(t) + "% · Gates " + esc(g.short) + " · Ceiling " + rungLabel(ceiling(t)) + "</p>");
+  h.push("<p><b>Direction:</b> " + esc(t.z) + "</p><p><b>Load-bearing claim:</b> " + esc(t.claim) + "</p>");
+  h.push("<h3>Decision matrix</h3><table style='border-collapse:collapse'>" + row(["Criterion", "Weight", "Rent", "Buy", "Basis"], true));
+  t.matrix.forEach(function (c) { h.push(row([esc(c.name), c.w + "%", c.s[0] + "/5", c.s[1] + "/5", esc(c.basis)])); });
+  h.push(row(["<b>Weighted score</b>", "100%", "<b>" + total(t, 0) + "</b>", "<b>" + total(t, 1) + "</b>", ""]) + "</table><p>" + esc(t.sens) + "</p>");
+  h.push("<h3>Gates</h3><table style='border-collapse:collapse'>" + row(["Gate", "Threshold", "Status", "Evidence"], true));
+  t.gates.forEach(function (x) { h.push(row([esc(x.name), esc(x.th), GATE[x.st][1], esc(x.ev)])); });
+  h.push("</table><h3>Needs answers</h3><ol>" + t.needs.map(function (q) { return "<li>" + esc(q) + "</li>"; }).join("") + "</ol>");
+  h.push("<h3>Next 72 hours</h3><ul>" + t.next.map(function (x, i) { return "<li>" + (checks && checks[t.n + "-" + i] ? "[done] " : "") + esc(x) + "</li>"; }).join("") + "</ul>");
+  h.push("<h3>Clearance</h3><ul>" + t.bounds.map(function (b) { return "<li><b>" + rungLabel(b[0]) + ":</b> " + esc(b[1]) + "</li>"; }).join("") + "</ul>");
+  h.push("<h3>Assumptions</h3><ul>" + t.assume.map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("") + "</ul>");
+  h.push("<h3>Stress tests</h3><ul><li><b>Failure mode:</b> " + esc(t.failure) + "</li><li><b>Adversarial risk:</b> " + esc(t.adv) + "</li>" + t.fal.map(function (f) { return "<li><b>Break condition (" + f[1].toLowerCase() + "):</b> " + esc(f[0]) + "</li>"; }).join("") + "</ul>");
+  return h.join("");
+}
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {theme: null, density: null, railOpen: false, follow: true, shown: 2, sel: null, extras: [], custom: {}, times: {}, open: Object.assign({}, OPEN_DEFAULT), checks: {}, grades: {}, draft: "", pending: false, pendingText: "", fresh: 0, toast: "", mView: "conv"};
+  }
+  componentDidMount() {
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      if (raw) {
+        var s = JSON.parse(raw);
+        this.setState({theme: s.theme || null, density: s.density || null, follow: s.follow !== false, shown: Math.min(D.length, Math.max(1, s.shown || 2)), extras: s.extras || [], custom: s.custom || {}, times: s.times || {}, open: Object.assign({}, OPEN_DEFAULT, s.open || {}), checks: s.checks || {}, grades: s.grades || {}});
+      }
+    } catch (e) {}
+  }
+  componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); }
+  persist() {
+    try {
+      var s = this.state;
+      window.localStorage.setItem(KEY, JSON.stringify({theme: s.theme, density: s.density, follow: s.follow, shown: s.shown, extras: s.extras, custom: s.custom, times: s.times, open: s.open, checks: s.checks, grades: s.grades}));
+    } catch (e) {}
+  }
+  put(p, cb) { var self = this; this.setState(p, function () { self.persist(); if (cb) cb(); }); }
+  say(msg) { var self = this; clearTimeout(this.t2); this.setState({toast: msg}); this.t2 = setTimeout(function () { self.setState({toast: ""}); }, 2800); }
+  copyText(txt, ok) {
+    var self = this;
+    try { navigator.clipboard.writeText(txt).then(function () { self.say(ok); }, function () { self.say(BLOCKED); }); } catch (e) { this.say(BLOCKED); }
+  }
+  copyRich(md, html) {
+    var self = this;
+    try {
+      if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+        navigator.clipboard.write([new ClipboardItem({"text/html": new Blob([html], {type: "text/html"}), "text/plain": new Blob([md], {type: "text/plain"})})]).then(function () { self.say("Copied with formatting"); }, function () { self.copyText(md, "Copied as plain text"); });
+      } else { this.copyText(md, "Copied as plain text"); }
+    } catch (e) { this.say(BLOCKED); }
+  }
+  openSec(k) {
+    var o = Object.assign({}, this.state.open); o[k] = true;
+    this.put({open: o, sel: null, mView: "dec"}, function () {
+      try { requestAnimationFrame(function () { var el = document.getElementById("acc-" + k); if (el) el.scrollIntoView({behavior: "smooth", block: "start"}); }); } catch (e) {}
+    });
+  }
+  at(n) { return this.state.times[n] || D[n - 1].at; }
+  send(forceText) {
+    var self = this, s = this.state, text = (forceText || s.draft || "").trim();
+    if (!text || s.pending) return;
+    this.setState({pending: true, pendingText: text, draft: forceText ? s.draft : ""});
+    clearTimeout(this.t1);
+    this.t1 = setTimeout(function () {
+      var st = self.state;
+      var r = forceText ? ["adds_evidence", 1] : classify(text, st.shown);
+      if (r[0] === "meta") {
+        var o = Object.assign({}, st.open, {clearance: true, stress: true, preds: true});
+        self.put({pending: false, pendingText: "", extras: st.extras.concat([{kind: "meta", user: text, after: st.shown, route: r}]), open: o});
+      } else if (!APPLIES[r[0]]) {
+        self.put({pending: false, pendingText: "", extras: st.extras.concat([{kind: "clarify", user: text, after: st.shown, route: r}])});
+      } else if (st.shown < D.length) {
+        var next = st.shown + 1, custom = Object.assign({}, st.custom), times = Object.assign({}, st.times);
+        if (text !== D[next - 1].user) custom[next] = text;
+        times[next] = new Date().toISOString();
+        self.put({pending: false, pendingText: "", shown: next, custom: custom, times: times, fresh: next, sel: st.follow ? null : st.sel});
+      } else {
+        self.put({pending: false, pendingText: "", extras: st.extras.concat([{kind: "stub", user: text, after: st.shown, route: r}])});
+      }
+    }, forceText ? 900 : 1300);
+  }
+  force(idx) {
+    var ex = this.state.extras.slice(), x = ex[idx];
+    if (!x || x.forced) return;
+    ex[idx] = Object.assign({}, x, {forced: true});
+    var self = this;
+    this.put({extras: ex}, function () { self.send(x.user); });
+  }
+  chain() {
+    var self = this, s = this.state, prev = "genesis", out = [];
+    D.slice(0, s.shown).forEach(function (t, i) {
+      var st = stateObj(t, i ? D[i - 1] : null, self.at(t.n), s.grades, prev);
+      var h = fnv(JSON.stringify(st));
+      out.push({state: st, hash: h, prevHash: prev});
+      prev = h;
+    });
+    return out;
+  }
+  vm(t, prev, link) {
+    var self = this, s = this.state, n = t.n, at = this.at(n);
+    var rT = total(t, 0), bT = total(t, 1), g = gates(t);
+    var pg = prev ? gates(prev) : null;
+    var ceil = ceiling(t), ci = rungIdx(ceil);
+    var md = mdTurn(t, s.checks), html = htmlTurn(t, s.checks), json = JSON.stringify(contract(t, at, s.checks), null, 2);
+    var stateJson = JSON.stringify(Object.assign({}, link.state, {hash: link.hash}), null, 2);
+    var rows = t.matrix.map(function (c, idx) {
+      var pc = prev ? prev.matrix[idx] : null;
+      function cell(k) {
+        var v = c.s[k], o = pc ? pc.s[k] : null, ch = (o == null || o === v) ? "" : ((v > o ? "+" : "−") + Math.abs(v - o));
+        return {txt: v + "/5", ch: ch, hasCh: !!ch, est: !!c.est[k], dots: [1, 2, 3, 4, 5].map(function (x) { return {cls: "dot" + (x <= v ? (k === 0 ? " a" : " b") : "")}; })};
+      }
+      var r = cell(0), b = cell(1);
+      return {name: c.name, w: c.w + "%", basis: c.basis, rent: r, buy: b, cls: (r.hasCh || b.hasCh) ? "chgrow" : ""};
+    });
+    var gl = t.gates.map(function (x, i) {
+      var pgx = prev && prev.gates[i];
+      return {name: x.name, th: x.th, ev: x.ev, type: GATE[x.st][0], label: GATE[x.st][1], isNew: !!x.isNew, advisory: !!x.advisory, cls: (prev && (!pgx || pgx.st !== x.st)) ? "chgrow" : ""};
+    });
+    var done = 0;
+    var next = t.next.map(function (x, i) {
+      var key = n + "-" + i, on = !!s.checks[key];
+      if (on) done++;
+      return {text: x, checked: on, cls: on ? "done" : "", toggle: function () { var c = Object.assign({}, self.state.checks); c[key] = !c[key]; self.put({checks: c}); }};
+    });
+    var inv = invariants(t, link.prevHash, link.state.prev_hash);
+    var bad = inv.filter(function (x) { return !x.ok; }).length;
+    var sysConf = !prev ? "Evolving" : (Math.abs(t.conf - prev.conf) < 15 ? "Stable" : "Evolving");
+    var diff = prev ? [
+      {m: "Confidence", before: prev.conf + "%", now: t.conf + "%", d: dlt(t.conf, prev.conf, true, " pts")},
+      {m: "Risk / irreversibility", before: prev.risk + "%", now: t.risk + "%", d: dlt(t.risk, prev.risk, false, " pts")},
+      {m: "Evidence strength", before: evStrength(prev) + "%", now: evStrength(t) + "%", d: dlt(evStrength(t), evStrength(prev), true, " pts")},
+      {m: "Rent score", before: String(total(prev, 0)), now: String(rT), d: dlt(rT, total(prev, 0), null, " pts")},
+      {m: "Buy score", before: String(total(prev, 1)), now: String(bT), d: dlt(bT, total(prev, 1), null, " pts")},
+      {m: "Protective gates passed", before: pg.pass + " of " + pg.of, now: g.pass + " of " + g.of, d: dlt(g.pass, pg.pass, true, "")},
+      {m: "Action ceiling", before: rungLabel(ceiling(prev)), now: rungLabel(ceil), d: dlt(ci, rungIdx(ceiling(prev)), null, ci - rungIdx(ceiling(prev)) === 1 || ci - rungIdx(ceiling(prev)) === -1 ? " rung" : " rungs")}
+    ] : [];
+    var changed = rows.filter(function (r) { return r.cls; }).length;
+    var prevGrade = prev ? (s.grades["p" + prev.n] || "open") : "open";
+    return {
+      n: n, rT: rT, bT: bT, verdict: t.verdict, summary: t.summary, z: t.z, claim: t.claim,
+      at: "Generated " + fmt(at), stakes: t.stakes, sysConf: sysConf, cohLevel: t.coherence[0],
+      statusType: STATUS[t.status][0], statusLabel: STATUS[t.status][1],
+      gatesShort: g.short, conf: t.conf + "%", risk: t.risk + "%", irrev: t.irrev,
+      ceilLabel: rungLabel(ceil), beliefSince: n,
+      dc: dlt(t.conf, prev && prev.conf, true, " pts"), dr: dlt(t.risk, prev && prev.risk, false, " pts"),
+      drT: dlt(rT, prev && total(prev, 0), null, ""), dbT: dlt(bT, prev && total(prev, 1), null, ""),
+      vsText: prev ? "vs v" + (n - 1) : "first reading",
+      tiles: [
+        {label: "Confidence", text: t.conf + "%", value: t.conf, skin: "transform-teal", sub: "In the current direction", d: dlt(t.conf, prev && prev.conf, true, " pts")},
+        {label: "Risk", text: t.risk + "%", value: t.risk, skin: "equal-ember", sub: t.irrev + " to reverse", d: dlt(t.risk, prev && prev.risk, false, " pts")},
+        {label: "Evidence strength", text: evStrength(t) + "%", value: evStrength(t), skin: "tech-blue", sub: evHave(t) + " of " + EV_OF + " inputs · self-report", d: dlt(evStrength(t), prev && evStrength(prev), true, " pts")},
+        {label: "Protective gates", text: g.pass + " of " + g.of, value: Math.round(g.pass / g.of * 100), skin: "ee-blue", sub: "Ceiling: " + rungLabel(ceil), d: dlt(g.pass, pg && pg.pass, true, "")}
+      ],
+      needsCount: t.needs.length + " open",
+      needs: t.needs.map(function (q) { return {text: q, aria: "Answer: " + q, answer: function () { self.setState({draft: "On “" + q + "”: ", mView: "conv"}); }}; }),
+      vars: t.vars.map(function (x) { return {text: x}; }), unk: t.unk.map(function (x) { return {text: x}; }),
+      rows: rows, sens: t.sens, gates: gl,
+      hasPrev: !!prev, isFirst: !prev, prevN: n - 1, prevClaim: prev ? prev.claim : "", diff: diff,
+      reviewText: prev ? prev.pred : "", reviewState: prevGrade === "held" ? "Held, graded by you" : prevGrade === "missed" ? "Did not hold, graded by you" : "Open, not yet graded",
+      changeMeta: prev ? (changed + " criteria · " + (g.pass - pg.pass >= 0 ? "+" : "") + (g.pass - pg.pass) + " gates") : "Baseline",
+      obs: t.obs, inf: t.inf,
+      next: next, doneText: done + " of " + t.next.length + " done",
+      gapNote: t.gap[0], gapCat: t.gap[1],
+      rungs: RUNGS.map(function (r, i) { return {label: r[1], cls: "rung " + (i === ci ? "ceil" : i < ci ? "on" : "off"), note: i === ci ? "ceiling" : i < ci ? "allowed" : i === 4 ? "you decide" : "locked"}; }),
+      bounds: t.bounds.map(function (b) {
+        var bi = rungIdx(b[0]);
+        var st = b[0] === "request_warrant" ? ["Needs your go-ahead", "var(--sec-dir)"] : bi <= ci ? ["Within ceiling", "var(--sec-flo)"] : ["Above ceiling", "var(--muted-foreground)"];
+        return {rung: rungLabel(b[0]), text: b[1], status: st[0], color: st[1]};
+      }),
+      evStrength: evStrength(t) + "%", evHave: evHave(t) + " of " + EV_OF,
+      execText: t.exec ? "Yes, under stated constraints" : "No",
+      inv: inv.map(function (x) { return {text: x.text, mark: x.ok ? "Holds" : "Broken", color: x.ok ? "var(--sec-flo)" : "var(--sec-adv)"}; }),
+      invText: bad ? bad + " violated" : "All " + inv.length + " hold",
+      failure: t.failure, adv: t.adv, exp: t.exp, wc: t.wc, res: t.res, rsc: t.rsc, dep: t.dep,
+      assume: t.assume.map(function (a) { return {text: a}; }), assumeCount: t.assume.length + " assumptions",
+      fal: t.fal.map(function (f) { return {text: f[0], effect: f[1], color: EFFECT[f[1]]}; }),
+      fl: t.fl.map(function (f) { return {k: f[0], v: f[1]}; }),
+      hash: link.hash, prevHash: link.prevHash,
+      inputs: INPUTS.map(function (k) { var v = t.inputs[k[0]]; return {label: k[1], value: v ? k[2](v[0]) : "Unknown", since: v ? "v" + v[1] : "", color: v ? "var(--foreground)" : "var(--muted-foreground)"}; }),
+      beliefs: D.slice(0, n).map(function (x) { return {n: x.n, text: x.claim, style: x.n === n ? "font-weight:500" : "color:var(--muted-foreground);text-decoration:line-through"}; }).reverse(),
+      stateJson: stateJson,
+      md: md, json: json,
+      copyMd: function () { self.copyText(md, "Copied as Markdown"); },
+      copyJson: function () { self.copyText(json, "Copied as JSON"); },
+      copyState: function () { self.copyText(stateJson, "State copied"); },
+      copyRich: function () { self.copyRich(md, html); }
+    };
+  }
+  renderVals() {
+    var self = this, s = this.state;
+    var theme = s.theme || this.props.theme || "midnight";
+    var density = s.density || this.props.density || "comfortable";
+    var shown = D.slice(0, s.shown);
+    var links = this.chain();
+    var vms = shown.map(function (t, i) { return self.vm(t, i ? shown[i - 1] : null, links[i]); });
+    var selN = s.sel || s.shown;
+    var p = vms[selN - 1];
+    p.isOld = selN !== s.shown;
+    p.fresh = s.fresh === selN && !p.isOld;
+    var latest = D[s.shown - 1];
+    var layers = [["Assumptions", "stress"], ["Clearance", "clearance"], ["Break conditions", "stress"], ["What changed", "changes"], ["Predictions", "preds"], ["Decision state", "state"]];
+    var items = [];
+    vms.forEach(function (v, i) {
+      var t = shown[i], isSel = v.n === selN;
+      items.push({isTurn: true, isMeta: false, isStub: false, isClarify: false, t: {
+        n: v.n, anchor: "turn-" + v.n, aria: "Turn " + v.n, at: fmt(self.at(v.n)), route: routeLabel(t.route),
+        user: s.custom[v.n] || t.user, scripted: !!s.custom[v.n],
+        paras: t.reply.split("\n\n").map(function (x) { return {text: x}; }),
+        verdict: v.verdict, summary: v.summary, statusType: v.statusType, statusLabel: v.statusLabel,
+        conf: v.conf, risk: v.risk, dc: v.dc, dr: v.dr, rT: v.rT, bT: v.bT, ceilLabel: v.ceilLabel,
+        cardCls: "turncard" + (isSel ? " sel" : ""),
+        selPressed: isSel ? "true" : "false",
+        selLabel: isSel ? "Shown in panel" : "Show in panel",
+        select: function () { self.setState({sel: v.n === s.shown ? null : v.n, mView: "dec"}); }
+      }});
+      s.extras.forEach(function (x, xi) {
+        if (x.after !== v.n) return;
+        var rl = routeLabel(x.route || ["meta", 0.99]);
+        if (x.kind === "meta") items.push({isTurn: false, isMeta: true, isStub: false, isClarify: false, m: {user: x.user, after: x.after, route: rl, layers: layers.map(function (l) { return {label: l[0], go: function () { self.openSec(l[1]); }}; })}});
+        else if (x.kind === "clarify") {
+          var vague = x.route[0] === "too_vague";
+          items.push({isTurn: false, isMeta: false, isStub: false, isClarify: true, c: {
+            user: x.user, after: x.after, route: rl,
+            title: x.forced ? "Applied on your request" : "Not applied",
+            lead: vague ? "“" + x.user + "” doesn’t give me anything new to weigh, so I haven’t applied it. The decision state stays at v" + x.after + "." : "That doesn’t look like it’s about renting or buying, so I haven’t applied it to this decision. The state stays at v" + x.after + ". If it’s a separate decision, start a new one from the decisions list.",
+            asks: D[x.after - 1].needs.map(function (q) { return {text: q, use: function () { self.setState({draft: "On “" + q + "”: "}); }}; }),
+            canForce: !x.forced && x.after < D.length + 1,
+            force: function () { self.force(xi); }
+          }});
+        }
+        else items.push({isTurn: false, isMeta: false, isStub: true, isClarify: false, s: {user: x.user}});
+      });
+    });
+    var S = {};
+    SECS.forEach(function (k) {
+      var o = !!s.open[k];
+      S[k] = {open: o, exp: o ? "true" : "false", chev: "chev" + (o ? " open" : ""), toggle: function () { var x = Object.assign({}, self.state.open); x[k] = !x[k]; self.put({open: x}); }};
+    });
+    var hasMetaNow = s.extras.some(function (x) { return x.kind === "meta" && x.after === s.shown; });
+    var suggList = s.pending ? [] : latest.sugg.map(function (x) { return {text: x, cls: "chip"}; });
+    var lastX = s.extras[s.extras.length - 1];
+    var notApplied = !s.pending && !!lastX && lastX.kind === "clarify" && lastX.after === s.shown && !lastX.forced;
+    if (!s.pending && !notApplied) suggList.push({text: "Hmm, okay", cls: "chip"});
+    if (!s.pending && !hasMetaNow) suggList.push({text: "/transparency", cls: "chip cmd"});
+    var sugg = suggList.map(function (x) { return {text: x.text, cls: x.cls, use: function () { self.setState({draft: x.text}); }}; });
+    var preds = shown.map(function (t) {
+      var id = "p" + t.n, gr = s.grades[id] || "open";
+      function grade(val) { return function () { var g = Object.assign({}, self.state.grades); if (val === "open") delete g[id]; else g[id] = val; self.put({grades: g}); }; }
+      return {n: t.n, text: t.pred, checkAt: fmtDay(self.at(t.n), 72), aria: "Grade prediction from turn " + t.n,
+        state: gr === "held" ? "Held" : gr === "missed" ? "Did not hold" : "Open",
+        color: gr === "held" ? "var(--sec-flo)" : gr === "missed" ? "var(--sec-adv)" : "var(--muted-foreground)",
+        heldPressed: gr === "held" ? "true" : "false", missedPressed: gr === "missed" ? "true" : "false", openPressed: gr === "open" ? "true" : "false",
+        held: grade("held"), missed: grade("missed"), reopen: grade("open")};
+    });
+    var held = preds.filter(function (x) { return x.state === "Held"; }).length;
+    var missed = preds.filter(function (x) { return x.state === "Did not hold"; }).length;
+    var resolved = held + missed;
+    var metaCount = s.extras.filter(function (x) { return x.kind === "meta"; }).length;
+    var allMd = function () {
+      return "# Rent or buy a house: decision record\n\n" + shown.map(function (t) { return "> **You:** " + (s.custom[t.n] || t.user) + "\n\n" + t.reply + "\n\n" + mdTurn(t, s.checks); }).join("\n\n---\n\n");
+    };
+    var fileJson = function () {
+      return JSON.stringify({format: "settle-decision", version: 1, exported_at: new Date().toISOString(), decision_id: DECISION_ID, title: "Rent or buy a house",
+        state: Object.assign({}, links[links.length - 1].state, {hash: links[links.length - 1].hash}),
+        log: shown.map(function (t, i) { return {kind: "decision", turn: t.n, at: self.at(t.n), user: s.custom[t.n] || t.user, reply: t.reply, record: contract(t, self.at(t.n), s.checks), state_hash: links[i].hash}; })
+          .concat(s.extras.map(function (x) { return {kind: x.kind, after: x.after, user: x.user}; })),
+        settings: {checks: s.checks, grades: s.grades}}, null, 2);
+    };
+    var threads = [
+      {title: "Rent or buy a house", meta: "v" + s.shown + " · " + STATUS[latest.status][1], cur: true},
+      {title: "Accept the new job offer?", meta: "v4 · Ready to decide"},
+      {title: "Postgres or SQLite for a side project?", meta: "v2 · Partial"}
+    ].map(function (x) {
+      return {title: x.title, meta: x.meta, current: x.cur ? "page" : "false", border: x.cur ? "var(--primary)" : "var(--border)", bg: x.cur ? "color-mix(in srgb, var(--primary) 10%, var(--card))" : "var(--card)", open: function () { if (!x.cur) self.say("Only the sample decision is wired in this prototype"); }};
+    });
+    return {
+      themeClass: (THEMES.filter(function (x) { return x.id === theme; })[0] || THEMES[0]).cls,
+      densityClass: density === "compact" ? "d-compact" : "",
+      compactPressed: density === "compact" ? "true" : "false",
+      toggleDensity: function () { self.put({density: density === "compact" ? "comfortable" : "compact"}); },
+      themes: THEMES.map(function (x) { return {label: x.label, aria: "Theme: " + x.label, bg: x.bg, acc: x.acc, pressed: x.id === theme ? "true" : "false", pick: function () { self.put({theme: x.id}); }}; }),
+      threadMeta: "State v" + s.shown + " · " + (s.shown + metaCount) + " turns · stored on this device",
+      railOpen: s.railOpen, railExp: s.railOpen ? "true" : "false", railLabel: s.railOpen ? "Hide decisions list" : "Show decisions list",
+      toggleRail: function () { self.setState({railOpen: !self.state.railOpen}); },
+      threads: threads,
+      followLatest: s.follow, toggleFollow: function () { self.put({follow: !self.state.follow}); },
+      newDecision: function () { self.say("New decision starts an empty state at v0 in the built app"); },
+      resetDemo: function () { try { window.localStorage.removeItem(KEY); } catch (e) {} clearTimeout(self.t1); self.setState({theme: null, density: null, follow: true, shown: 2, sel: null, extras: [], custom: {}, times: {}, open: Object.assign({}, OPEN_DEFAULT), checks: {}, grades: {}, draft: "", pending: false, pendingText: "", fresh: 0}); self.say("Local data cleared"); },
+      exportThread: function () { self.copyText(allMd(), "Thread copied as Markdown"); },
+      exportFile: function () { self.copyText(fileJson(), "Decision file copied as JSON"); },
+      importFile: function () { self.say("Import checks every hash link, then restores state and log"); },
+      items: items,
+      pending: s.pending, pendingText: s.pendingText,
+      hasSugg: sugg.length > 0, sugg: sugg,
+      draft: s.draft, three: 3, six: 6, yes: true,
+      onDraft: function (e) { self.setState({draft: e && e.target ? e.target.value : ""}); },
+      onKey: function (e) { if (e && e.key === "Enter" && !e.shiftKey) { e.preventDefault(); self.send(); } },
+      send: function () { self.send(); },
+      sendDisabled: s.pending || !(s.draft || "").trim(),
+      p: p, S: S, preds: preds,
+      notApplied: notApplied && !p.isOld,
+      openNeeds: function () { self.openSec("needs"); },
+      calibText: resolved ? held + " of " + resolved + " held · graded by you" : "0 resolved · nothing graded yet; calibration starts once you grade an outcome",
+      calibShort: resolved + " of " + preds.length + " graded",
+      chainText: "Chain intact · " + s.shown + " states · " + metaCount + " meta turns",
+      steps: vms.map(function (v) { return {label: "v" + v.n, aria: "State after turn " + v.n, pressed: v.n === selN ? "true" : "false", pick: function () { self.setState({sel: v.n === s.shown ? null : v.n}); }}; }),
+      goLatest: function () { self.setState({sel: null}); },
+      traj: vms.map(function (v) { return {n: v.n, verdict: v.verdict, conf: v.conf, risk: v.risk, rT: v.rT, bT: v.bT, ceil: v.ceilLabel, cls: v.n === selN ? "sel" : ""}; }),
+      trajMeta: vms.map(function (v) { return v.conf; }).join(" → ") + " confidence",
+      expandAll: function () { var o = {}; SECS.forEach(function (k) { o[k] = true; }); self.put({open: o}); },
+      collapseAll: function () { var o = {}; SECS.forEach(function (k) { o[k] = false; }); self.put({open: o}); },
+      mConvPressed: s.mView === "conv" ? "true" : "false", mDecPressed: s.mView === "dec" ? "true" : "false",
+      showConv: function () { self.setState({mView: "conv"}); }, showDec: function () { self.setState({mView: "dec"}); },
+      convHide: s.mView === "dec" ? "m-hide" : "", decHide: s.mView === "conv" ? "m-hide" : "",
+      hasToast: !!s.toast, toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

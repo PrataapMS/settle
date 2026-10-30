@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Settle decision frame",
+  "type": "object",
+  "properties": {
+    "decision_type": {
+      "type": "string",
+      "description": "snake_case kind of decision, e.g. rent_vs_buy_home"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short title the user would recognise"
+    },
+    "currency": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "ISO 4217 code if money is involved"
+    },
+    "options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "snake_case identifier, unique within its list"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "additionalProperties": false
+      },
+      "description": "2 to 5 options"
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "snake_case identifier, unique within its list"
+          },
+          "label": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer",
+            "description": "Integer weight; all weights sum to 100"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "weight"
+        ],
+        "additionalProperties": false
+      },
+      "description": "3 to 7 criteria"
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "snake_case identifier, unique within its list"
+          },
+          "label": {
+            "type": "string",
+            "description": "Short label shown in the panel"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "number",
+              "boolean",
+              "text"
+            ]
+          },
+          "unit": {
+            "type": "string",
+            "description": "Unit for display, e.g. 'INR/month', '%', 'years'. Empty string if none."
+          },
+          "required": {
+            "type": "boolean",
+            "description": "True if the decision cannot close without it. Counts towards evidence strength."
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "type",
+          "unit",
+          "required"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Facts the decision depends on"
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "snake_case identifier, unique within its list"
+          },
+          "label": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "expr": {
+            "type": "string",
+            "description": "Arithmetic over input and earlier metric ids: + - * / ( ), numbers, pmt(rate_pct, years, principal), min(a,b), max(a,b). No other syntax."
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "unit",
+          "expr"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Derived numbers the engine computes; never compute them yourself"
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Starts with g_"
+          },
+          "label": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string",
+            "description": "An input id or metric id whose value is compared"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "<=",
+              ">=",
+              "<",
+              ">",
+              "=="
+            ]
+          },
+          "threshold": {
+            "type": "number"
+          },
+          "threshold_text": {
+            "type": "string",
+            "description": "The threshold in plain words"
+          },
+          "protective": {
+            "type": "boolean",
+            "description": "Protective gates decide the action ceiling. Advisory gates (false) only inform."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "input id"
+            },
+            "description": "Inputs that feed the subject. Used to report a partial gate."
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "subject",
+          "op",
+          "threshold",
+          "threshold_text",
+          "protective",
+          "depends_on"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Thresholds that must hold before stronger actions are allowed"
+    }
+  },
+  "required": [
+    "decision_type",
+    "title",
+    "currency",
+    "options",
+    "criteria",
+    "inputs",
+    "metrics",
+    "gates"
+  ],
+  "additionalProperties": false,
+  "description": "The decision frame. Proposed on the first turn; the user confirms it."
+}

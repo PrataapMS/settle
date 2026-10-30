@@ -1,0 +1,644 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Settle model output: later decision turns",
+  "type": "object",
+  "properties": {
+    "record": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "partial",
+            "evolving",
+            "ready"
+          ]
+        },
+        "stakes_register": {
+          "type": "string",
+          "enum": [
+            "conversational",
+            "personal-low",
+            "personal-financial-high",
+            "work-high",
+            "health-safety-high"
+          ]
+        },
+        "verdict": {
+          "type": "string",
+          "description": "One line, under 15 words"
+        },
+        "summary": {
+          "type": "string",
+          "description": "One sentence: what this turn changed"
+        },
+        "reply": {
+          "type": "string",
+          "description": "The conversational reply. Paragraphs separated by a blank line. Must end with terminal punctuation."
+        },
+        "claim": {
+          "type": "string",
+          "description": "The load-bearing claim the direction rests on. One or two sentences."
+        },
+        "direction": {
+          "type": "string",
+          "description": "What to do now, in one or two sentences"
+        },
+        "scores": {
+          "type": "object",
+          "properties": {
+            "confidence": {
+              "type": "integer",
+              "description": "0-100, confidence in the direction"
+            },
+            "risk": {
+              "type": "integer",
+              "description": "0-100, cost of being wrong"
+            }
+          },
+          "required": [
+            "confidence",
+            "risk"
+          ],
+          "additionalProperties": false
+        },
+        "risk": {
+          "type": "object",
+          "properties": {
+            "irreversibility_window": {
+              "type": "string",
+              "enum": [
+                "reversible",
+                "recoverable_with_cost",
+                "costly",
+                "irreversible"
+              ]
+            },
+            "failure_mode": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "irreversibility_window",
+            "failure_mode"
+          ],
+          "additionalProperties": false
+        },
+        "evidence": {
+          "type": "object",
+          "properties": {
+            "observed": {
+              "type": "string",
+              "description": "Only what the user actually said"
+            },
+            "inferred": {
+              "type": "string",
+              "description": "What you assumed or derived"
+            }
+          },
+          "required": [
+            "observed",
+            "inferred"
+          ],
+          "additionalProperties": false
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Must be an input id in the frame (after any frame_proposal)"
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "boolean",
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "document",
+                  "assumed"
+                ]
+              },
+              "note": {
+                "type": "string",
+                "description": "Short provenance note; empty string if none"
+              }
+            },
+            "required": [
+              "id",
+              "value",
+              "source",
+              "note"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Only inputs that are new or changed this turn"
+        },
+        "matrix": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "criterion_id": {
+                "type": "string"
+              },
+              "scores": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "option_id": {
+                      "type": "string"
+                    },
+                    "score": {
+                      "type": "integer",
+                      "description": "1-5"
+                    },
+                    "assumed": {
+                      "type": "boolean",
+                      "description": "True if the score rests on an assumption rather than user facts"
+                    }
+                  },
+                  "required": [
+                    "option_id",
+                    "score",
+                    "assumed"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "basis": {
+                "type": "string",
+                "description": "Why these scores, in one sentence"
+              }
+            },
+            "required": [
+              "criterion_id",
+              "scores",
+              "basis"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Every criterion, every option, every turn"
+        },
+        "sensitivity": {
+          "type": "string",
+          "description": "What would make the trailing option overtake"
+        },
+        "needs_answers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "A question that would move the decision"
+          },
+          "description": "1 to 4 questions"
+        },
+        "key_variables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocking_unknowns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "Must be about this decision"
+          }
+        },
+        "adversarial": {
+          "type": "object",
+          "properties": {
+            "risk": {
+              "type": "string"
+            },
+            "exploit_surface": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "risk",
+            "exploit_surface"
+          ],
+          "additionalProperties": false
+        },
+        "falsifiability": {
+          "type": "object",
+          "properties": {
+            "assumptions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "break_conditions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "event": {
+                    "type": "string"
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "reduces_confidence",
+                      "increases_confidence",
+                      "favours_option",
+                      "flips_decision"
+                    ]
+                  },
+                  "option_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Required for favours_option and flips_decision"
+                  }
+                },
+                "required": [
+                  "event",
+                  "effect",
+                  "option_id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "what_would_change_this": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "assumptions",
+            "break_conditions",
+            "what_would_change_this"
+          ],
+          "additionalProperties": false
+        },
+        "reality": {
+          "type": "object",
+          "properties": {
+            "resists": {
+              "type": "string"
+            },
+            "resources": {
+              "type": "string"
+            },
+            "dependencies": {
+              "type": "string"
+            },
+            "executable_under_constraints": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "resists",
+            "resources",
+            "dependencies",
+            "executable_under_constraints"
+          ],
+          "additionalProperties": false
+        },
+        "action_bounds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "string",
+                "enum": [
+                  "observe",
+                  "recommend",
+                  "simulate",
+                  "prepare",
+                  "request_warrant"
+                ]
+              },
+              "action": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "level",
+              "action"
+            ],
+            "additionalProperties": false
+          },
+          "description": "Proposed actions; the engine decides which are within the ceiling"
+        },
+        "next_72h": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "2 to 5 concrete tasks"
+        },
+        "flourishing": {
+          "type": "object",
+          "properties": {
+            "direction": {
+              "type": "string"
+            },
+            "leverage": {
+              "type": "string"
+            },
+            "stability": {
+              "type": "string"
+            },
+            "agency_rebalance": {
+              "type": "string"
+            },
+            "trajectory_shift": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "direction",
+            "leverage",
+            "stability",
+            "agency_rebalance",
+            "trajectory_shift"
+          ],
+          "additionalProperties": false
+        },
+        "forward_disclosure": {
+          "type": "object",
+          "properties": {
+            "note": {
+              "type": "string",
+              "description": "The single most useful next input"
+            },
+            "gap_category": {
+              "type": "string",
+              "enum": [
+                "evidence",
+                "structure",
+                "preference",
+                "constraint"
+              ]
+            }
+          },
+          "required": [
+            "note",
+            "gap_category"
+          ],
+          "additionalProperties": false
+        },
+        "prediction": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "A falsifiable prediction the user can check"
+            },
+            "check_after_hours": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "text",
+            "check_after_hours"
+          ],
+          "additionalProperties": false
+        },
+        "coherence": {
+          "type": "object",
+          "properties": {
+            "level": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "level",
+            "reason"
+          ],
+          "additionalProperties": false
+        },
+        "frame_proposal": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "reason": {
+              "type": "string"
+            },
+            "add_inputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "snake_case identifier, unique within its list"
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "Short label shown in the panel"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "number",
+                      "boolean",
+                      "text"
+                    ]
+                  },
+                  "unit": {
+                    "type": "string",
+                    "description": "Unit for display, e.g. 'INR/month', '%', 'years'. Empty string if none."
+                  },
+                  "required": {
+                    "type": "boolean",
+                    "description": "True if the decision cannot close without it. Counts towards evidence strength."
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "type",
+                  "unit",
+                  "required"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "add_metrics": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "snake_case identifier, unique within its list"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "expr": {
+                    "type": "string",
+                    "description": "Arithmetic over input and earlier metric ids: + - * / ( ), numbers, pmt(rate_pct, years, principal), min(a,b), max(a,b). No other syntax."
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "unit",
+                  "expr"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "add_gates": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Starts with g_"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "An input id or metric id whose value is compared"
+                  },
+                  "op": {
+                    "type": "string",
+                    "enum": [
+                      "<=",
+                      ">=",
+                      "<",
+                      ">",
+                      "=="
+                    ]
+                  },
+                  "threshold": {
+                    "type": "number"
+                  },
+                  "threshold_text": {
+                    "type": "string",
+                    "description": "The threshold in plain words"
+                  },
+                  "protective": {
+                    "type": "boolean",
+                    "description": "Protective gates decide the action ceiling. Advisory gates (false) only inform."
+                  },
+                  "depends_on": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "input id"
+                    },
+                    "description": "Inputs that feed the subject. Used to report a partial gate."
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "subject",
+                  "op",
+                  "threshold",
+                  "threshold_text",
+                  "protective",
+                  "depends_on"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "change_weights": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "criterion_id": {
+                    "type": "string"
+                  },
+                  "weight": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "criterion_id",
+                  "weight"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "reason",
+            "add_inputs",
+            "add_metrics",
+            "add_gates",
+            "change_weights"
+          ],
+          "additionalProperties": false
+        },
+        "suggested_followups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "1 to 3 messages the user might send next"
+        }
+      },
+      "required": [
+        "status",
+        "stakes_register",
+        "verdict",
+        "summary",
+        "reply",
+        "claim",
+        "direction",
+        "scores",
+        "risk",
+        "evidence",
+        "inputs",
+        "matrix",
+        "sensitivity",
+        "needs_answers",
+        "key_variables",
+        "blocking_unknowns",
+        "adversarial",
+        "falsifiability",
+        "reality",
+        "action_bounds",
+        "next_72h",
+        "flourishing",
+        "forward_disclosure",
+        "prediction",
+        "coherence",
+        "frame_proposal",
+        "suggested_followups"
+      ],
+      "additionalProperties": false,
+      "description": "One decision turn. Never include totals, gate status, evidence strength or the ceiling: the engine computes them."
+    }
+  },
+  "required": [
+    "record"
+  ],
+  "additionalProperties": false
+}

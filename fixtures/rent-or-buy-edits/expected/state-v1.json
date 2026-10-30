@@ -1,0 +1,459 @@
+{
+  "action_bounds": [
+    {
+      "action": "Use renting as the default until the buy case passes the protective gates.",
+      "level": "recommend",
+      "status": "within"
+    },
+    {
+      "action": "Run the 5-year rent-versus-buy comparison once real rent and loan figures arrive.",
+      "level": "simulate",
+      "status": "above"
+    },
+    {
+      "action": "Draft a purchase-readiness checklist.",
+      "level": "prepare",
+      "status": "above"
+    }
+  ],
+  "assumptions": [
+    "You are comparing homes of similar size and area, not a cheap rental against a dream house.",
+    "Your income is stable enough to carry a long loan.",
+    "A rental on acceptable terms is available where you want to live."
+  ],
+  "base_v": null,
+  "belief": {
+    "history": [],
+    "since_v": 1,
+    "text": "With the current information, renting is the safer default until the buying case clears affordability, time-horizon and liquidity gates."
+  },
+  "calibration": {
+    "graded_by": "none",
+    "held": 0,
+    "missed": 0,
+    "resolved": 0
+  },
+  "cause": "decision",
+  "ceiling": "recommend",
+  "coherence": {
+    "level": "high",
+    "reason": "With no figures, the reversible option is the default and every gate starts unknown; nothing in the record contradicts that."
+  },
+  "decision_id": "dec_rent_or_buy_edits",
+  "deltas": null,
+  "direction": "Rent now, and do not buy unless the house passes a 5-year stay test, an all-in cost test and a post-closing cash-reserve test.",
+  "evidence": {
+    "known": 0,
+    "required": 9,
+    "strength": 0
+  },
+  "format": "settle-state",
+  "frame": {
+    "criteria": [
+      {
+        "id": "horizon_fit",
+        "label": "Fit with time horizon",
+        "weight": 25
+      },
+      {
+        "id": "monthly_cost",
+        "label": "All-in monthly cost",
+        "weight": 25
+      },
+      {
+        "id": "liquidity",
+        "label": "Liquidity after commitment",
+        "weight": 20
+      },
+      {
+        "id": "flexibility",
+        "label": "Flexibility to move",
+        "weight": 15
+      },
+      {
+        "id": "equity_control",
+        "label": "Equity and control",
+        "weight": 15
+      }
+    ],
+    "currency": "INR",
+    "decision_type": "rent_vs_buy_home",
+    "frame_version": 1,
+    "gates": [
+      {
+        "depends_on": [
+          "stay_years"
+        ],
+        "id": "g_stay",
+        "label": "Stay horizon",
+        "op": ">=",
+        "protective": true,
+        "subject": "stay_years",
+        "threshold": 5,
+        "threshold_text": "At least 5 years in the area"
+      },
+      {
+        "depends_on": [
+          "purchase_price",
+          "down_payment_pct",
+          "loan_rate_pct",
+          "loan_years",
+          "running_costs_month",
+          "gross_income_month"
+        ],
+        "id": "g_afford",
+        "label": "Affordability",
+        "op": "<=",
+        "protective": true,
+        "subject": "all_in_ratio",
+        "threshold": 0.35,
+        "threshold_text": "All-in cost at most 35% of gross monthly income"
+      },
+      {
+        "depends_on": [
+          "down_payment_covered",
+          "reserve_after_close_months"
+        ],
+        "id": "g_reserve",
+        "label": "Post-close reserve",
+        "op": ">=",
+        "protective": true,
+        "subject": "reserve_after_close_months",
+        "threshold": 6,
+        "threshold_text": "6+ months of essential expenses in cash"
+      }
+    ],
+    "inputs": [
+      {
+        "id": "stay_years",
+        "label": "Expected stay",
+        "required": true,
+        "type": "number",
+        "unit": "years"
+      },
+      {
+        "id": "comparable_rent",
+        "label": "Comparable rent",
+        "required": true,
+        "type": "number",
+        "unit": "INR/month"
+      },
+      {
+        "id": "purchase_price",
+        "label": "Purchase price",
+        "required": true,
+        "type": "number",
+        "unit": "INR"
+      },
+      {
+        "id": "down_payment_pct",
+        "label": "Down payment",
+        "required": true,
+        "type": "number",
+        "unit": "%"
+      },
+      {
+        "id": "loan_rate_pct",
+        "label": "Loan interest rate",
+        "required": true,
+        "type": "number",
+        "unit": "% a year"
+      },
+      {
+        "id": "loan_years",
+        "label": "Loan tenure",
+        "required": true,
+        "type": "number",
+        "unit": "years"
+      },
+      {
+        "id": "down_payment_covered",
+        "label": "Savings cover the down payment",
+        "required": true,
+        "type": "boolean",
+        "unit": ""
+      },
+      {
+        "id": "reserve_after_close_months",
+        "label": "Reserve after closing",
+        "required": true,
+        "type": "number",
+        "unit": "months of expenses"
+      },
+      {
+        "id": "gross_income_month",
+        "label": "Gross household income",
+        "required": true,
+        "type": "number",
+        "unit": "INR/month"
+      },
+      {
+        "id": "running_costs_month",
+        "label": "Maintenance, property tax and insurance",
+        "required": false,
+        "type": "number",
+        "unit": "INR/month"
+      }
+    ],
+    "metrics": [
+      {
+        "expr": "purchase_price * (1 - down_payment_pct / 100)",
+        "id": "loan_principal",
+        "label": "Loan amount",
+        "unit": "INR"
+      },
+      {
+        "expr": "pmt(loan_rate_pct, loan_years, loan_principal)",
+        "id": "emi",
+        "label": "Monthly instalment",
+        "unit": "INR/month"
+      },
+      {
+        "expr": "emi + running_costs_month",
+        "id": "all_in_monthly",
+        "label": "All-in monthly ownership cost",
+        "unit": "INR/month"
+      },
+      {
+        "expr": "all_in_monthly / gross_income_month",
+        "id": "all_in_ratio",
+        "label": "All-in cost as share of gross income",
+        "unit": "ratio"
+      }
+    ],
+    "options": [
+      {
+        "id": "rent",
+        "label": "Rent"
+      },
+      {
+        "id": "buy",
+        "label": "Buy"
+      }
+    ],
+    "title": "Rent or buy a house"
+  },
+  "frame_version": 1,
+  "gates": [
+    {
+      "id": "g_stay",
+      "is_new": false,
+      "label": "Stay horizon",
+      "op": ">=",
+      "protective": true,
+      "status": "unknown",
+      "subject": "stay_years",
+      "threshold": 5,
+      "threshold_text": "At least 5 years in the area",
+      "value": null
+    },
+    {
+      "id": "g_afford",
+      "is_new": false,
+      "label": "Affordability",
+      "op": "<=",
+      "protective": true,
+      "status": "unknown",
+      "subject": "all_in_ratio",
+      "threshold": 0.35,
+      "threshold_text": "All-in cost at most 35% of gross monthly income",
+      "value": null
+    },
+    {
+      "id": "g_reserve",
+      "is_new": false,
+      "label": "Post-close reserve",
+      "op": ">=",
+      "protective": true,
+      "status": "unknown",
+      "subject": "reserve_after_close_months",
+      "threshold": 6,
+      "threshold_text": "6+ months of essential expenses in cash",
+      "value": null
+    }
+  ],
+  "inputs": {
+    "comparable_rent": null,
+    "down_payment_covered": null,
+    "down_payment_pct": null,
+    "gross_income_month": null,
+    "loan_rate_pct": null,
+    "loan_years": null,
+    "purchase_price": null,
+    "reserve_after_close_months": null,
+    "running_costs_month": null,
+    "stay_years": null
+  },
+  "invariants": [
+    {
+      "detail": "weights sum to 100",
+      "id": "weights_sum_100",
+      "ok": true
+    },
+    {
+      "detail": "every score is an integer from 1 to 5",
+      "id": "scores_in_range",
+      "ok": true
+    },
+    {
+      "detail": "every criterion scored once for every option",
+      "id": "matrix_complete",
+      "ok": true
+    },
+    {
+      "detail": "all inputs are defined in the frame",
+      "id": "inputs_in_frame",
+      "ok": true
+    },
+    {
+      "detail": "every input value matches its type",
+      "id": "input_types_match",
+      "ok": true
+    },
+    {
+      "detail": "break conditions reference real options where needed",
+      "id": "option_refs_valid",
+      "ok": true
+    },
+    {
+      "detail": "confidence and risk are integers from 0 to 100",
+      "id": "scores_0_100",
+      "ok": true
+    },
+    {
+      "detail": "reply, claim, summary and direction end cleanly",
+      "id": "no_truncated_text",
+      "ok": true
+    },
+    {
+      "detail": "frame is valid",
+      "id": "frame_valid",
+      "ok": true
+    },
+    {
+      "detail": "any pending proposal would leave a valid frame",
+      "id": "proposal_valid",
+      "ok": true
+    }
+  ],
+  "log_head": "a366dac1de53d2757064af461ffe6a89cb0eebc2797f9546d45612c7420df41d",
+  "matrix": [
+    {
+      "basis": "Stay unknown; buying needs about 5 years to recover entry costs.",
+      "criterion_id": "horizon_fit",
+      "label": "Fit with time horizon",
+      "scores": {
+        "buy": {
+          "assumed": true,
+          "score": 2
+        },
+        "rent": {
+          "assumed": false,
+          "score": 4
+        }
+      },
+      "weight": 25
+    },
+    {
+      "basis": "No rent or loan figures yet; neutral placeholder.",
+      "criterion_id": "monthly_cost",
+      "label": "All-in monthly cost",
+      "scores": {
+        "buy": {
+          "assumed": true,
+          "score": 3
+        },
+        "rent": {
+          "assumed": true,
+          "score": 3
+        }
+      },
+      "weight": 25
+    },
+    {
+      "basis": "Down payment and closing costs lock cash up.",
+      "criterion_id": "liquidity",
+      "label": "Liquidity after commitment",
+      "scores": {
+        "buy": {
+          "assumed": false,
+          "score": 2
+        },
+        "rent": {
+          "assumed": false,
+          "score": 5
+        }
+      },
+      "weight": 20
+    },
+    {
+      "basis": "Selling takes months and carries brokerage costs.",
+      "criterion_id": "flexibility",
+      "label": "Flexibility to move",
+      "scores": {
+        "buy": {
+          "assumed": false,
+          "score": 2
+        },
+        "rent": {
+          "assumed": false,
+          "score": 5
+        }
+      },
+      "weight": 15
+    },
+    {
+      "basis": "Ownership builds equity and removes landlord risk.",
+      "criterion_id": "equity_control",
+      "label": "Equity and control",
+      "scores": {
+        "buy": {
+          "assumed": false,
+          "score": 5
+        },
+        "rent": {
+          "assumed": false,
+          "score": 2
+        }
+      },
+      "weight": 15
+    }
+  ],
+  "metrics": {
+    "all_in_monthly": null,
+    "all_in_ratio": null,
+    "emi": null,
+    "loan_principal": null
+  },
+  "pending_frame_proposal": null,
+  "predictions": [
+    {
+      "check_at": "2026-11-02T04:42:00Z",
+      "id": "p1",
+      "made_in": 1,
+      "status": "open",
+      "text": "If you look at listings before setting the reserve rule, the first home you like will pull the budget above the 35% gate."
+    }
+  ],
+  "risk": {
+    "failure_mode": "Buying too early can trap you in high transaction costs, reduced liquidity, repair exposure and difficulty moving.",
+    "irreversibility_window": "costly"
+  },
+  "scores": {
+    "confidence": 18,
+    "risk": 68
+  },
+  "status": "partial",
+  "summary": "Opened the decision. Rent is the default; buying waits on stay, cost and reserve.",
+  "superseded": [],
+  "system_confidence": "evolving",
+  "title": "Rent or buy a house",
+  "totals": {
+    "buy": 54,
+    "rent": 76
+  },
+  "updated_at": "2026-10-30T10:12:00+05:30",
+  "v": 1,
+  "verdict": "Rent now; buying is gated",
+  "version": 1
+}

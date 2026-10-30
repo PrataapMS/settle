@@ -1,0 +1,599 @@
+{
+  "action_bounds": [
+    {
+      "action": "Rent and invest the difference unless the growth or ownership-value case clears the gap.",
+      "level": "recommend",
+      "status": "within"
+    },
+    {
+      "action": "Re-run the 7-year comparison at 3%, 4% and 5% yearly growth.",
+      "level": "simulate",
+      "status": "within"
+    },
+    {
+      "action": "Prepare a purchase-readiness checklist: legal title, possession date, registration costs.",
+      "level": "prepare",
+      "status": "within"
+    },
+    {
+      "action": "Make an offer on the flat.",
+      "level": "request_warrant",
+      "status": "needs_user"
+    }
+  ],
+  "assumptions": [
+    "Stamp duty and registration total about 7% of the price.",
+    "The down payment would otherwise earn about 7% a year.",
+    "Running costs are about ₹6,000 a month.",
+    "Both incomes continue for the 7-year stay."
+  ],
+  "base_v": null,
+  "belief": {
+    "history": [
+      {
+        "text": "With the current information, renting is the safer default until the buying case clears affordability, time-horizon and liquidity gates.",
+        "v": 1
+      },
+      {
+        "text": "Having enough savings makes purchasing possible, but renting remains the safer default until the buy case clears time-horizon, all-in monthly cost and post-close liquidity tests.",
+        "v": 2
+      }
+    ],
+    "since_v": 3,
+    "text": "Buying is now safe on all three protective gates, but at a price-to-rent ratio near 22 it costs roughly ₹43,000 a month more than renting in unrecoverable terms. It pays off only with about 4% yearly price growth or a high personal value on owning."
+  },
+  "calibration": {
+    "graded_by": "none",
+    "held": 0,
+    "missed": 0,
+    "resolved": 0
+  },
+  "cause": "decision",
+  "ceiling": "prepare",
+  "coherence": {
+    "level": "high",
+    "reason": "Gates passing and the matrix still favouring rent are consistent: the gates test safety, the matrix tests value."
+  },
+  "decision_id": "dec_rent_or_buy",
+  "deltas": {
+    "ceiling_steps": 2,
+    "confidence": 26,
+    "criteria_changed": [
+      "horizon_fit",
+      "monthly_cost",
+      "liquidity"
+    ],
+    "evidence_strength": 0.63,
+    "gates_changed": [
+      "g_stay",
+      "g_afford",
+      "g_reserve",
+      "g_ptr"
+    ],
+    "gates_passed": 3,
+    "risk": -18,
+    "totals": {
+      "buy": 9,
+      "rent": 5
+    }
+  },
+  "direction": "Lean rent and invest the difference. Switch to buy only if you can justify 4%+ yearly price growth, or you value owning above about ₹40k a month.",
+  "evidence": {
+    "known": 9,
+    "required": 10,
+    "strength": 0.72
+  },
+  "format": "settle-state",
+  "frame": {
+    "criteria": [
+      {
+        "id": "horizon_fit",
+        "label": "Fit with time horizon",
+        "weight": 25
+      },
+      {
+        "id": "monthly_cost",
+        "label": "All-in monthly cost",
+        "weight": 25
+      },
+      {
+        "id": "liquidity",
+        "label": "Liquidity after commitment",
+        "weight": 20
+      },
+      {
+        "id": "flexibility",
+        "label": "Flexibility to move",
+        "weight": 15
+      },
+      {
+        "id": "equity_control",
+        "label": "Equity and control",
+        "weight": 15
+      }
+    ],
+    "currency": "INR",
+    "decision_type": "rent_vs_buy_home",
+    "frame_version": 2,
+    "gates": [
+      {
+        "depends_on": [
+          "stay_years"
+        ],
+        "id": "g_stay",
+        "label": "Stay horizon",
+        "op": ">=",
+        "protective": true,
+        "subject": "stay_years",
+        "threshold": 5,
+        "threshold_text": "At least 5 years in the area"
+      },
+      {
+        "depends_on": [
+          "purchase_price",
+          "down_payment_pct",
+          "loan_rate_pct",
+          "loan_years",
+          "running_costs_month",
+          "gross_income_month"
+        ],
+        "id": "g_afford",
+        "label": "Affordability",
+        "op": "<=",
+        "protective": true,
+        "subject": "all_in_ratio",
+        "threshold": 0.35,
+        "threshold_text": "All-in cost at most 35% of gross monthly income"
+      },
+      {
+        "depends_on": [
+          "down_payment_covered",
+          "reserve_after_close_months"
+        ],
+        "id": "g_reserve",
+        "label": "Post-close reserve",
+        "op": ">=",
+        "protective": true,
+        "subject": "reserve_after_close_months",
+        "threshold": 6,
+        "threshold_text": "6+ months of essential expenses in cash"
+      },
+      {
+        "depends_on": [
+          "purchase_price",
+          "comparable_rent"
+        ],
+        "id": "g_ptr",
+        "label": "Price-to-rent",
+        "op": "<=",
+        "protective": false,
+        "subject": "price_to_rent",
+        "threshold": 20,
+        "threshold_text": "20 or below favours buying"
+      }
+    ],
+    "inputs": [
+      {
+        "id": "stay_years",
+        "label": "Expected stay",
+        "required": true,
+        "type": "number",
+        "unit": "years"
+      },
+      {
+        "id": "comparable_rent",
+        "label": "Comparable rent",
+        "required": true,
+        "type": "number",
+        "unit": "INR/month"
+      },
+      {
+        "id": "purchase_price",
+        "label": "Purchase price",
+        "required": true,
+        "type": "number",
+        "unit": "INR"
+      },
+      {
+        "id": "down_payment_pct",
+        "label": "Down payment",
+        "required": true,
+        "type": "number",
+        "unit": "%"
+      },
+      {
+        "id": "loan_rate_pct",
+        "label": "Loan interest rate",
+        "required": true,
+        "type": "number",
+        "unit": "% a year"
+      },
+      {
+        "id": "loan_years",
+        "label": "Loan tenure",
+        "required": true,
+        "type": "number",
+        "unit": "years"
+      },
+      {
+        "id": "down_payment_covered",
+        "label": "Savings cover the down payment",
+        "required": true,
+        "type": "boolean",
+        "unit": ""
+      },
+      {
+        "id": "reserve_after_close_months",
+        "label": "Reserve after closing",
+        "required": true,
+        "type": "number",
+        "unit": "months of expenses"
+      },
+      {
+        "id": "gross_income_month",
+        "label": "Gross household income",
+        "required": true,
+        "type": "number",
+        "unit": "INR/month"
+      },
+      {
+        "id": "running_costs_month",
+        "label": "Maintenance, property tax and insurance",
+        "required": false,
+        "type": "number",
+        "unit": "INR/month"
+      },
+      {
+        "id": "expected_growth_pct",
+        "label": "Expected price growth",
+        "required": true,
+        "type": "number",
+        "unit": "% a year"
+      }
+    ],
+    "metrics": [
+      {
+        "expr": "purchase_price * (1 - down_payment_pct / 100)",
+        "id": "loan_principal",
+        "label": "Loan amount",
+        "unit": "INR"
+      },
+      {
+        "expr": "pmt(loan_rate_pct, loan_years, loan_principal)",
+        "id": "emi",
+        "label": "Monthly instalment",
+        "unit": "INR/month"
+      },
+      {
+        "expr": "emi + running_costs_month",
+        "id": "all_in_monthly",
+        "label": "All-in monthly ownership cost",
+        "unit": "INR/month"
+      },
+      {
+        "expr": "all_in_monthly / gross_income_month",
+        "id": "all_in_ratio",
+        "label": "All-in cost as share of gross income",
+        "unit": "ratio"
+      },
+      {
+        "expr": "purchase_price / (comparable_rent * 12)",
+        "id": "price_to_rent",
+        "label": "Price-to-rent ratio",
+        "unit": "years of rent"
+      }
+    ],
+    "options": [
+      {
+        "id": "rent",
+        "label": "Rent"
+      },
+      {
+        "id": "buy",
+        "label": "Buy"
+      }
+    ],
+    "title": "Rent or buy a house"
+  },
+  "frame_version": 2,
+  "gates": [
+    {
+      "id": "g_stay",
+      "is_new": false,
+      "label": "Stay horizon",
+      "op": ">=",
+      "protective": true,
+      "status": "pass",
+      "subject": "stay_years",
+      "threshold": 5,
+      "threshold_text": "At least 5 years in the area",
+      "value": 7
+    },
+    {
+      "id": "g_afford",
+      "is_new": false,
+      "label": "Affordability",
+      "op": "<=",
+      "protective": true,
+      "status": "pass",
+      "subject": "all_in_ratio",
+      "threshold": 0.35,
+      "threshold_text": "All-in cost at most 35% of gross monthly income",
+      "value": 0.2288
+    },
+    {
+      "id": "g_reserve",
+      "is_new": false,
+      "label": "Post-close reserve",
+      "op": ">=",
+      "protective": true,
+      "status": "pass",
+      "subject": "reserve_after_close_months",
+      "threshold": 6,
+      "threshold_text": "6+ months of essential expenses in cash",
+      "value": 8
+    },
+    {
+      "id": "g_ptr",
+      "is_new": true,
+      "label": "Price-to-rent",
+      "op": "<=",
+      "protective": false,
+      "status": "fail",
+      "subject": "price_to_rent",
+      "threshold": 20,
+      "threshold_text": "20 or below favours buying",
+      "value": 21.8254
+    }
+  ],
+  "inputs": {
+    "comparable_rent": {
+      "note": "Comparable 3BHK.",
+      "since_v": 3,
+      "source": "user",
+      "value": 42000
+    },
+    "down_payment_covered": {
+      "note": "You said there is enough savings to purchase.",
+      "since_v": 2,
+      "source": "user",
+      "value": true
+    },
+    "down_payment_pct": {
+      "note": "",
+      "since_v": 3,
+      "source": "user",
+      "value": 20
+    },
+    "expected_growth_pct": null,
+    "gross_income_month": {
+      "note": "₹3.6 L a month, household.",
+      "since_v": 3,
+      "source": "user",
+      "value": 360000
+    },
+    "loan_rate_pct": {
+      "note": "Bank quote.",
+      "since_v": 3,
+      "source": "user",
+      "value": 8.5
+    },
+    "loan_years": {
+      "note": "",
+      "since_v": 3,
+      "source": "user",
+      "value": 20
+    },
+    "purchase_price": {
+      "note": "₹1.1 Cr.",
+      "since_v": 3,
+      "source": "user",
+      "value": 11000000
+    },
+    "reserve_after_close_months": {
+      "note": "",
+      "since_v": 3,
+      "source": "user",
+      "value": 8
+    },
+    "running_costs_month": {
+      "note": "Estimate for maintenance, property tax and insurance; confirm with bills.",
+      "since_v": 3,
+      "source": "assumed",
+      "value": 6000
+    },
+    "stay_years": {
+      "note": "Both jobs are in Pune.",
+      "since_v": 3,
+      "source": "user",
+      "value": 7
+    }
+  },
+  "invariants": [
+    {
+      "detail": "weights sum to 100",
+      "id": "weights_sum_100",
+      "ok": true
+    },
+    {
+      "detail": "every score is an integer from 1 to 5",
+      "id": "scores_in_range",
+      "ok": true
+    },
+    {
+      "detail": "every criterion scored once for every option",
+      "id": "matrix_complete",
+      "ok": true
+    },
+    {
+      "detail": "all inputs are defined in the frame",
+      "id": "inputs_in_frame",
+      "ok": true
+    },
+    {
+      "detail": "every input value matches its type",
+      "id": "input_types_match",
+      "ok": true
+    },
+    {
+      "detail": "break conditions reference real options where needed",
+      "id": "option_refs_valid",
+      "ok": true
+    },
+    {
+      "detail": "confidence and risk are integers from 0 to 100",
+      "id": "scores_0_100",
+      "ok": true
+    },
+    {
+      "detail": "reply, claim, summary and direction end cleanly",
+      "id": "no_truncated_text",
+      "ok": true
+    },
+    {
+      "detail": "frame is valid",
+      "id": "frame_valid",
+      "ok": true
+    },
+    {
+      "detail": "any pending proposal would leave a valid frame",
+      "id": "proposal_valid",
+      "ok": true
+    }
+  ],
+  "log_head": "1993e2eadfefa0832997b1cd2108c780a9ffe8e7d51f7650b01694338c00ceed",
+  "matrix": [
+    {
+      "basis": "7-year stay stated; clears the 5-year recovery horizon.",
+      "criterion_id": "horizon_fit",
+      "label": "Fit with time horizon",
+      "scores": {
+        "buy": {
+          "assumed": false,
+          "score": 4
+        },
+        "rent": {
+          "assumed": false,
+          "score": 4
+        }
+      },
+      "weight": 25
+    },
+    {
+      "basis": "Rent ₹42k against roughly ₹85k a month of unrecoverable ownership cost.",
+      "criterion_id": "monthly_cost",
+      "label": "All-in monthly cost",
+      "scores": {
+        "buy": {
+          "assumed": false,
+          "score": 2
+        },
+        "rent": {
+          "assumed": false,
+          "score": 4
+        }
+      },
+      "weight": 25
+    },
+    {
+      "basis": "8 months of expenses remain after closing.",
+      "criterion_id": "liquidity",
+      "label": "Liquidity after commitment",
+      "scores": {
+        "buy": {
+          "assumed": false,
+          "score": 4
+        },
+        "rent": {
+          "assumed": false,
+          "score": 5
+        }
+      },
+      "weight": 20
+    },
+    {
+      "basis": "Unchanged.",
+      "criterion_id": "flexibility",
+      "label": "Flexibility to move",
+      "scores": {
+        "buy": {
+          "assumed": false,
+          "score": 2
+        },
+        "rent": {
+          "assumed": false,
+          "score": 5
+        }
+      },
+      "weight": 15
+    },
+    {
+      "basis": "Unchanged.",
+      "criterion_id": "equity_control",
+      "label": "Equity and control",
+      "scores": {
+        "buy": {
+          "assumed": false,
+          "score": 5
+        },
+        "rent": {
+          "assumed": false,
+          "score": 2
+        }
+      },
+      "weight": 15
+    }
+  ],
+  "metrics": {
+    "all_in_monthly": 82368.4445,
+    "all_in_ratio": 0.2288,
+    "emi": 76368.4445,
+    "loan_principal": 8800000,
+    "price_to_rent": 21.8254
+  },
+  "pending_frame_proposal": null,
+  "predictions": [
+    {
+      "check_at": "2026-11-02T04:42:00Z",
+      "id": "p1",
+      "made_in": 1,
+      "status": "open",
+      "text": "If you look at listings before setting the reserve rule, the first home you like will pull the budget above the 35% gate."
+    },
+    {
+      "check_at": "2026-11-02T05:01:00Z",
+      "id": "p2",
+      "made_in": 2,
+      "status": "open",
+      "text": "Once the lender estimate arrives, cash left after stamp duty and registration will be noticeably lower than expected, because those costs are usually left out of the savings figure."
+    },
+    {
+      "check_at": "2026-11-02T05:35:00Z",
+      "id": "p3",
+      "made_in": 3,
+      "status": "open",
+      "text": "Ten-year registration data for this micro-market will show yearly growth below the figure brokers quote."
+    }
+  ],
+  "risk": {
+    "failure_mode": "Buying on an unsourced growth assumption: if prices grow under 3% a year, ownership costs about ₹4 to 5 L a year more than renting for the whole stay.",
+    "irreversibility_window": "recoverable_with_cost"
+  },
+  "scores": {
+    "confidence": 74,
+    "risk": 44
+  },
+  "status": "ready",
+  "summary": "Protective gates pass. Buying is safe but dearer; expected price growth decides it.",
+  "superseded": [],
+  "system_confidence": "evolving",
+  "title": "Rent or buy a house",
+  "totals": {
+    "buy": 67,
+    "rent": 81
+  },
+  "updated_at": "2026-10-30T11:05:00+05:30",
+  "v": 3,
+  "verdict": "Buying is safe on every protective gate; renting is still about ₹43k a month cheaper",
+  "version": 1
+}

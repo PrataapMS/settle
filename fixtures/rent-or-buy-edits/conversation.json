@@ -1,0 +1,1869 @@
+{
+  "decision_id": "dec_rent_or_buy_edits",
+  "title": "Rent or buy a house (frame changes and rewinds)",
+  "note": "Second golden fixture. Covers: frame_edit (weights, threshold, required flag, label), rewind, a proposal split into an auto-applied part and a held weight change, frame_dismiss, a held weights-only proposal, then an additive-only proposal that must keep the pending weight change, then frame_accept, a second rewind (superseded list is a union), a failed turn, a low-confidence message the user marked 'just a comment', and a 'missed' grade. Decision outputs are copied from ../rent-or-buy/conversation.json.",
+  "events": [
+    {
+      "kind": "decision",
+      "at": "2026-10-30T10:12:00+05:30",
+      "user_text": "Help me decide between renting a house or buying a house?",
+      "route": {
+        "route": "new_decision",
+        "confidence": 0.97,
+        "source": "jev"
+      },
+      "model": "anthropic/claude-sonnet-5.5",
+      "prompt_version": "shared-rules@1+frame-turn@1",
+      "output": {
+        "frame": {
+          "decision_type": "rent_vs_buy_home",
+          "title": "Rent or buy a house",
+          "currency": "INR",
+          "options": [
+            {
+              "id": "rent",
+              "label": "Rent"
+            },
+            {
+              "id": "buy",
+              "label": "Buy"
+            }
+          ],
+          "criteria": [
+            {
+              "id": "horizon_fit",
+              "label": "Fit with time horizon",
+              "weight": 25
+            },
+            {
+              "id": "monthly_cost",
+              "label": "All-in monthly cost",
+              "weight": 25
+            },
+            {
+              "id": "liquidity",
+              "label": "Liquidity after commitment",
+              "weight": 20
+            },
+            {
+              "id": "flexibility",
+              "label": "Flexibility to move",
+              "weight": 15
+            },
+            {
+              "id": "equity_control",
+              "label": "Equity and control",
+              "weight": 15
+            }
+          ],
+          "inputs": [
+            {
+              "id": "stay_years",
+              "label": "Expected stay",
+              "type": "number",
+              "unit": "years",
+              "required": true
+            },
+            {
+              "id": "comparable_rent",
+              "label": "Comparable rent",
+              "type": "number",
+              "unit": "INR/month",
+              "required": true
+            },
+            {
+              "id": "purchase_price",
+              "label": "Purchase price",
+              "type": "number",
+              "unit": "INR",
+              "required": true
+            },
+            {
+              "id": "down_payment_pct",
+              "label": "Down payment",
+              "type": "number",
+              "unit": "%",
+              "required": true
+            },
+            {
+              "id": "loan_rate_pct",
+              "label": "Loan interest rate",
+              "type": "number",
+              "unit": "% a year",
+              "required": true
+            },
+            {
+              "id": "loan_years",
+              "label": "Loan tenure",
+              "type": "number",
+              "unit": "years",
+              "required": true
+            },
+            {
+              "id": "down_payment_covered",
+              "label": "Savings cover the down payment",
+              "type": "boolean",
+              "unit": "",
+              "required": true
+            },
+            {
+              "id": "reserve_after_close_months",
+              "label": "Reserve after closing",
+              "type": "number",
+              "unit": "months of expenses",
+              "required": true
+            },
+            {
+              "id": "gross_income_month",
+              "label": "Gross household income",
+              "type": "number",
+              "unit": "INR/month",
+              "required": true
+            },
+            {
+              "id": "running_costs_month",
+              "label": "Maintenance, property tax and insurance",
+              "type": "number",
+              "unit": "INR/month",
+              "required": false
+            }
+          ],
+          "metrics": [
+            {
+              "id": "loan_principal",
+              "label": "Loan amount",
+              "unit": "INR",
+              "expr": "purchase_price * (1 - down_payment_pct / 100)"
+            },
+            {
+              "id": "emi",
+              "label": "Monthly instalment",
+              "unit": "INR/month",
+              "expr": "pmt(loan_rate_pct, loan_years, loan_principal)"
+            },
+            {
+              "id": "all_in_monthly",
+              "label": "All-in monthly ownership cost",
+              "unit": "INR/month",
+              "expr": "emi + running_costs_month"
+            },
+            {
+              "id": "all_in_ratio",
+              "label": "All-in cost as share of gross income",
+              "unit": "ratio",
+              "expr": "all_in_monthly / gross_income_month"
+            }
+          ],
+          "gates": [
+            {
+              "id": "g_stay",
+              "label": "Stay horizon",
+              "subject": "stay_years",
+              "op": ">=",
+              "threshold": 5,
+              "threshold_text": "At least 5 years in the area",
+              "protective": true,
+              "depends_on": [
+                "stay_years"
+              ]
+            },
+            {
+              "id": "g_afford",
+              "label": "Affordability",
+              "subject": "all_in_ratio",
+              "op": "<=",
+              "threshold": 0.35,
+              "threshold_text": "All-in cost at most 35% of gross monthly income",
+              "protective": true,
+              "depends_on": [
+                "purchase_price",
+                "down_payment_pct",
+                "loan_rate_pct",
+                "loan_years",
+                "running_costs_month",
+                "gross_income_month"
+              ]
+            },
+            {
+              "id": "g_reserve",
+              "label": "Post-close reserve",
+              "subject": "reserve_after_close_months",
+              "op": ">=",
+              "threshold": 6,
+              "threshold_text": "6+ months of essential expenses in cash",
+              "protective": true,
+              "depends_on": [
+                "down_payment_covered",
+                "reserve_after_close_months"
+              ]
+            }
+          ]
+        },
+        "record": {
+          "status": "partial",
+          "stakes_register": "personal-financial-high",
+          "verdict": "Rent now; buying is gated",
+          "summary": "Opened the decision. Rent is the default; buying waits on stay, cost and reserve.",
+          "reply": "Default decision: rent now. Buying should not proceed until it passes three gates: you expect to stay at least 5 years, the all-in monthly ownership cost is affordable after taxes, insurance, maintenance and fees, and you still keep 6 months of essential expenses in cash after closing.\n\nIn the next 72 hours, gather 3 real rental listings, get 1 real lender quote, and compare them on a 5-year horizon. If the buy case survives that comparison, buying becomes a live option. If it does not, renting is not hesitation; it is preserving liquidity and mobility.",
+          "claim": "With the current information, renting is the safer default until the buying case clears affordability, time-horizon and liquidity gates.",
+          "direction": "Rent now, and do not buy unless the house passes a 5-year stay test, an all-in cost test and a post-closing cash-reserve test.",
+          "scores": {
+            "confidence": 18,
+            "risk": 68
+          },
+          "risk": {
+            "irreversibility_window": "costly",
+            "failure_mode": "Buying too early can trap you in high transaction costs, reduced liquidity, repair exposure and difficulty moving."
+          },
+          "evidence": {
+            "observed": "You asked to compare renting and buying. No figures, place or timeline were given.",
+            "inferred": "Every gate starts as unknown; the default favours the reversible option."
+          },
+          "inputs": [],
+          "matrix": [
+            {
+              "criterion_id": "horizon_fit",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": true
+                }
+              ],
+              "basis": "Stay unknown; buying needs about 5 years to recover entry costs."
+            },
+            {
+              "criterion_id": "monthly_cost",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 3,
+                  "assumed": true
+                },
+                {
+                  "option_id": "buy",
+                  "score": 3,
+                  "assumed": true
+                }
+              ],
+              "basis": "No rent or loan figures yet; neutral placeholder."
+            },
+            {
+              "criterion_id": "liquidity",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Down payment and closing costs lock cash up."
+            },
+            {
+              "criterion_id": "flexibility",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Selling takes months and carries brokerage costs."
+            },
+            {
+              "criterion_id": "equity_control",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 2,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 5,
+                  "assumed": false
+                }
+              ],
+              "basis": "Ownership builds equity and removes landlord risk."
+            }
+          ],
+          "sensitivity": "Buy overtakes rent only if horizon, cost and liquidity all move in its favour. Equity alone cannot carry it.",
+          "needs_answers": [
+            "For the home you would buy: what purchase price, down payment, loan rate, and monthly tax plus insurance are you using?",
+            "For the home you would rent: what monthly rent have you found for comparable places in the same area?",
+            "What is the minimum number of years you are confident you would stay in that area?"
+          ],
+          "key_variables": [
+            "Expected stay in the area",
+            "All-in monthly ownership cost versus comparable rent",
+            "Cash reserves remaining after closing",
+            "Income stability and debt load"
+          ],
+          "blocking_unknowns": [
+            "Expected time living in the area",
+            "Purchase price, down payment, loan rate, taxes, insurance and maintenance",
+            "Rent for comparable homes",
+            "Emergency savings left after a purchase",
+            "Income stability and debt obligations"
+          ],
+          "adversarial": {
+            "risk": "Being pulled into buying by social pressure, fear of missing out, or a monthly loan figure that hides taxes, insurance, repairs and closing costs.",
+            "exploit_surface": "Sellers, agents and lenders benefit when you focus on whether the payment is affordable rather than on total ownership cost and exit risk."
+          },
+          "falsifiability": {
+            "assumptions": [
+              "You are comparing homes of similar size and area, not a cheap rental against a dream house.",
+              "Your income is stable enough to carry a long loan.",
+              "A rental on acceptable terms is available where you want to live."
+            ],
+            "break_conditions": [
+              {
+                "event": "Within 72 hours you confirm a 5+ year stay, and a lender quote puts all-in cost below 35% of gross monthly income.",
+                "effect": "reduces_confidence",
+                "option_id": null
+              },
+              {
+                "event": "Comparable rent comes within 10% of the all-in monthly ownership cost.",
+                "effect": "reduces_confidence",
+                "option_id": null
+              },
+              {
+                "event": "An inspection finds near-term repairs above 3% of the purchase price.",
+                "effect": "favours_option",
+                "option_id": "rent"
+              }
+            ],
+            "what_would_change_this": "A specific comparable rent; a purchase price with down payment, rate, tax, insurance and maintenance; your minimum stay in the area."
+          },
+          "reality": {
+            "resists": "Buying resists through transaction costs, hidden maintenance, rate sensitivity and reduced mobility. Renting resists through less control and possible rent increases.",
+            "resources": "Buying needs a down payment, closing costs, an emergency reserve and tolerance for repairs. Renting needs a deposit and accepts less customisation.",
+            "dependencies": "Buying depends on loan approval, seller terms, inspection, taxes and market availability. Renting depends on landlord terms and lease availability.",
+            "executable_under_constraints": true
+          },
+          "action_bounds": [
+            {
+              "level": "recommend",
+              "action": "Use renting as the default until the buy case passes the protective gates."
+            },
+            {
+              "level": "simulate",
+              "action": "Run the 5-year rent-versus-buy comparison once real rent and loan figures arrive."
+            },
+            {
+              "level": "prepare",
+              "action": "Draft a purchase-readiness checklist."
+            }
+          ],
+          "next_72h": [
+            "Pull 3 rental listings for homes you would actually live in; record rent, deposit, maintenance and lease length.",
+            "Get 1 lender quote for a realistic price; record EMI, rate, tenure, processing fee and closing costs.",
+            "Make a one-page comparison: rent for 12 months, buy and stay 5 years, buy and sell before 3 years.",
+            "Set a rule now: no offer unless 6 months of expenses remain in cash after down payment, closing and immediate repairs."
+          ],
+          "flourishing": {
+            "direction": "Use renting as the default until buying proves itself against hard numbers.",
+            "leverage": "The decisive lever is not whether ownership is desirable; it is whether ownership stays safe after full monthly cost, reserves and stay duration are included.",
+            "stability": "Preserves mobility and liquidity, and gives a clean threshold for switching from rent to buy.",
+            "agency_rebalance": "Make the purchase earn commitment through numbers, not aspiration or pressure.",
+            "trajectory_shift": "From identity-based housing choice to constraint-based commitment."
+          },
+          "forward_disclosure": {
+            "note": "Your expected stay plus the monthly rent and all-in ownership cost for comparable homes.",
+            "gap_category": "evidence"
+          },
+          "prediction": {
+            "text": "If you look at listings before setting the reserve rule, the first home you like will pull the budget above the 35% gate.",
+            "check_after_hours": 72
+          },
+          "coherence": {
+            "level": "high",
+            "reason": "With no figures, the reversible option is the default and every gate starts unknown; nothing in the record contradicts that."
+          },
+          "frame_proposal": null,
+          "suggested_followups": [
+            "We have enough savings to buy, and renting is fine too."
+          ]
+        }
+      }
+    },
+    {
+      "kind": "decision",
+      "at": "2026-10-30T10:31:00+05:30",
+      "user_text": "Let's say renting is good, but purchasing is also possible as there is enough savings for it.",
+      "route": {
+        "route": "adds_evidence",
+        "confidence": 0.84,
+        "source": "jev"
+      },
+      "model": "anthropic/claude-sonnet-5.5",
+      "prompt_version": "shared-rules@1+decision-turn@1",
+      "output": {
+        "record": {
+          "status": "evolving",
+          "stakes_register": "personal-financial-high",
+          "verdict": "Rent by default; buying is now feasible, not yet better",
+          "summary": "Savings make buying feasible. Rent stays the default until stay, cost and reserve are proven.",
+          "reply": "Update: enough savings moves buying from impossible to possible, but not from possible to better. The key distinction is affordability versus resilience. If your savings cover the down payment and closing costs but leave you thin afterwards, buying is still fragile.\n\nIf buying leaves you with 6 months of essential expenses, an all-in monthly cost under about 35% of gross income, and a stay of at least 5 years, it becomes a serious option. For the next 72 hours: get one written lender estimate, gather three real rental comps, calculate cash left after closing, and compare both over 5 years. Do not make an offer yet.",
+          "claim": "Having enough savings makes purchasing possible, but renting remains the safer default until the buy case clears time-horizon, all-in monthly cost and post-close liquidity tests.",
+          "direction": "Keep renting; turn the savings into a measured buy test, not a purchase.",
+          "scores": {
+            "confidence": 48,
+            "risk": 62
+          },
+          "risk": {
+            "irreversibility_window": "costly",
+            "failure_mode": "Buying too early can convert savings into illiquid equity while exposing you to transaction costs, repairs and reduced mobility."
+          },
+          "evidence": {
+            "observed": "You said renting is good and purchasing is possible because there is enough savings.",
+            "inferred": "Savings may cover a down payment and closing costs, but no lender quote, stay duration or comparable rent were given."
+          },
+          "inputs": [
+            {
+              "id": "down_payment_covered",
+              "value": true,
+              "source": "user",
+              "note": "You said there is enough savings to purchase."
+            }
+          ],
+          "matrix": [
+            {
+              "criterion_id": "horizon_fit",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": true
+                }
+              ],
+              "basis": "Stay still unknown."
+            },
+            {
+              "criterion_id": "monthly_cost",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 3,
+                  "assumed": true
+                },
+                {
+                  "option_id": "buy",
+                  "score": 3,
+                  "assumed": true
+                }
+              ],
+              "basis": "No rent or loan figures yet; neutral placeholder."
+            },
+            {
+              "criterion_id": "liquidity",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 3,
+                  "assumed": true
+                }
+              ],
+              "basis": "Savings cover the down payment; reserve after closing still unknown."
+            },
+            {
+              "criterion_id": "flexibility",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            },
+            {
+              "criterion_id": "equity_control",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 2,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 5,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            }
+          ],
+          "sensitivity": "Buy needs about 18 more points to overtake rent. A confirmed long stay and an all-in cost close to rent would do it.",
+          "needs_answers": [
+            "How much cash would remain after the down payment, stamp duty and registration?",
+            "What monthly rent have you found for comparable homes in the same area?",
+            "What is the minimum number of years you are confident you would stay?"
+          ],
+          "key_variables": [
+            "Expected stay duration",
+            "All-in monthly ownership cost",
+            "Comparable rent for acceptable homes",
+            "Cash remaining after closing"
+          ],
+          "blocking_unknowns": [
+            "Expected years in the area",
+            "All-in monthly cost after EMI, property tax, insurance, maintenance and society charges",
+            "Cash remaining after down payment and closing costs",
+            "Comparable rent for the same type of home"
+          ],
+          "adversarial": {
+            "risk": "Savings create a new pull: money that can buy a house starts to feel like money that should. Feasibility gets mistaken for advantage.",
+            "exploit_surface": "Lenders and sellers quote what you can borrow, not what leaves you resilient. A pre-approval ceiling is not a budget."
+          },
+          "falsifiability": {
+            "assumptions": [
+              "‘Enough savings’ means enough for the down payment and closing costs, not necessarily a reserve as well.",
+              "Renting is acceptable, so buying has to beat a good alternative rather than rescue you from a bad one.",
+              "Your income is stable enough to carry a long loan."
+            ],
+            "break_conditions": [
+              {
+                "event": "Cash after closing covers 6+ months of essential expenses and the stay is 5+ years.",
+                "effect": "reduces_confidence",
+                "option_id": null
+              },
+              {
+                "event": "A lender estimate shows all-in cost well above 35% of gross income.",
+                "effect": "favours_option",
+                "option_id": "rent"
+              },
+              {
+                "event": "Comparable rent is within 10% of all-in ownership cost.",
+                "effect": "reduces_confidence",
+                "option_id": null
+              }
+            ],
+            "what_would_change_this": "A written lender estimate; three rental comps; cash left after closing."
+          },
+          "reality": {
+            "resists": "Converting savings into a down payment turns liquid money into illiquid equity and exposes you to transaction costs and repairs.",
+            "resources": "You report enough savings to make purchasing possible; whether they also cover a reserve is open.",
+            "dependencies": "Lender approval, the property's legal checks, and income stability over the loan term.",
+            "executable_under_constraints": true
+          },
+          "action_bounds": [
+            {
+              "level": "recommend",
+              "action": "Keep renting as the default; treat buying as a live option under test."
+            },
+            {
+              "level": "simulate",
+              "action": "Run the 5-year comparison from a written lender estimate and three rental comps."
+            },
+            {
+              "level": "prepare",
+              "action": "Draft a purchase-readiness checklist."
+            }
+          ],
+          "next_72h": [
+            "Get one written lender estimate for a realistic price, including processing fee, stamp duty and registration.",
+            "Gather three rental comps for the same size and area.",
+            "Calculate cash left after closing and compare it to 6 months of essential expenses.",
+            "Compare both options over 5 years in one table."
+          ],
+          "flourishing": {
+            "direction": "Let buying earn commitment against a rental option you already think is good.",
+            "leverage": "Savings shift the question from ‘can we’ to ‘should we’; resilience after closing is now the lever.",
+            "stability": "Keeps the reserve intact while the numbers come in.",
+            "agency_rebalance": "You set the test; the market does not set it for you.",
+            "trajectory_shift": "From possible to proven, or deliberately declined."
+          },
+          "forward_disclosure": {
+            "note": "Cash left after closing, and the monthly rent for a comparable home.",
+            "gap_category": "evidence"
+          },
+          "prediction": {
+            "text": "Once the lender estimate arrives, cash left after stamp duty and registration will be noticeably lower than expected, because those costs are usually left out of the savings figure.",
+            "check_after_hours": 72
+          },
+          "coherence": {
+            "level": "high",
+            "reason": "New evidence raises feasibility without touching the gates, so the direction holds and only the liquidity score moves."
+          },
+          "frame_proposal": null,
+          "suggested_followups": [
+            "We'd stay at least 7 years; both our jobs are in Pune. Comparable 3BHK rent is ₹42,000 a month. The flat is ₹1.1 Cr; the bank quoted 8.5% for 20 years with 20% down. After down payment and closing we'd still have 8 months of expenses. Household gross income is ₹3.6 L a month."
+          ]
+        }
+      }
+    },
+    {
+      "kind": "decision",
+      "at": "2026-10-30T11:05:00+05:30",
+      "user_text": "We'd stay at least 7 years; both our jobs are in Pune. Comparable 3BHK rent is ₹42,000 a month. The flat is ₹1.1 Cr; the bank quoted 8.5% for 20 years with 20% down. After down payment and closing we'd still have 8 months of expenses. Household gross income is ₹3.6 L a month.",
+      "route": {
+        "route": "adds_evidence",
+        "confidence": 0.98,
+        "source": "jev"
+      },
+      "model": "anthropic/claude-sonnet-5.5",
+      "prompt_version": "shared-rules@1+decision-turn@1",
+      "output": {
+        "record": {
+          "status": "ready",
+          "stakes_register": "personal-financial-high",
+          "verdict": "Buying is safe on every protective gate; renting is still about ₹43k a month cheaper",
+          "summary": "Protective gates pass. Buying is safe but dearer; expected price growth decides it.",
+          "reply": "Update: buying now passes all three protective gates, but passing the gates makes it safe, not cheaper. A ₹88 L loan at 8.5% over 20 years is an EMI of about ₹76,400. With maintenance, property tax and insurance (roughly ₹6,000), the all-in cost is about ₹82,400 a month: 23% of gross income, well inside the 35% gate. Eight months of reserve clears the 6-month gate, and 7 years clears the stay gate.\n\nThe economics still lean rent. Early on, about ₹62,000 a month of the EMI is interest. Add running costs and the return you give up on roughly ₹30 L of down payment, stamp duty and registration, and ownership's unrecoverable cost is around ₹85,000 a month against ₹42,000 rent. A price-to-rent ratio near 22 is on the expensive side. Buying wins only if the flat appreciates roughly 3.5 to 4.5% a year over 7 years, or if owning is worth that gap to you.\n\nNext: decide what price growth you believe for this micro-market and why, and put a monthly value on owning. If either clears the gap, buying is a reasonable choice rather than a gamble.",
+          "claim": "Buying is now safe on all three protective gates, but at a price-to-rent ratio near 22 it costs roughly ₹43,000 a month more than renting in unrecoverable terms. It pays off only with about 4% yearly price growth or a high personal value on owning.",
+          "direction": "Lean rent and invest the difference. Switch to buy only if you can justify 4%+ yearly price growth, or you value owning above about ₹40k a month.",
+          "scores": {
+            "confidence": 74,
+            "risk": 44
+          },
+          "risk": {
+            "irreversibility_window": "recoverable_with_cost",
+            "failure_mode": "Buying on an unsourced growth assumption: if prices grow under 3% a year, ownership costs about ₹4 to 5 L a year more than renting for the whole stay."
+          },
+          "evidence": {
+            "observed": "7-year stay; ₹42k comparable rent; ₹1.1 Cr price; 8.5% over 20 years with 20% down; 8 months of reserve; ₹3.6 L gross monthly income.",
+            "inferred": "Stamp duty and registration about 7%; 7% yearly return forgone on about ₹30 L; running costs about ₹6k a month."
+          },
+          "inputs": [
+            {
+              "id": "stay_years",
+              "value": 7,
+              "source": "user",
+              "note": "Both jobs are in Pune."
+            },
+            {
+              "id": "comparable_rent",
+              "value": 42000,
+              "source": "user",
+              "note": "Comparable 3BHK."
+            },
+            {
+              "id": "purchase_price",
+              "value": 11000000,
+              "source": "user",
+              "note": "₹1.1 Cr."
+            },
+            {
+              "id": "down_payment_pct",
+              "value": 20,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "loan_rate_pct",
+              "value": 8.5,
+              "source": "user",
+              "note": "Bank quote."
+            },
+            {
+              "id": "loan_years",
+              "value": 20,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "reserve_after_close_months",
+              "value": 8,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "gross_income_month",
+              "value": 360000,
+              "source": "user",
+              "note": "₹3.6 L a month, household."
+            },
+            {
+              "id": "running_costs_month",
+              "value": 6000,
+              "source": "assumed",
+              "note": "Estimate for maintenance, property tax and insurance; confirm with bills."
+            }
+          ],
+          "matrix": [
+            {
+              "criterion_id": "horizon_fit",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 4,
+                  "assumed": false
+                }
+              ],
+              "basis": "7-year stay stated; clears the 5-year recovery horizon."
+            },
+            {
+              "criterion_id": "monthly_cost",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Rent ₹42k against roughly ₹85k a month of unrecoverable ownership cost."
+            },
+            {
+              "criterion_id": "liquidity",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 4,
+                  "assumed": false
+                }
+              ],
+              "basis": "8 months of expenses remain after closing."
+            },
+            {
+              "criterion_id": "flexibility",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            },
+            {
+              "criterion_id": "equity_control",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 2,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 5,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            }
+          ],
+          "sensitivity": "Buy overtakes rent if expected price growth is above about 4% a year, or if you value owning at more than about ₹40k a month.",
+          "needs_answers": [
+            "What yearly price growth do you expect for this micro-market, and what is it based on?",
+            "What is owning worth to you each month: freedom to renovate, no landlord risk, stability for family?",
+            "Is the ₹6,000 running-cost figure from society and municipal bills, or an estimate?"
+          ],
+          "key_variables": [
+            "Expected yearly price growth",
+            "Monthly value you place on owning",
+            "Return available on the down payment if invested",
+            "Rent growth over 7 years"
+          ],
+          "blocking_unknowns": [
+            "Expected price growth for the area",
+            "Personal value of ownership per month",
+            "Exact maintenance and property-tax figures"
+          ],
+          "adversarial": {
+            "risk": "Passing the gates can feel like permission. The risk now is anchoring on ‘we can afford it’ and skipping the growth assumption the whole buy case rests on.",
+            "exploit_surface": "Developers and brokers will supply optimistic appreciation figures. Treat any growth number without a source as a sales input, not evidence."
+          },
+          "falsifiability": {
+            "assumptions": [
+              "Stamp duty and registration total about 7% of the price.",
+              "The down payment would otherwise earn about 7% a year.",
+              "Running costs are about ₹6,000 a month.",
+              "Both incomes continue for the 7-year stay."
+            ],
+            "break_conditions": [
+              {
+                "event": "Ten-year price data for this micro-market shows sustained growth above 5% a year.",
+                "effect": "flips_decision",
+                "option_id": "buy"
+              },
+              {
+                "event": "Rent for comparable flats is rising faster than 8% a year.",
+                "effect": "reduces_confidence",
+                "option_id": null
+              },
+              {
+                "event": "A job change makes the 7-year stay uncertain.",
+                "effect": "favours_option",
+                "option_id": "rent"
+              }
+            ],
+            "what_would_change_this": "A sourced price-growth figure for the micro-market; your own monthly value on owning."
+          },
+          "reality": {
+            "resists": "Buying resists through about ₹30 L of entry cost that is sunk on day one. Renting resists through rent increases and less control over the home.",
+            "resources": "Both paths are affordable; the reserve survives either choice.",
+            "dependencies": "Buying depends on legal clearance, possession date and registration. Renting depends on landlord renewals every 11 months.",
+            "executable_under_constraints": true
+          },
+          "action_bounds": [
+            {
+              "level": "recommend",
+              "action": "Rent and invest the difference unless the growth or ownership-value case clears the gap."
+            },
+            {
+              "level": "simulate",
+              "action": "Re-run the 7-year comparison at 3%, 4% and 5% yearly growth."
+            },
+            {
+              "level": "prepare",
+              "action": "Prepare a purchase-readiness checklist: legal title, possession date, registration costs."
+            },
+            {
+              "level": "request_warrant",
+              "action": "Make an offer on the flat."
+            }
+          ],
+          "next_72h": [
+            "Find 10-year price history for the micro-market from registration records or two independent sources.",
+            "Write down a monthly value for owning before looking at the growth figure.",
+            "Confirm maintenance, property tax and insurance with the society and municipal bills.",
+            "Re-run the 7-year comparison with rent growing 5% a year."
+          ],
+          "flourishing": {
+            "direction": "Choose with the trade-off in view: buying costs more, and you decide whether that buys something you value.",
+            "leverage": "The growth assumption carries the buy case; make it explicit and sourced.",
+            "stability": "Either path keeps 6+ months of reserve; neither choice is fragile.",
+            "agency_rebalance": "This is now a values decision on top of a safe financial floor.",
+            "trajectory_shift": "From ‘can we?’ to ‘is owning worth about ₹40k a month to us?’"
+          },
+          "forward_disclosure": {
+            "note": "A sourced yearly price-growth figure for this micro-market.",
+            "gap_category": "evidence"
+          },
+          "prediction": {
+            "text": "Ten-year registration data for this micro-market will show yearly growth below the figure brokers quote.",
+            "check_after_hours": 72
+          },
+          "coherence": {
+            "level": "high",
+            "reason": "Gates passing and the matrix still favouring rent are consistent: the gates test safety, the matrix tests value."
+          },
+          "frame_proposal": {
+            "reason": "Price growth and the price-to-rent ratio now decide the value question, so both should be tracked.",
+            "add_inputs": [
+              {
+                "id": "expected_growth_pct",
+                "label": "Expected price growth",
+                "type": "number",
+                "unit": "% a year",
+                "required": true
+              }
+            ],
+            "add_metrics": [
+              {
+                "id": "price_to_rent",
+                "label": "Price-to-rent ratio",
+                "unit": "years of rent",
+                "expr": "purchase_price / (comparable_rent * 12)"
+              }
+            ],
+            "add_gates": [
+              {
+                "id": "g_ptr",
+                "label": "Price-to-rent",
+                "subject": "price_to_rent",
+                "op": "<=",
+                "threshold": 20,
+                "threshold_text": "20 or below favours buying",
+                "protective": false,
+                "depends_on": [
+                  "purchase_price",
+                  "comparable_rent"
+                ]
+              }
+            ],
+            "change_weights": []
+          },
+          "suggested_followups": [
+            "Prices here grew about 6% a year over the last decade.",
+            "Owning is worth about ₹20,000 a month to us."
+          ]
+        }
+      }
+    },
+    {
+      "kind": "frame_edit",
+      "at": "2026-10-30T11:20:00+05:30",
+      "changes": {
+        "weights": [
+          {
+            "criterion_id": "flexibility",
+            "weight": 25
+          },
+          {
+            "criterion_id": "equity_control",
+            "weight": 5
+          }
+        ],
+        "thresholds": [
+          {
+            "gate_id": "g_afford",
+            "threshold": 0.3
+          }
+        ],
+        "required": [
+          {
+            "input_id": "running_costs_month",
+            "required": true
+          }
+        ],
+        "labels": [
+          {
+            "kind": "option",
+            "id": "rent",
+            "label": "Keep renting"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "rewind",
+      "at": "2026-10-30T11:25:00+05:30",
+      "to_v": 2
+    },
+    {
+      "kind": "decision",
+      "at": "2026-10-30T11:40:00+05:30",
+      "user_text": "Same facts as before: 7 years, ₹42k rent, ₹1.1 Cr flat, 8.5% for 20 years, 20% down, 8 months reserve, ₹3.6 L income. Flexibility matters more to us than equity.",
+      "route": {
+        "route": "changes_preference",
+        "confidence": 0.81,
+        "source": "jev"
+      },
+      "model": "anthropic/claude-sonnet-5.5",
+      "prompt_version": "shared-rules@1+decision-turn@1",
+      "output": {
+        "record": {
+          "status": "ready",
+          "stakes_register": "personal-financial-high",
+          "verdict": "Buying is safe on every protective gate; renting is still about ₹43k a month cheaper",
+          "summary": "Protective gates pass. Buying is safe but dearer; expected price growth decides it.",
+          "reply": "Update: buying now passes all three protective gates, but passing the gates makes it safe, not cheaper. A ₹88 L loan at 8.5% over 20 years is an EMI of about ₹76,400. With maintenance, property tax and insurance (roughly ₹6,000), the all-in cost is about ₹82,400 a month: 23% of gross income, well inside the 35% gate. Eight months of reserve clears the 6-month gate, and 7 years clears the stay gate.\n\nThe economics still lean rent. Early on, about ₹62,000 a month of the EMI is interest. Add running costs and the return you give up on roughly ₹30 L of down payment, stamp duty and registration, and ownership's unrecoverable cost is around ₹85,000 a month against ₹42,000 rent. A price-to-rent ratio near 22 is on the expensive side. Buying wins only if the flat appreciates roughly 3.5 to 4.5% a year over 7 years, or if owning is worth that gap to you.\n\nNext: decide what price growth you believe for this micro-market and why, and put a monthly value on owning. If either clears the gap, buying is a reasonable choice rather than a gamble.",
+          "claim": "Buying is now safe on all three protective gates, but at a price-to-rent ratio near 22 it costs roughly ₹43,000 a month more than renting in unrecoverable terms. It pays off only with about 4% yearly price growth or a high personal value on owning.",
+          "direction": "Lean rent and invest the difference. Switch to buy only if you can justify 4%+ yearly price growth, or you value owning above about ₹40k a month.",
+          "scores": {
+            "confidence": 74,
+            "risk": 44
+          },
+          "risk": {
+            "irreversibility_window": "recoverable_with_cost",
+            "failure_mode": "Buying on an unsourced growth assumption: if prices grow under 3% a year, ownership costs about ₹4 to 5 L a year more than renting for the whole stay."
+          },
+          "evidence": {
+            "observed": "7-year stay; ₹42k comparable rent; ₹1.1 Cr price; 8.5% over 20 years with 20% down; 8 months of reserve; ₹3.6 L gross monthly income.",
+            "inferred": "Stamp duty and registration about 7%; 7% yearly return forgone on about ₹30 L; running costs about ₹6k a month."
+          },
+          "inputs": [
+            {
+              "id": "stay_years",
+              "value": 7,
+              "source": "user",
+              "note": "Both jobs are in Pune."
+            },
+            {
+              "id": "comparable_rent",
+              "value": 42000,
+              "source": "user",
+              "note": "Comparable 3BHK."
+            },
+            {
+              "id": "purchase_price",
+              "value": 11000000,
+              "source": "user",
+              "note": "₹1.1 Cr."
+            },
+            {
+              "id": "down_payment_pct",
+              "value": 20,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "loan_rate_pct",
+              "value": 8.5,
+              "source": "user",
+              "note": "Bank quote."
+            },
+            {
+              "id": "loan_years",
+              "value": 20,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "reserve_after_close_months",
+              "value": 8,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "gross_income_month",
+              "value": 360000,
+              "source": "user",
+              "note": "₹3.6 L a month, household."
+            },
+            {
+              "id": "running_costs_month",
+              "value": 6000,
+              "source": "assumed",
+              "note": "Estimate for maintenance, property tax and insurance; confirm with bills."
+            }
+          ],
+          "matrix": [
+            {
+              "criterion_id": "horizon_fit",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 4,
+                  "assumed": false
+                }
+              ],
+              "basis": "7-year stay stated; clears the 5-year recovery horizon."
+            },
+            {
+              "criterion_id": "monthly_cost",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Rent ₹42k against roughly ₹85k a month of unrecoverable ownership cost."
+            },
+            {
+              "criterion_id": "liquidity",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 4,
+                  "assumed": false
+                }
+              ],
+              "basis": "8 months of expenses remain after closing."
+            },
+            {
+              "criterion_id": "flexibility",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            },
+            {
+              "criterion_id": "equity_control",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 2,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 5,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            }
+          ],
+          "sensitivity": "Buy overtakes rent if expected price growth is above about 4% a year, or if you value owning at more than about ₹40k a month.",
+          "needs_answers": [
+            "What yearly price growth do you expect for this micro-market, and what is it based on?",
+            "What is owning worth to you each month: freedom to renovate, no landlord risk, stability for family?",
+            "Is the ₹6,000 running-cost figure from society and municipal bills, or an estimate?"
+          ],
+          "key_variables": [
+            "Expected yearly price growth",
+            "Monthly value you place on owning",
+            "Return available on the down payment if invested",
+            "Rent growth over 7 years"
+          ],
+          "blocking_unknowns": [
+            "Expected price growth for the area",
+            "Personal value of ownership per month",
+            "Exact maintenance and property-tax figures"
+          ],
+          "adversarial": {
+            "risk": "Passing the gates can feel like permission. The risk now is anchoring on ‘we can afford it’ and skipping the growth assumption the whole buy case rests on.",
+            "exploit_surface": "Developers and brokers will supply optimistic appreciation figures. Treat any growth number without a source as a sales input, not evidence."
+          },
+          "falsifiability": {
+            "assumptions": [
+              "Stamp duty and registration total about 7% of the price.",
+              "The down payment would otherwise earn about 7% a year.",
+              "Running costs are about ₹6,000 a month.",
+              "Both incomes continue for the 7-year stay."
+            ],
+            "break_conditions": [
+              {
+                "event": "Ten-year price data for this micro-market shows sustained growth above 5% a year.",
+                "effect": "flips_decision",
+                "option_id": "buy"
+              },
+              {
+                "event": "Rent for comparable flats is rising faster than 8% a year.",
+                "effect": "reduces_confidence",
+                "option_id": null
+              },
+              {
+                "event": "A job change makes the 7-year stay uncertain.",
+                "effect": "favours_option",
+                "option_id": "rent"
+              }
+            ],
+            "what_would_change_this": "A sourced price-growth figure for the micro-market; your own monthly value on owning."
+          },
+          "reality": {
+            "resists": "Buying resists through about ₹30 L of entry cost that is sunk on day one. Renting resists through rent increases and less control over the home.",
+            "resources": "Both paths are affordable; the reserve survives either choice.",
+            "dependencies": "Buying depends on legal clearance, possession date and registration. Renting depends on landlord renewals every 11 months.",
+            "executable_under_constraints": true
+          },
+          "action_bounds": [
+            {
+              "level": "recommend",
+              "action": "Rent and invest the difference unless the growth or ownership-value case clears the gap."
+            },
+            {
+              "level": "simulate",
+              "action": "Re-run the 7-year comparison at 3%, 4% and 5% yearly growth."
+            },
+            {
+              "level": "prepare",
+              "action": "Prepare a purchase-readiness checklist: legal title, possession date, registration costs."
+            },
+            {
+              "level": "request_warrant",
+              "action": "Make an offer on the flat."
+            }
+          ],
+          "next_72h": [
+            "Find 10-year price history for the micro-market from registration records or two independent sources.",
+            "Write down a monthly value for owning before looking at the growth figure.",
+            "Confirm maintenance, property tax and insurance with the society and municipal bills.",
+            "Re-run the 7-year comparison with rent growing 5% a year."
+          ],
+          "flourishing": {
+            "direction": "Choose with the trade-off in view: buying costs more, and you decide whether that buys something you value.",
+            "leverage": "The growth assumption carries the buy case; make it explicit and sourced.",
+            "stability": "Either path keeps 6+ months of reserve; neither choice is fragile.",
+            "agency_rebalance": "This is now a values decision on top of a safe financial floor.",
+            "trajectory_shift": "From ‘can we?’ to ‘is owning worth about ₹40k a month to us?’"
+          },
+          "forward_disclosure": {
+            "note": "A sourced yearly price-growth figure for this micro-market.",
+            "gap_category": "evidence"
+          },
+          "prediction": {
+            "text": "Ten-year registration data for this micro-market will show yearly growth below the figure brokers quote.",
+            "check_after_hours": 72
+          },
+          "coherence": {
+            "level": "high",
+            "reason": "Gates passing and the matrix still favouring rent are consistent: the gates test safety, the matrix tests value."
+          },
+          "frame_proposal": {
+            "reason": "You said flexibility matters more than equity, and price growth now decides the value question.",
+            "add_inputs": [
+              {
+                "id": "expected_growth_pct",
+                "label": "Expected price growth",
+                "type": "number",
+                "unit": "% a year",
+                "required": true
+              }
+            ],
+            "add_metrics": [
+              {
+                "id": "price_to_rent",
+                "label": "Price-to-rent ratio",
+                "unit": "years of rent",
+                "expr": "purchase_price / (comparable_rent * 12)"
+              }
+            ],
+            "add_gates": [
+              {
+                "id": "g_ptr",
+                "label": "Price-to-rent",
+                "subject": "price_to_rent",
+                "op": "<=",
+                "threshold": 20,
+                "threshold_text": "20 or below favours buying",
+                "protective": false,
+                "depends_on": [
+                  "purchase_price",
+                  "comparable_rent"
+                ]
+              }
+            ],
+            "change_weights": [
+              {
+                "criterion_id": "flexibility",
+                "weight": 20
+              },
+              {
+                "criterion_id": "equity_control",
+                "weight": 10
+              }
+            ]
+          },
+          "suggested_followups": [
+            "Prices here grew about 6% a year over the last decade.",
+            "Owning is worth about ₹20,000 a month to us."
+          ]
+        }
+      }
+    },
+    {
+      "kind": "frame_dismiss",
+      "at": "2026-10-30T11:41:00+05:30"
+    },
+    {
+      "kind": "decision",
+      "at": "2026-10-30T11:45:00+05:30",
+      "user_text": "Actually yes, flexibility really does matter more to us than equity.",
+      "route": {
+        "route": "changes_preference",
+        "confidence": 0.81,
+        "source": "jev"
+      },
+      "model": "anthropic/claude-sonnet-5.5",
+      "prompt_version": "shared-rules@1+decision-turn@1",
+      "output": {
+        "record": {
+          "status": "ready",
+          "stakes_register": "personal-financial-high",
+          "verdict": "Buying is safe on every protective gate; renting is still about ₹43k a month cheaper",
+          "summary": "Protective gates pass. Buying is safe but dearer; expected price growth decides it.",
+          "reply": "Update: buying now passes all three protective gates, but passing the gates makes it safe, not cheaper. A ₹88 L loan at 8.5% over 20 years is an EMI of about ₹76,400. With maintenance, property tax and insurance (roughly ₹6,000), the all-in cost is about ₹82,400 a month: 23% of gross income, well inside the 35% gate. Eight months of reserve clears the 6-month gate, and 7 years clears the stay gate.\n\nThe economics still lean rent. Early on, about ₹62,000 a month of the EMI is interest. Add running costs and the return you give up on roughly ₹30 L of down payment, stamp duty and registration, and ownership's unrecoverable cost is around ₹85,000 a month against ₹42,000 rent. A price-to-rent ratio near 22 is on the expensive side. Buying wins only if the flat appreciates roughly 3.5 to 4.5% a year over 7 years, or if owning is worth that gap to you.\n\nNext: decide what price growth you believe for this micro-market and why, and put a monthly value on owning. If either clears the gap, buying is a reasonable choice rather than a gamble.",
+          "claim": "Buying is now safe on all three protective gates, but at a price-to-rent ratio near 22 it costs roughly ₹43,000 a month more than renting in unrecoverable terms. It pays off only with about 4% yearly price growth or a high personal value on owning.",
+          "direction": "Lean rent and invest the difference. Switch to buy only if you can justify 4%+ yearly price growth, or you value owning above about ₹40k a month.",
+          "scores": {
+            "confidence": 74,
+            "risk": 44
+          },
+          "risk": {
+            "irreversibility_window": "recoverable_with_cost",
+            "failure_mode": "Buying on an unsourced growth assumption: if prices grow under 3% a year, ownership costs about ₹4 to 5 L a year more than renting for the whole stay."
+          },
+          "evidence": {
+            "observed": "7-year stay; ₹42k comparable rent; ₹1.1 Cr price; 8.5% over 20 years with 20% down; 8 months of reserve; ₹3.6 L gross monthly income.",
+            "inferred": "Stamp duty and registration about 7%; 7% yearly return forgone on about ₹30 L; running costs about ₹6k a month."
+          },
+          "inputs": [
+            {
+              "id": "stay_years",
+              "value": 7,
+              "source": "user",
+              "note": "Both jobs are in Pune."
+            },
+            {
+              "id": "comparable_rent",
+              "value": 42000,
+              "source": "user",
+              "note": "Comparable 3BHK."
+            },
+            {
+              "id": "purchase_price",
+              "value": 11000000,
+              "source": "user",
+              "note": "₹1.1 Cr."
+            },
+            {
+              "id": "down_payment_pct",
+              "value": 20,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "loan_rate_pct",
+              "value": 8.5,
+              "source": "user",
+              "note": "Bank quote."
+            },
+            {
+              "id": "loan_years",
+              "value": 20,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "reserve_after_close_months",
+              "value": 8,
+              "source": "user",
+              "note": ""
+            },
+            {
+              "id": "gross_income_month",
+              "value": 360000,
+              "source": "user",
+              "note": "₹3.6 L a month, household."
+            },
+            {
+              "id": "running_costs_month",
+              "value": 6000,
+              "source": "assumed",
+              "note": "Estimate for maintenance, property tax and insurance; confirm with bills."
+            }
+          ],
+          "matrix": [
+            {
+              "criterion_id": "horizon_fit",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 4,
+                  "assumed": false
+                }
+              ],
+              "basis": "7-year stay stated; clears the 5-year recovery horizon."
+            },
+            {
+              "criterion_id": "monthly_cost",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Rent ₹42k against roughly ₹85k a month of unrecoverable ownership cost."
+            },
+            {
+              "criterion_id": "liquidity",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 4,
+                  "assumed": false
+                }
+              ],
+              "basis": "8 months of expenses remain after closing."
+            },
+            {
+              "criterion_id": "flexibility",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            },
+            {
+              "criterion_id": "equity_control",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 2,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 5,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            }
+          ],
+          "sensitivity": "Buy overtakes rent if expected price growth is above about 4% a year, or if you value owning at more than about ₹40k a month.",
+          "needs_answers": [
+            "What yearly price growth do you expect for this micro-market, and what is it based on?",
+            "What is owning worth to you each month: freedom to renovate, no landlord risk, stability for family?",
+            "Is the ₹6,000 running-cost figure from society and municipal bills, or an estimate?"
+          ],
+          "key_variables": [
+            "Expected yearly price growth",
+            "Monthly value you place on owning",
+            "Return available on the down payment if invested",
+            "Rent growth over 7 years"
+          ],
+          "blocking_unknowns": [
+            "Expected price growth for the area",
+            "Personal value of ownership per month",
+            "Exact maintenance and property-tax figures"
+          ],
+          "adversarial": {
+            "risk": "Passing the gates can feel like permission. The risk now is anchoring on ‘we can afford it’ and skipping the growth assumption the whole buy case rests on.",
+            "exploit_surface": "Developers and brokers will supply optimistic appreciation figures. Treat any growth number without a source as a sales input, not evidence."
+          },
+          "falsifiability": {
+            "assumptions": [
+              "Stamp duty and registration total about 7% of the price.",
+              "The down payment would otherwise earn about 7% a year.",
+              "Running costs are about ₹6,000 a month.",
+              "Both incomes continue for the 7-year stay."
+            ],
+            "break_conditions": [
+              {
+                "event": "Ten-year price data for this micro-market shows sustained growth above 5% a year.",
+                "effect": "flips_decision",
+                "option_id": "buy"
+              },
+              {
+                "event": "Rent for comparable flats is rising faster than 8% a year.",
+                "effect": "reduces_confidence",
+                "option_id": null
+              },
+              {
+                "event": "A job change makes the 7-year stay uncertain.",
+                "effect": "favours_option",
+                "option_id": "rent"
+              }
+            ],
+            "what_would_change_this": "A sourced price-growth figure for the micro-market; your own monthly value on owning."
+          },
+          "reality": {
+            "resists": "Buying resists through about ₹30 L of entry cost that is sunk on day one. Renting resists through rent increases and less control over the home.",
+            "resources": "Both paths are affordable; the reserve survives either choice.",
+            "dependencies": "Buying depends on legal clearance, possession date and registration. Renting depends on landlord renewals every 11 months.",
+            "executable_under_constraints": true
+          },
+          "action_bounds": [
+            {
+              "level": "recommend",
+              "action": "Rent and invest the difference unless the growth or ownership-value case clears the gap."
+            },
+            {
+              "level": "simulate",
+              "action": "Re-run the 7-year comparison at 3%, 4% and 5% yearly growth."
+            },
+            {
+              "level": "prepare",
+              "action": "Prepare a purchase-readiness checklist: legal title, possession date, registration costs."
+            },
+            {
+              "level": "request_warrant",
+              "action": "Make an offer on the flat."
+            }
+          ],
+          "next_72h": [
+            "Find 10-year price history for the micro-market from registration records or two independent sources.",
+            "Write down a monthly value for owning before looking at the growth figure.",
+            "Confirm maintenance, property tax and insurance with the society and municipal bills.",
+            "Re-run the 7-year comparison with rent growing 5% a year."
+          ],
+          "flourishing": {
+            "direction": "Choose with the trade-off in view: buying costs more, and you decide whether that buys something you value.",
+            "leverage": "The growth assumption carries the buy case; make it explicit and sourced.",
+            "stability": "Either path keeps 6+ months of reserve; neither choice is fragile.",
+            "agency_rebalance": "This is now a values decision on top of a safe financial floor.",
+            "trajectory_shift": "From ‘can we?’ to ‘is owning worth about ₹40k a month to us?’"
+          },
+          "forward_disclosure": {
+            "note": "A sourced yearly price-growth figure for this micro-market.",
+            "gap_category": "evidence"
+          },
+          "prediction": {
+            "text": "Ten-year registration data for this micro-market will show yearly growth below the figure brokers quote.",
+            "check_after_hours": 72
+          },
+          "coherence": {
+            "level": "high",
+            "reason": "Gates passing and the matrix still favouring rent are consistent: the gates test safety, the matrix tests value."
+          },
+          "frame_proposal": {
+            "reason": "You confirmed flexibility matters more than equity.",
+            "add_inputs": [],
+            "add_metrics": [],
+            "add_gates": [],
+            "change_weights": [
+              {
+                "criterion_id": "flexibility",
+                "weight": 20
+              },
+              {
+                "criterion_id": "equity_control",
+                "weight": 10
+              }
+            ]
+          },
+          "suggested_followups": [
+            "Prices here grew about 6% a year over the last decade.",
+            "Owning is worth about ₹20,000 a month to us."
+          ]
+        }
+      }
+    },
+    {
+      "kind": "decision",
+      "at": "2026-10-30T11:45:30+05:30",
+      "user_text": "Registration data shows prices here grew about 6% a year over the last decade.",
+      "route": {
+        "route": "adds_evidence",
+        "confidence": 0.93,
+        "source": "jev"
+      },
+      "model": "anthropic/claude-sonnet-5.5",
+      "prompt_version": "shared-rules@1+decision-turn@1",
+      "output": {
+        "record": {
+          "status": "ready",
+          "stakes_register": "personal-financial-high",
+          "verdict": "Buying is safe on every protective gate; renting is still about ₹43k a month cheaper",
+          "summary": "Protective gates pass. Buying is safe but dearer; expected price growth decides it.",
+          "reply": "Update: buying now passes all three protective gates, but passing the gates makes it safe, not cheaper. A ₹88 L loan at 8.5% over 20 years is an EMI of about ₹76,400. With maintenance, property tax and insurance (roughly ₹6,000), the all-in cost is about ₹82,400 a month: 23% of gross income, well inside the 35% gate. Eight months of reserve clears the 6-month gate, and 7 years clears the stay gate.\n\nThe economics still lean rent. Early on, about ₹62,000 a month of the EMI is interest. Add running costs and the return you give up on roughly ₹30 L of down payment, stamp duty and registration, and ownership's unrecoverable cost is around ₹85,000 a month against ₹42,000 rent. A price-to-rent ratio near 22 is on the expensive side. Buying wins only if the flat appreciates roughly 3.5 to 4.5% a year over 7 years, or if owning is worth that gap to you.\n\nNext: decide what price growth you believe for this micro-market and why, and put a monthly value on owning. If either clears the gap, buying is a reasonable choice rather than a gamble.",
+          "claim": "Buying is now safe on all three protective gates, but at a price-to-rent ratio near 22 it costs roughly ₹43,000 a month more than renting in unrecoverable terms. It pays off only with about 4% yearly price growth or a high personal value on owning.",
+          "direction": "Lean rent and invest the difference. Switch to buy only if you can justify 4%+ yearly price growth, or you value owning above about ₹40k a month.",
+          "scores": {
+            "confidence": 74,
+            "risk": 44
+          },
+          "risk": {
+            "irreversibility_window": "recoverable_with_cost",
+            "failure_mode": "Buying on an unsourced growth assumption: if prices grow under 3% a year, ownership costs about ₹4 to 5 L a year more than renting for the whole stay."
+          },
+          "evidence": {
+            "observed": "7-year stay; ₹42k comparable rent; ₹1.1 Cr price; 8.5% over 20 years with 20% down; 8 months of reserve; ₹3.6 L gross monthly income.",
+            "inferred": "Stamp duty and registration about 7%; 7% yearly return forgone on about ₹30 L; running costs about ₹6k a month."
+          },
+          "inputs": [
+            {
+              "id": "expected_growth_pct",
+              "value": 6,
+              "source": "user",
+              "note": "Registration data, last decade."
+            }
+          ],
+          "matrix": [
+            {
+              "criterion_id": "horizon_fit",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 4,
+                  "assumed": false
+                }
+              ],
+              "basis": "7-year stay stated; clears the 5-year recovery horizon."
+            },
+            {
+              "criterion_id": "monthly_cost",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 4,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Rent ₹42k against roughly ₹85k a month of unrecoverable ownership cost."
+            },
+            {
+              "criterion_id": "liquidity",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 4,
+                  "assumed": false
+                }
+              ],
+              "basis": "8 months of expenses remain after closing."
+            },
+            {
+              "criterion_id": "flexibility",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 5,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 2,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            },
+            {
+              "criterion_id": "equity_control",
+              "scores": [
+                {
+                  "option_id": "rent",
+                  "score": 2,
+                  "assumed": false
+                },
+                {
+                  "option_id": "buy",
+                  "score": 5,
+                  "assumed": false
+                }
+              ],
+              "basis": "Unchanged."
+            }
+          ],
+          "sensitivity": "Buy overtakes rent if expected price growth is above about 4% a year, or if you value owning at more than about ₹40k a month.",
+          "needs_answers": [
+            "What yearly price growth do you expect for this micro-market, and what is it based on?",
+            "What is owning worth to you each month: freedom to renovate, no landlord risk, stability for family?",
+            "Is the ₹6,000 running-cost figure from society and municipal bills, or an estimate?"
+          ],
+          "key_variables": [
+            "Expected yearly price growth",
+            "Monthly value you place on owning",
+            "Return available on the down payment if invested",
+            "Rent growth over 7 years"
+          ],
+          "blocking_unknowns": [
+            "Expected price growth for the area",
+            "Personal value of ownership per month",
+            "Exact maintenance and property-tax figures"
+          ],
+          "adversarial": {
+            "risk": "Passing the gates can feel like permission. The risk now is anchoring on ‘we can afford it’ and skipping the growth assumption the whole buy case rests on.",
+            "exploit_surface": "Developers and brokers will supply optimistic appreciation figures. Treat any growth number without a source as a sales input, not evidence."
+          },
+          "falsifiability": {
+            "assumptions": [
+              "Stamp duty and registration total about 7% of the price.",
+              "The down payment would otherwise earn about 7% a year.",
+              "Running costs are about ₹6,000 a month.",
+              "Both incomes continue for the 7-year stay."
+            ],
+            "break_conditions": [
+              {
+                "event": "Ten-year price data for this micro-market shows sustained growth above 5% a year.",
+                "effect": "flips_decision",
+                "option_id": "buy"
+              },
+              {
+                "event": "Rent for comparable flats is rising faster than 8% a year.",
+                "effect": "reduces_confidence",
+                "option_id": null
+              },
+              {
+                "event": "A job change makes the 7-year stay uncertain.",
+                "effect": "favours_option",
+                "option_id": "rent"
+              }
+            ],
+            "what_would_change_this": "A sourced price-growth figure for the micro-market; your own monthly value on owning."
+          },
+          "reality": {
+            "resists": "Buying resists through about ₹30 L of entry cost that is sunk on day one. Renting resists through rent increases and less control over the home.",
+            "resources": "Both paths are affordable; the reserve survives either choice.",
+            "dependencies": "Buying depends on legal clearance, possession date and registration. Renting depends on landlord renewals every 11 months.",
+            "executable_under_constraints": true
+          },
+          "action_bounds": [
+            {
+              "level": "recommend",
+              "action": "Rent and invest the difference unless the growth or ownership-value case clears the gap."
+            },
+            {
+              "level": "simulate",
+              "action": "Re-run the 7-year comparison at 3%, 4% and 5% yearly growth."
+            },
+            {
+              "level": "prepare",
+              "action": "Prepare a purchase-readiness checklist: legal title, possession date, registration costs."
+            },
+            {
+              "level": "request_warrant",
+              "action": "Make an offer on the flat."
+            }
+          ],
+          "next_72h": [
+            "Find 10-year price history for the micro-market from registration records or two independent sources.",
+            "Write down a monthly value for owning before looking at the growth figure.",
+            "Confirm maintenance, property tax and insurance with the society and municipal bills.",
+            "Re-run the 7-year comparison with rent growing 5% a year."
+          ],
+          "flourishing": {
+            "direction": "Choose with the trade-off in view: buying costs more, and you decide whether that buys something you value.",
+            "leverage": "The growth assumption carries the buy case; make it explicit and sourced.",
+            "stability": "Either path keeps 6+ months of reserve; neither choice is fragile.",
+            "agency_rebalance": "This is now a values decision on top of a safe financial floor.",
+            "trajectory_shift": "From ‘can we?’ to ‘is owning worth about ₹40k a month to us?’"
+          },
+          "forward_disclosure": {
+            "note": "A sourced yearly price-growth figure for this micro-market.",
+            "gap_category": "evidence"
+          },
+          "prediction": {
+            "text": "Ten-year registration data for this micro-market will show yearly growth below the figure brokers quote.",
+            "check_after_hours": 72
+          },
+          "coherence": {
+            "level": "high",
+            "reason": "Gates passing and the matrix still favouring rent are consistent: the gates test safety, the matrix tests value."
+          },
+          "frame_proposal": {
+            "reason": "Track whether expected growth clears the roughly 4% break-even.",
+            "add_inputs": [],
+            "add_metrics": [],
+            "add_gates": [
+              {
+                "id": "g_growth",
+                "label": "Growth clears break-even",
+                "subject": "expected_growth_pct",
+                "op": ">=",
+                "threshold": 4,
+                "threshold_text": "Expected growth at least 4% a year",
+                "protective": false,
+                "depends_on": [
+                  "expected_growth_pct"
+                ]
+              }
+            ],
+            "change_weights": []
+          },
+          "suggested_followups": [
+            "Prices here grew about 6% a year over the last decade.",
+            "Owning is worth about ₹20,000 a month to us."
+          ]
+        }
+      }
+    },
+    {
+      "kind": "frame_accept",
+      "at": "2026-10-30T11:46:00+05:30"
+    },
+    {
+      "kind": "rewind",
+      "at": "2026-10-30T11:50:00+05:30",
+      "to_v": 6
+    },
+    {
+      "kind": "failed",
+      "at": "2026-10-30T11:55:00+05:30",
+      "user_text": "Prices grew 6% a year here.",
+      "route": {
+        "route": "adds_evidence",
+        "confidence": 0.95,
+        "source": "jev"
+      },
+      "reason": "schema: record.matrix[0].scores[0].score is 7 after repair"
+    },
+    {
+      "kind": "clarify",
+      "at": "2026-10-30T11:58:00+05:30",
+      "user_text": "maybe we stay longer, not sure",
+      "route": {
+        "route": "adds_evidence",
+        "confidence": 0.58,
+        "source": "jev"
+      },
+      "user_choice": "comment"
+    },
+    {
+      "kind": "grade",
+      "at": "2026-11-02T09:30:00+05:30",
+      "prediction_id": "p1",
+      "status": "missed"
+    }
+  ]
+}

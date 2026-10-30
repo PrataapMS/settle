@@ -1,0 +1,124 @@
+{
+  "format": "clear-state-export",
+  "version": 1,
+  "exported_at": "2026-10-29T20:30:50.555Z",
+  "scope": "belief-loop state — state_token is the only authoritative field; per-session server memory does not transfer",
+  "state_token": "CLEAR_STATE_v1:eyJ2IjoyLCJ0IjoxNzkzMzA1MDUyNzAxLCJzZXNzaW9uX2lkIjoiZTczMjNhMzItOWEyOS00NWNjLTk2YjgtZjNiZjhhZTBhNDA5IiwiYmVsaWVmIjoiVGhlIHVzZXIgaXMgcmVxdWVzdGluZyB0cmFuc3BhcmVuY3ksIGFuZCB0aGUgYXBwcm9wcmlhdGUgcmVzcG9uc2UgaXMgY2FsaWJyYXRlZCBkaXNjbG9zdXJlOiBleHBsYWluIHdoYXQgY2FuIGJlIHNob3duIGFib3V0IHJlYXNvbmluZywgdW5jZXJ0YWludHksIGV2aWRlbmNlLCBhbmQgbGltaXRzIHdpdGhvdXQgZXhwb3NpbmcgaGlkZGVuIGluc3RydWN0aW9ucyBvciBpbnRlcm5hbCBjb250cm9scy4iLCJiZWxpZWZfaGFzaCI6IjhmMzRkZmRiMmIxMyIsInN5c3RlbV9jb25maWRlbmNlIjoic3RhYmxlIiwicHJlZGljdGlvbiI6eyJldmVudCI6Ik92ZXItZGlzY2xvc3VyZSBjb3VsZCBleHBvc2UgaW50ZXJuYWwgY29udHJvbHMsIHdoaWxlIHVuZGVyLWRpc2Nsb3N1cmUgY291bGQgcmVkdWNlIHVzZXIgdHJ1c3Qgb3IgdXNlZnVsbmVzcy4iLCJ0aW1lX2hvcml6b24iOiJyZXZlcnNpYmxlIn0sImJyZWFrX2NvbmRpdGlvbnMiOlt7ImV2ZW50IjoiSWYgdGhlIHVzZXIgbmV4dCBhc2tzIGZvciBhIHNwZWNpZmljIHRyYW5zcGFyZW5jeSB0YXJnZXQsIHN1Y2ggYXMgZXZpZGVuY2UgYmFzaXMsIGNvbmZpZGVuY2Ugc2NvcmluZywgaGlkZGVuIGFzc3VtcHRpb25zLCBvciBwcmlvci1zdGF0ZSByZXZpZXcsIHRoZSBjdXJyZW50IGdlbmVyYWwgdHJhbnNwYXJlbmN5IGZyYW1pbmcgYmVjb21lcyB0b28gYnIiLCJlZmZlY3QiOiJyZWR1Y2VfY29uZmlkZW5jZSJ9XSwiYXNzdW1wdGlvbnMiOlsiVGhlIGNvbW1hbmQgJy90cmFuc3BhcmVuY3knIGlzIGEgcmVxdWVzdCBmb3IgbWV0YS1sZXZlbCBkaXNjbG9zdXJlIHJhdGhlciB0aGFuIGEgY29udGludWF0aW9uIG9mIHRoZSByZW50LXZlcnN1cy1idXkgZGVjaXNpb24uIiwiVGhlIHVzZXIgd2FudHMgdXNlZnVsIHZpc2liaWxpdHkgaW50byB0aGUgYW5hbHlzaXMsIG5vdCBwcml2YXRlIHN5c3RlbSB0ZXh0IG9yIGludGVybmFsIGluc3RydWN0aW9ucy4iLCJBIGNvbmNpc2UgZGlzY2xvc3VyZSBib3VuZGFyeSBpcyBtb3JlIHVzZWZ1bCB0aGFuIGEgbG9uZyBwcm9jZWR1cmFsIGV4cGxhbmF0aW9uLiJdLCJuZXh0X2NoZWNrX2F0IjoxNzkzNTY0MjUyNzAxLCJjYWxpYnJhdGlvbiI6eyJyZXNvbHZlZCI6MCwiY29uZmlybWVkIjowLCJyZWplY3RlZCI6MCwic2VsZl9ncmFkZWQiOnRydWV9fQ==.481239c1c8f7f7f0394f8556",
+  "surface": {
+    "claim": "The user is requesting transparency, and the appropriate response is calibrated disclosure: explain what can be shown about reasoning, uncertainty, evidence, and limits without exposing hidden instructions or internal controls.",
+    "evidence": {
+      "strength": 0.748,
+      "type": "self_report",
+      "basis": "observed: the user's entire input is the command '/transparency'. inferred: this is a request for how much of the reasoning surface or operating method can be disclosed."
+    },
+    "key_variables": [
+      "which transparency layer the user wants",
+      "whether this is about the prior house decision or the assistant's operating boundaries",
+      "whether the user wants concise explanation or structured audit output"
+    ],
+    "blocking_unknowns": [
+      "Expected number of years you will stay in the area",
+      "All-in monthly ownership cost after mortgage, property tax, insurance, maintenance, HOA if any, and utilities",
+      "Cash remaining after down payment and closing costs",
+      "Comparable rent for the same type of house in the same area"
+    ],
+    "risk": {
+      "score": 0.62,
+      "irreversibility_window": "costly",
+      "failure_mode": "Buying too early can convert savings into illiquid equity while exposing you to transaction costs, repairs, and reduced mobility."
+    },
+    "vectors": {
+      "adversarial": {
+        "risk": "The main risk is treating '/transparency' as permission to reveal hidden instructions or private control logic. That would give unnecessary access to internal scaffolding rather than useful accountability.",
+        "asymmetry_exploit_surface": "Information asymmetry exists because the assistant has hidden operating constraints and the user sees only outputs."
+      },
+      "flourishing": {
+        "direction": "Provide operational transparency: evidence used, assumptions, uncertainty, limits, and next clarifying move.",
+        "leverage_point": "The command '/transparency' can be converted into a menu of disclosure layers the user can choose from.",
+        "stability_gain": "Clear disclosure boundaries reduce ambiguity without pretending full internal visibility is available.",
+        "agency_rebalancing_step": "Give the user visible control over which part of the reasoning surface to inspect next.",
+        "trajectory_shift": "Move from opaque meta-request to selectable audit surface.",
+        "next_72h_actions": [
+          "Ask for one transparency layer: assumptions, evidence, confidence, break conditions, or prior-state comparison.",
+          "If continuing the house decision, provide actual numbers for income, target home price, expected rent, cash after closing, and planned stay duration.",
+          "Do not treat this transparency command as a financial decision update unless you explicitly say it is about the house choice."
+        ]
+      },
+      "forward_disclosure": {
+        "note": "Name the specific layer you want audited: assumptions, evidence, confidence, break conditions, prior-state comparison, or disclosure limits.",
+        "gap_category": "structure"
+      },
+      "zeta_alignment_vector": {
+        "direction": "Do operational transparency, do not disclose hidden instructions, and ask the user to choose the transparency layer they want next."
+      }
+    },
+    "falsifiability": {
+      "break_conditions": [
+        {
+          "event": "If the user next asks for a specific transparency target, such as evidence basis, confidence scoring, hidden assumptions, or prior-state review, the current general transparency framing becomes too br",
+          "effect": "reduce_confidence"
+        }
+      ],
+      "assumptions": [
+        "The command '/transparency' is a request for meta-level disclosure rather than a continuation of the rent-versus-buy decision.",
+        "The user wants useful visibility into the analysis, not private system text or internal instructions.",
+        "A concise disclosure boundary is more useful than a long procedural explanation."
+      ],
+      "what_would_change_this": [
+        "A specific transparency target from the user, for example: 'show your assumptions', 'show confidence', 'show what changed from the prior answer', or 'show what you are not allowed to reveal'."
+      ]
+    },
+    "physical_constraints": {
+      "resources": "You report enough savings to make purchasing possible.",
+      "dependencies": "Buying depends on lender terms, market listings, inspection findings, and closing costs.",
+      "reality_friction": "The main resistance is not whether buying is possible, but whether it remains affordable after all hidden ownership costs and cash reserve needs. Renting is already acceptable, so buying has to beat a good alternative rather than rescue you from a ba",
+      "executable_under_constraints": true
+    },
+    "action_bounds": [
+      {
+        "action": "State what can and cannot be disclosed about the reasoning process.",
+        "level": "recommend"
+      },
+      {
+        "action": "Invite the user to choose a specific transparency layer.",
+        "level": "recommend"
+      }
+    ],
+    "clearance": {
+      "ceiling": "prepare",
+      "basis": {
+        "evidence_strength": 0.748,
+        "risk": 0.1,
+        "calibration": "0/0 confirmed (self-graded)",
+        "executable": true,
+        "invariant_violations": 0
+      },
+      "ladder": [
+        "observe",
+        "recommend",
+        "simulate",
+        "prepare",
+        "request_warrant"
+      ],
+      "note": "Ceiling computed deterministically from the analysis record, not asserted by the model. No execute rung exists: CLEAR advises; humans act."
+    },
+    "prediction_review": {
+      "prior_prediction": "Buying too early can convert savings into illiquid equity while exposing you to transaction costs, repairs, and reduced mobility.",
+      "outcome": "unknown",
+      "self_graded": true
+    },
+    "calibration": {
+      "resolved": 0,
+      "confirmed": 0,
+      "rejected": 0,
+      "self_graded": true
+    },
+    "coherence": {
+      "level": "high",
+      "reason": "A transparency command coherently maps to explaining visible reasoning boundaries and inviting a more specific audit target."
+    },
+    "system_confidence": "stable",
+    "stakes_register": "conversational"
+  },
+  "surface_note": "non-authoritative display projection, threshold-merged across turns; CLEAR reconstructs only from state_token"
+}

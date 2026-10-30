@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settle decision state</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/kuat/styles.css">
+<link rel="stylesheet" href="ds/kuat/tokens/fonts.css">
+<link rel="stylesheet" href="ds/kuat/tokens/colors.css">
+<link rel="stylesheet" href="ds/kuat/tokens/semantic.css">
+<link rel="stylesheet" href="ds/kuat/tokens/typography.css">
+<link rel="stylesheet" href="ds/kuat/tokens/spacing.css">
+<link rel="stylesheet" href="ds/kuat/tokens/shadows.css">
+<link rel="stylesheet" href="ds/kuat/tokens/component-tokens.css">
+<link rel="stylesheet" href="ds/kuat/tokens/button-variables.css">
+<link rel="stylesheet" href="ds/kuat/tokens/base.css">
+<script src="ds/kuat/_ds_bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:var(--link)}a:hover{color:var(--primary)}
+.ey{font-family:var(--font-mono);font-size:11px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-foreground);margin:0}
+.tb{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.45}
+.tb th,.tb td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--border)}
+.tb thead th{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground)}
+.tb tbody th{font-weight:600}
+.cd{font-family:var(--font-mono);font-size:12.5px}
+</style>
+</helmet>
+<div style="width:1120px;height:1900px;box-sizing:border-box;padding:56px;background:var(--background);color:var(--foreground);font-family:var(--font-sans);font-size:15px;line-height:1.6;display:flex;flex-direction:column;gap:30px">
+
+<div style="display:flex;flex-direction:column;gap:6px">
+<p class="ey" style="color:var(--primary)">Settle · for the tech-stack review</p>
+<h1 style="margin:0;font-size:32px;line-height:38px;font-weight:600;letter-spacing:-1px">Decision state: one log, one state, per decision</h1>
+<p style="margin:0;max-width:880px;color:var(--muted-foreground)">The log is authoritative and append-only. The state is the latest decision record, rebuilt from the log at any time and sent to the model each turn. Because the state is derivable, it needs no signature. That makes it simpler than the current token and more complete.</p>
+</div>
+
+<div style="display:flex;align-items:stretch;gap:12px">
+<div style="flex:1;border:1px solid var(--border);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:6px">
+<p class="ey">Every turn</p>
+<p style="margin:0;font-weight:600">Append to log</p>
+<p style="margin:0;font-size:14px;color:var(--muted-foreground)">User message, reply, validated record, time, model and prompt version.</p>
+</div>
+<div style="display:flex;align-items:center;color:var(--muted-foreground)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></div>
+<div style="flex:1;border:1px solid var(--primary);background:color-mix(in srgb,var(--primary) 8%,var(--card));padding:16px;display:flex;flex-direction:column;gap:6px">
+<p class="ey" style="color:var(--ee-blue-700)">Decision turn</p>
+<p style="margin:0;font-weight:600">Engine writes state v+1</p>
+<p style="margin:0;font-size:14px;color:var(--muted-foreground)">New belief, inputs, matrix, gates, ceiling, prediction. Hash links it to vN.</p>
+</div>
+<div style="display:flex;align-items:center;color:var(--muted-foreground);font-size:13px;font-family:var(--font-mono)">or</div>
+<div style="flex:1;border:1px dashed var(--border);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:6px">
+<p class="ey">Meta turn · /command</p>
+<p style="margin:0;font-weight:600">State untouched</p>
+<p style="margin:0;font-size:14px;color:var(--muted-foreground)">Answered from the current state. Logged, but no belief, score or prediction changes.</p>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">Current token compared with Settle</p>
+<table class="tb">
+<thead><tr><th scope="col" style="width:150px">Aspect</th><th scope="col">Current state_token</th><th scope="col">Settle</th></tr></thead>
+<tbody>
+<tr><th scope="row">Scope</th><td>One per session</td><td>One per decision; a session can touch several</td></tr>
+<tr><th scope="row">Belief</th><td>A single slot. <span class="cd">/transparency</span> replaced the rent-or-buy belief.</td><td>Current belief plus history: each version, the turn that set it, and the one that replaced it</td></tr>
+<tr><th scope="row">Decision content</th><td>Not in the token; the surface is "non-authoritative", so options, scores and gates cannot be restored</td><td>Inputs with values and the turn they arrived, matrix, gates, assumptions and ceiling are all in the state</td></tr>
+<tr><th scope="row">Integrity</th><td>Base64 payload plus a 96-bit HMAC; meaningful only if the key never reaches the client</td><td>Hash chain (each state hashes the previous). Detects corruption and gaps; nothing secret to protect locally</td></tr>
+<tr><th scope="row">Predictions</th><td>One <span class="cd">prediction</span> with a <span class="cd">time_horizon</span>; <span class="cd">next_check_at</span> on the token</td><td>One per decision turn, each with <span class="cd">check_at</span> and a status you set</td></tr>
+<tr><th scope="row">Calibration</th><td>Counts stay 0 and self-graded</td><td>Derived from your grades, so it moves</td></tr>
+<tr><th scope="row">Portability</th><td>Token transfers; server session memory does not</td><td>One <span class="cd">settle-decision</span> file restores state and full history</td></tr>
+<tr><th scope="row">Kept as is</th><td colspan="2"><span class="cd">belief_hash</span> (now the state hash), assumptions, break conditions, <span class="cd">next_check_at</span> (now per prediction), <span class="cd">system_confidence</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">State object (what the model receives)</p>
+<pre style="margin:0;font-family:var(--font-mono);font-size:12px;line-height:1.55;background:var(--muted);border:1px solid var(--border);padding:16px;white-space:pre-wrap">{
+  "format": "settle-state", "version": 1,
+  "decision_id": "dec_rent_or_buy",
+  "v": 3, "updated_at": "2026-10-30T11:05:00+05:30",
+  "prev_hash": "9c41e07a", "hash": "2b7f03d1",
+  "belief": {
+    "text": "Buying is now safe on all three...",
+    "since": 3,
+    "history": [{ "v": 1, "text": "..." }, { "v": 2, "text": "..." }]
+  },
+  "direction": "Lean rent and invest the difference...",
+  "options": ["rent", "buy"],
+  "inputs": {
+    "stay_years": { "value": 7, "since": 3 },
+    "down_payment_covered": { "value": true, "since": 2 },
+    "expected_growth_pct": null
+  },
+  "matrix": [{ "criterion", "weight", "rent", "buy" }],
+  "gates": [{ "gate", "status", "protective" }],
+  "assumptions": ["Stamp duty and registration about 7%", "..."],
+  "predictions": [{ "id": "p3", "made_in": 3, "text": "...",
+                    "check_at": "2026-11-02T...", "status": "open" }],
+  "calibration": { "resolved": 0, "held": 0, "missed": 0, "graded_by": "none" },
+  "ceiling": "prepare"
+}</pre>
+<p style="margin:0;font-size:13px;color:var(--muted-foreground)">About 2 to 4 KB. Sending this instead of the whole thread keeps the cost per turn flat as threads grow.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">Browser storage (IndexedDB)</p>
+<table class="tb">
+<thead><tr><th scope="col">Store</th><th scope="col">Key</th><th scope="col">Holds</th></tr></thead>
+<tbody>
+<tr><th scope="row" class="cd">decisions</th><td class="cd">id</td><td>Title, created and updated time, current state (a cache)</td></tr>
+<tr><th scope="row" class="cd">log</th><td class="cd">[decisionId, seq]</td><td>Decision and meta turns; append-only, never edited</td></tr>
+<tr><th scope="row" class="cd">ui</th><td class="cd">"settings"</td><td>Theme, density, open sections, checklist ticks</td></tr>
+</tbody>
+</table>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">Rules</p>
+<ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:14px">
+<li>A decision turn appends to the log and replaces the state with v+1. Nothing else writes the state.</li>
+<li>A meta turn, or a message the turn check marks too vague or off topic, appends to the log only. It may read the state but never change it.</li>
+<li>Rewinding to vN rebuilds the state from the log up to vN; later entries stay in the log, marked superseded.</li>
+<li>Import replays the log through the engine and compares every hash. Any mismatch stops the import and names the first bad entry.</li>
+<li>Predictions come due at <span class="cd">check_at</span>; the thread shows a prompt to grade them. Only you grade.</li>
+<li>Export is one JSON file: state, log and settings. Markdown export is for reading, not restoring.</li>
+</ol>
+</div>
+<div style="border:1px solid var(--border);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:6px">
+<p class="ey">When signing would earn its place</p>
+<p style="margin:0;font-size:14px">Only when a server must trust state the client holds, such as shared read-only links or a hosted engine. The key then stays server-side. For local-only, no-login use, a signature adds code without protecting anything.</p>
+</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1120,"height":1900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

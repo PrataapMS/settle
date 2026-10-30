@@ -1,0 +1,140 @@
+{
+  "note": "Canonical JSON test vectors (RFC 8785). In TS: expect(canonical(value)).toBe(c.canonical) and sha256Hex(...) toBe(c.sha256). -0.0 and 8.0 are written in this file as JSON numbers, which TS parses as -0 and 8.",
+  "cases": [
+    {
+      "name": "zero",
+      "value": 0,
+      "canonical": "0",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "name": "negative zero",
+      "value": -0.0,
+      "canonical": "0",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "name": "integer float",
+      "value": 8.0,
+      "canonical": "8",
+      "sha256": "2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3"
+    },
+    {
+      "name": "decimal",
+      "value": 8.5,
+      "canonical": "8.5",
+      "sha256": "cc6f2aa507f6a1f7de2db7e09ddef04282962c09cb6c6d659f0fa9aa07ac3b6c"
+    },
+    {
+      "name": "binary fraction",
+      "value": 0.30000000000000004,
+      "canonical": "0.30000000000000004",
+      "sha256": "06bad31060c1212ae832de4c031f7b31e3b48aed57858294478cb19450cf34ca"
+    },
+    {
+      "name": "metric",
+      "value": 76368.4445,
+      "canonical": "76368.4445",
+      "sha256": "f092d3306761f71520e81c5fbdfbe27b79307f54d7936fce5194095ecef00278"
+    },
+    {
+      "name": "small",
+      "value": 1e-06,
+      "canonical": "0.000001",
+      "sha256": "159fb29a827ad04b260aa6c8ab6d8637f8f2b38af5c4f3cb49d6a21205e040f8"
+    },
+    {
+      "name": "smaller",
+      "value": 1e-07,
+      "canonical": "1e-7",
+      "sha256": "5b33e02f2c5103a05d32f6ba9cb058294452bfbf393967f68bb30c1bdcbbab22"
+    },
+    {
+      "name": "large",
+      "value": 1.2345678901234568e+20,
+      "canonical": "123456789012345680000",
+      "sha256": "725abf175290195635e55a971cf88e02a46d6d56e964ec2d8bc47614b9559062"
+    },
+    {
+      "name": "very large",
+      "value": 1e+21,
+      "canonical": "1e+21",
+      "sha256": "241c4643fa70b1dcde1205b71be4e3bebb17e9f880c8e1a33d0ead6c27271d3c"
+    },
+    {
+      "name": "2^53",
+      "value": 9007199254740992,
+      "canonical": "9007199254740992",
+      "sha256": "c681da39d7273a6a24c15c9cac3a75526ff2ecf8ba4ee60346a0c70c8163bdb2"
+    },
+    {
+      "name": "2^53 + 2 (float)",
+      "value": 9007199254740994.0,
+      "canonical": "9007199254740994",
+      "sha256": "25aa68783313802627958889943e895749ac4c0c7469b2a305cd450a12120768"
+    },
+    {
+      "name": "2^60 (float)",
+      "value": 1.152921504606847e+18,
+      "canonical": "1152921504606847000",
+      "sha256": "fb2c76e2bae2715eba806c59577ddd5c0845a17edb83d31b0420ab960918fe1e"
+    },
+    {
+      "name": "negative exponent",
+      "value": -1.5e-10,
+      "canonical": "-1.5e-10",
+      "sha256": "19ca303844b8cb9af4ec4dbd2d619c3be9c7c3cfa82c4e90c2b04821ad4f07f9"
+    },
+    {
+      "name": "money",
+      "value": 11000000,
+      "canonical": "11000000",
+      "sha256": "fe87a77625b901682780c0c10f8dfdcdc5bb36de8abfd36248f29d51391d7679"
+    },
+    {
+      "name": "ratio",
+      "value": 0.2288,
+      "canonical": "0.2288",
+      "sha256": "3a16fce61e0abea5838da8019f60ac2139fe935115922d951bd24afac5b71761"
+    },
+    {
+      "name": "unicode string",
+      "value": "₹1.1 Cr · ‘quoted’ — dash",
+      "canonical": "\"₹1.1 Cr · ‘quoted’ — dash\"",
+      "sha256": "8f86609b57ed6b57c9a26ee416ab38ea6544c2c18248e4594a3ce182eb277874"
+    },
+    {
+      "name": "control characters",
+      "value": "line\nbreak\ttab\u0001",
+      "canonical": "\"line\\nbreak\\ttab\\u0001\"",
+      "sha256": "73b067f78edf015690afb03cc5717ac424b8af111c08dc01cfee55208c6e91df"
+    },
+    {
+      "name": "key order (UTF-16 code units)",
+      "value": {
+        "ｚ": 4,
+        "😀": 3,
+        "é": 2,
+        "a": 1,
+        "B": 0
+      },
+      "canonical": "{\"B\":0,\"a\":1,\"é\":2,\"😀\":3,\"ｚ\":4}",
+      "sha256": "4e9b87dbdbbf06022243bdce6b0680cc0b264ae8b348f1d307d54dc4f247d163"
+    },
+    {
+      "name": "nested",
+      "value": {
+        "b": [
+          1,
+          {
+            "d": true,
+            "c": null
+          }
+        ],
+        "a": "x"
+      },
+      "canonical": "{\"a\":\"x\",\"b\":[1,{\"c\":null,\"d\":true}]}",
+      "sha256": "692184961ba5561cd5980f2bc9a05cc1545fff37cf981faa705d8e466f1b116c"
+    }
+  ]
+}

@@ -1,0 +1,273 @@
+/*
+ * Settle theme tokens for shadcn/ui (Tailwind CSS v4).
+ *
+ * Usage: import after Tailwind in src/index.css, then set ONE theme class on <html>:
+ *   theme-midnight (default) | theme-light | theme-dark | theme-paper
+ * Dark-style themes also add the `dark` class so shadcn's `dark:` variants apply.
+ *
+ * IMPORTANT: these rules are deliberately unlayered. `shadcn init` writes its own unlayered
+ * :root, .dark and @theme inline blocks into src/index.css; delete those three blocks
+ * (keep `@custom-variant dark`) or they will override the themes below.
+ *
+ * Standard shadcn tokens are redefined per theme; Settle adds:
+ *   --sec-*   section accents (text-safe on --card in that theme)
+ *   --opt-a…e option colours for matrix dots and legends (up to 5 options)
+ *   --up, --down  delta colours (always paired with words)
+ *   --pad, --gap  panel spacing (density)
+ *
+ * Contrast targets: body text 4.5:1 on --background and --card; --primary-foreground on --primary 4.5:1;
+ * --sec-* and --muted-foreground 4.5:1 on --card. Verify with axe in all four themes (P3.10).
+ */
+
+  :root,
+  .theme-midnight {
+    --radius: 0.625rem;
+    --background: #0b0f12;
+    --foreground: #e4ebe8;
+    --card: #121a1f;
+    --card-foreground: #e4ebe8;
+    --popover: #121a1f;
+    --popover-foreground: #e4ebe8;
+    --primary: #6bc9ca;
+    --primary-foreground: #04110f;
+    --secondary: #1a242b;
+    --secondary-foreground: #e4ebe8;
+    --muted: #1a242b;
+    --muted-foreground: #9fb0aa;
+    --accent: #10302d;
+    --accent-foreground: #e4ebe8;
+    --destructive: #d98786;
+    --border: #27343c;
+    --input: #27343c;
+    --ring: #6bc9ca;
+    --panel: #0e1418;
+    --user-bubble: #10302d;
+
+    --sec-adv: #d98786;   /* adversarial */
+    --sec-fal: #ffab4d;   /* falsifiability */
+    --sec-real: #a1c8e2;  /* reality */
+    --sec-act: #4dbced;   /* actions, clearance */
+    --sec-flo: #6bc9ca;   /* flourishing, observed */
+    --sec-dir: #ffab4d;   /* direction */
+    --sec-need: #ffab4d;  /* needs answers, not applied */
+    --sec-var: #d3afcc;   /* key variables, belief */
+
+    --opt-a: #4dbced;
+    --opt-b: #ffab4d;
+    --opt-c: #6bc9ca;
+    --opt-d: #c092b8;
+    --opt-e: #b1d923;
+
+    --up: #72b070;
+    --down: #d98786;
+
+    --pad: 20px;
+    --gap: 16px;
+    color-scheme: dark;
+  }
+
+  .theme-light {
+    --radius: 0.5rem;
+    --background: #ffffff;
+    --foreground: #212526;
+    --card: #ffffff;
+    --card-foreground: #212526;
+    --popover: #ffffff;
+    --popover-foreground: #212526;
+    --primary: #1378ae;
+    --primary-foreground: #ffffff;
+    --secondary: #f5f5f5;
+    --secondary-foreground: #212526;
+    --muted: #f5f5f5;
+    --muted-foreground: #606364;
+    --accent: #e6f5fc;
+    --accent-foreground: #212526;
+    --destructive: #a3152b;
+    --border: #dbdbdb;
+    --input: #dbdbdb;
+    --ring: #1378ae;
+    --panel: #fafafa;
+    --user-bubble: #e6f5fc;
+
+    --sec-adv: #a3152b;
+    --sec-fal: #904a00;
+    --sec-real: #22567c;
+    --sec-act: #105c88;
+    --sec-flo: #175e5f;
+    --sec-dir: #904a00;
+    --sec-need: #904a00;
+    --sec-var: #853d7b;
+
+    --opt-a: #1378ae;
+    --opt-b: #c06300;
+    --opt-c: #1f7d7e;
+    --opt-d: #853d7b;
+    --opt-e: #5f7600;
+
+    --up: #056810;
+    --down: #a3152b;
+    color-scheme: light;
+  }
+
+  .theme-dark {
+    --radius: 0.5rem;
+    --background: #16191b;
+    --foreground: #f2f4f5;
+    --card: #1f2427;
+    --card-foreground: #f2f4f5;
+    --popover: #1f2427;
+    --popover-foreground: #f2f4f5;
+    --primary: #4dbced;
+    --primary-foreground: #04121e;
+    --secondary: #2a3034;
+    --secondary-foreground: #f2f4f5;
+    --muted: #2a3034;
+    --muted-foreground: #b9bec0;
+    --accent: #0c4062;
+    --accent-foreground: #f2f4f5;
+    --destructive: #d98786;
+    --border: #3a4145;
+    --input: #3a4145;
+    --ring: #4dbced;
+    --panel: #1a1e21;
+    --user-bubble: #15354a;
+
+    --sec-adv: #d98786;
+    --sec-fal: #ffab4d;
+    --sec-real: #a1c8e2;
+    --sec-act: #80cff2;
+    --sec-flo: #6bc9ca;
+    --sec-dir: #ffab4d;
+    --sec-need: #ffc380;
+    --sec-var: #d3afcc;
+
+    --opt-a: #4dbced;
+    --opt-b: #ffab4d;
+    --opt-c: #6bc9ca;
+    --opt-d: #c092b8;
+    --opt-e: #b1d923;
+
+    --up: #72b070;
+    --down: #d98786;
+    color-scheme: dark;
+  }
+
+  .theme-paper {
+    --radius: 0.375rem;
+    --background: #f6f3ec;
+    --foreground: #23211d;
+    --card: #fffdf8;
+    --card-foreground: #23211d;
+    --popover: #fffdf8;
+    --popover-foreground: #23211d;
+    --primary: #22567c;
+    --primary-foreground: #ffffff;
+    --secondary: #ebe5d8;
+    --secondary-foreground: #23211d;
+    --muted: #ebe5d8;
+    --muted-foreground: #59544a;
+    --accent: #e8eef3;
+    --accent-foreground: #23211d;
+    --destructive: #a3152b;
+    --border: #dad2c2;
+    --input: #dad2c2;
+    --ring: #22567c;
+    --panel: #f1ece2;
+    --user-bubble: #ebe5d8;
+
+    --sec-adv: #a3152b;
+    --sec-fal: #904a00;
+    --sec-real: #22567c;
+    --sec-act: #105c88;
+    --sec-flo: #175e5f;
+    --sec-dir: #904a00;
+    --sec-need: #904a00;
+    --sec-var: #853d7b;
+
+    --opt-a: #22567c;
+    --opt-b: #c06300;
+    --opt-c: #1f7d7e;
+    --opt-d: #853d7b;
+    --opt-e: #5f7600;
+
+    --up: #056810;
+    --down: #a3152b;
+    color-scheme: light;
+  }
+
+  .density-compact {
+    --pad: 14px;
+    --gap: 10px;
+    font-size: 14px;
+  }
+
+  body {
+    font-family: "Lexend Variable", ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.01em;
+  }
+
+  .font-mono,
+  code,
+  pre {
+    font-family: "JetBrains Mono Variable", ui-monospace, Menlo, monospace;
+  }
+
+/* Map to Tailwind utilities (bg-background, text-sec-adv, bg-opt-a, ...). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-panel: var(--panel);
+  --color-user-bubble: var(--user-bubble);
+  --color-sec-adv: var(--sec-adv);
+  --color-sec-fal: var(--sec-fal);
+  --color-sec-real: var(--sec-real);
+  --color-sec-act: var(--sec-act);
+  --color-sec-flo: var(--sec-flo);
+  --color-sec-dir: var(--sec-dir);
+  --color-sec-need: var(--sec-need);
+  --color-sec-var: var(--sec-var);
+  --color-opt-a: var(--opt-a);
+  --color-opt-b: var(--opt-b);
+  --color-opt-c: var(--opt-c);
+  --color-opt-d: var(--opt-d);
+  --color-opt-e: var(--opt-e);
+  --color-up: var(--up);
+  --color-down: var(--down);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Tinted section box: <div class="sec-box" style="--c: var(--sec-adv)"> */
+.sec-box {
+  border: 1px solid color-mix(in srgb, var(--c) 34%, var(--border));
+  background: color-mix(in srgb, var(--c) 7%, var(--card));
+  border-radius: var(--radius-lg);
+  padding: var(--pad);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

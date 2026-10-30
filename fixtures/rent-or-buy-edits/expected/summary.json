@@ -1,0 +1,639 @@
+{
+  "final": {
+    "calibration": {
+      "graded_by": "user",
+      "held": 0,
+      "missed": 1,
+      "resolved": 1
+    },
+    "log_head": "20a4a2de30ec24acdb91637e96ca66d404ec76076e119bcb9d72a546f5f1ee56",
+    "pending_frame_proposal": true,
+    "v": 10
+  },
+  "versions": [
+    {
+      "base_v": null,
+      "cause": "decision",
+      "ceiling": "recommend",
+      "confidence": 18,
+      "deltas": null,
+      "evidence": {
+        "known": 0,
+        "required": 9,
+        "strength": 0
+      },
+      "frame_version": 1,
+      "gates": {
+        "g_afford": [
+          "unknown",
+          null
+        ],
+        "g_reserve": [
+          "unknown",
+          null
+        ],
+        "g_stay": [
+          "unknown",
+          null
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": null,
+        "all_in_ratio": null,
+        "emi": null,
+        "loan_principal": null
+      },
+      "pending_frame_proposal": false,
+      "risk": 68,
+      "superseded": [],
+      "system_confidence": "evolving",
+      "totals": {
+        "buy": 54,
+        "rent": 76
+      },
+      "v": 1
+    },
+    {
+      "base_v": null,
+      "cause": "decision",
+      "ceiling": "recommend",
+      "confidence": 48,
+      "deltas": {
+        "ceiling_steps": 0,
+        "confidence": 30,
+        "criteria_changed": [
+          "liquidity"
+        ],
+        "evidence_strength": 0.09,
+        "gates_changed": [
+          "g_reserve"
+        ],
+        "gates_passed": 0,
+        "risk": -6,
+        "totals": {
+          "buy": 4,
+          "rent": 0
+        }
+      },
+      "evidence": {
+        "known": 1,
+        "required": 9,
+        "strength": 0.09
+      },
+      "frame_version": 1,
+      "gates": {
+        "g_afford": [
+          "unknown",
+          null
+        ],
+        "g_reserve": [
+          "partial",
+          null
+        ],
+        "g_stay": [
+          "unknown",
+          null
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": null,
+        "all_in_ratio": null,
+        "emi": null,
+        "loan_principal": null
+      },
+      "pending_frame_proposal": false,
+      "risk": 62,
+      "superseded": [],
+      "system_confidence": "evolving",
+      "totals": {
+        "buy": 58,
+        "rent": 76
+      },
+      "v": 2
+    },
+    {
+      "base_v": null,
+      "cause": "decision",
+      "ceiling": "prepare",
+      "confidence": 74,
+      "deltas": {
+        "ceiling_steps": 2,
+        "confidence": 26,
+        "criteria_changed": [
+          "horizon_fit",
+          "monthly_cost",
+          "liquidity"
+        ],
+        "evidence_strength": 0.63,
+        "gates_changed": [
+          "g_stay",
+          "g_afford",
+          "g_reserve",
+          "g_ptr"
+        ],
+        "gates_passed": 3,
+        "risk": -18,
+        "totals": {
+          "buy": 9,
+          "rent": 5
+        }
+      },
+      "evidence": {
+        "known": 9,
+        "required": 10,
+        "strength": 0.72
+      },
+      "frame_version": 2,
+      "gates": {
+        "g_afford": [
+          "pass",
+          0.2288
+        ],
+        "g_ptr": [
+          "fail",
+          21.8254
+        ],
+        "g_reserve": [
+          "pass",
+          8
+        ],
+        "g_stay": [
+          "pass",
+          7
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": 82368.4445,
+        "all_in_ratio": 0.2288,
+        "emi": 76368.4445,
+        "loan_principal": 8800000,
+        "price_to_rent": 21.8254
+      },
+      "pending_frame_proposal": false,
+      "risk": 44,
+      "superseded": [],
+      "system_confidence": "evolving",
+      "totals": {
+        "buy": 67,
+        "rent": 81
+      },
+      "v": 3
+    },
+    {
+      "base_v": null,
+      "cause": "frame_edit",
+      "ceiling": "prepare",
+      "confidence": 74,
+      "deltas": {
+        "ceiling_steps": 0,
+        "confidence": 0,
+        "criteria_changed": [],
+        "evidence_strength": -0.07,
+        "gates_changed": [],
+        "gates_passed": 0,
+        "risk": 0,
+        "totals": {
+          "buy": -6,
+          "rent": 6
+        }
+      },
+      "evidence": {
+        "known": 9,
+        "required": 11,
+        "strength": 0.65
+      },
+      "frame_version": 3,
+      "gates": {
+        "g_afford": [
+          "pass",
+          0.2288
+        ],
+        "g_ptr": [
+          "fail",
+          21.8254
+        ],
+        "g_reserve": [
+          "pass",
+          8
+        ],
+        "g_stay": [
+          "pass",
+          7
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": 82368.4445,
+        "all_in_ratio": 0.2288,
+        "emi": 76368.4445,
+        "loan_principal": 8800000,
+        "price_to_rent": 21.8254
+      },
+      "pending_frame_proposal": false,
+      "risk": 44,
+      "superseded": [],
+      "system_confidence": "stable",
+      "totals": {
+        "buy": 61,
+        "rent": 87
+      },
+      "v": 4
+    },
+    {
+      "base_v": 2,
+      "cause": "rewind",
+      "ceiling": "recommend",
+      "confidence": 48,
+      "deltas": {
+        "ceiling_steps": -2,
+        "confidence": -26,
+        "criteria_changed": [
+          "horizon_fit",
+          "monthly_cost",
+          "liquidity"
+        ],
+        "evidence_strength": -0.56,
+        "gates_changed": [
+          "g_stay",
+          "g_afford",
+          "g_reserve"
+        ],
+        "gates_passed": -3,
+        "risk": 18,
+        "totals": {
+          "buy": -3,
+          "rent": -11
+        }
+      },
+      "evidence": {
+        "known": 1,
+        "required": 9,
+        "strength": 0.09
+      },
+      "frame_version": 1,
+      "gates": {
+        "g_afford": [
+          "unknown",
+          null
+        ],
+        "g_reserve": [
+          "partial",
+          null
+        ],
+        "g_stay": [
+          "unknown",
+          null
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": null,
+        "all_in_ratio": null,
+        "emi": null,
+        "loan_principal": null
+      },
+      "pending_frame_proposal": false,
+      "risk": 62,
+      "superseded": [
+        3,
+        4
+      ],
+      "system_confidence": "evolving",
+      "totals": {
+        "buy": 58,
+        "rent": 76
+      },
+      "v": 5
+    },
+    {
+      "base_v": null,
+      "cause": "decision",
+      "ceiling": "prepare",
+      "confidence": 74,
+      "deltas": {
+        "ceiling_steps": 2,
+        "confidence": 26,
+        "criteria_changed": [
+          "horizon_fit",
+          "monthly_cost",
+          "liquidity"
+        ],
+        "evidence_strength": 0.63,
+        "gates_changed": [
+          "g_stay",
+          "g_afford",
+          "g_reserve",
+          "g_ptr"
+        ],
+        "gates_passed": 3,
+        "risk": -18,
+        "totals": {
+          "buy": 9,
+          "rent": 5
+        }
+      },
+      "evidence": {
+        "known": 9,
+        "required": 10,
+        "strength": 0.72
+      },
+      "frame_version": 4,
+      "gates": {
+        "g_afford": [
+          "pass",
+          0.2288
+        ],
+        "g_ptr": [
+          "fail",
+          21.8254
+        ],
+        "g_reserve": [
+          "pass",
+          8
+        ],
+        "g_stay": [
+          "pass",
+          7
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": 82368.4445,
+        "all_in_ratio": 0.2288,
+        "emi": 76368.4445,
+        "loan_principal": 8800000,
+        "price_to_rent": 21.8254
+      },
+      "pending_frame_proposal": true,
+      "risk": 44,
+      "superseded": [
+        3,
+        4
+      ],
+      "system_confidence": "evolving",
+      "totals": {
+        "buy": 67,
+        "rent": 81
+      },
+      "v": 6
+    },
+    {
+      "base_v": null,
+      "cause": "decision",
+      "ceiling": "prepare",
+      "confidence": 74,
+      "deltas": {
+        "ceiling_steps": 0,
+        "confidence": 0,
+        "criteria_changed": [],
+        "evidence_strength": 0,
+        "gates_changed": [],
+        "gates_passed": 0,
+        "risk": 0,
+        "totals": {
+          "buy": 0,
+          "rent": 0
+        }
+      },
+      "evidence": {
+        "known": 9,
+        "required": 10,
+        "strength": 0.72
+      },
+      "frame_version": 4,
+      "gates": {
+        "g_afford": [
+          "pass",
+          0.2288
+        ],
+        "g_ptr": [
+          "fail",
+          21.8254
+        ],
+        "g_reserve": [
+          "pass",
+          8
+        ],
+        "g_stay": [
+          "pass",
+          7
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": 82368.4445,
+        "all_in_ratio": 0.2288,
+        "emi": 76368.4445,
+        "loan_principal": 8800000,
+        "price_to_rent": 21.8254
+      },
+      "pending_frame_proposal": true,
+      "risk": 44,
+      "superseded": [
+        3,
+        4
+      ],
+      "system_confidence": "stable",
+      "totals": {
+        "buy": 67,
+        "rent": 81
+      },
+      "v": 7
+    },
+    {
+      "base_v": null,
+      "cause": "decision",
+      "ceiling": "prepare",
+      "confidence": 74,
+      "deltas": {
+        "ceiling_steps": 0,
+        "confidence": 0,
+        "criteria_changed": [],
+        "evidence_strength": 0.08,
+        "gates_changed": [
+          "g_growth"
+        ],
+        "gates_passed": 1,
+        "risk": 0,
+        "totals": {
+          "buy": 0,
+          "rent": 0
+        }
+      },
+      "evidence": {
+        "known": 10,
+        "required": 10,
+        "strength": 0.8
+      },
+      "frame_version": 5,
+      "gates": {
+        "g_afford": [
+          "pass",
+          0.2288
+        ],
+        "g_growth": [
+          "pass",
+          6
+        ],
+        "g_ptr": [
+          "fail",
+          21.8254
+        ],
+        "g_reserve": [
+          "pass",
+          8
+        ],
+        "g_stay": [
+          "pass",
+          7
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": 82368.4445,
+        "all_in_ratio": 0.2288,
+        "emi": 76368.4445,
+        "loan_principal": 8800000,
+        "price_to_rent": 21.8254
+      },
+      "pending_frame_proposal": true,
+      "risk": 44,
+      "superseded": [
+        3,
+        4
+      ],
+      "system_confidence": "stable",
+      "totals": {
+        "buy": 67,
+        "rent": 81
+      },
+      "v": 8
+    },
+    {
+      "base_v": null,
+      "cause": "frame_accept",
+      "ceiling": "prepare",
+      "confidence": 74,
+      "deltas": {
+        "ceiling_steps": 0,
+        "confidence": 0,
+        "criteria_changed": [],
+        "evidence_strength": 0,
+        "gates_changed": [],
+        "gates_passed": 0,
+        "risk": 0,
+        "totals": {
+          "buy": -3,
+          "rent": 3
+        }
+      },
+      "evidence": {
+        "known": 10,
+        "required": 10,
+        "strength": 0.8
+      },
+      "frame_version": 6,
+      "gates": {
+        "g_afford": [
+          "pass",
+          0.2288
+        ],
+        "g_growth": [
+          "pass",
+          6
+        ],
+        "g_ptr": [
+          "fail",
+          21.8254
+        ],
+        "g_reserve": [
+          "pass",
+          8
+        ],
+        "g_stay": [
+          "pass",
+          7
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": 82368.4445,
+        "all_in_ratio": 0.2288,
+        "emi": 76368.4445,
+        "loan_principal": 8800000,
+        "price_to_rent": 21.8254
+      },
+      "pending_frame_proposal": false,
+      "risk": 44,
+      "superseded": [
+        3,
+        4
+      ],
+      "system_confidence": "stable",
+      "totals": {
+        "buy": 64,
+        "rent": 84
+      },
+      "v": 9
+    },
+    {
+      "base_v": 6,
+      "cause": "rewind",
+      "ceiling": "prepare",
+      "confidence": 74,
+      "deltas": {
+        "ceiling_steps": 0,
+        "confidence": 0,
+        "criteria_changed": [],
+        "evidence_strength": -0.08,
+        "gates_changed": [],
+        "gates_passed": -1,
+        "risk": 0,
+        "totals": {
+          "buy": 3,
+          "rent": -3
+        }
+      },
+      "evidence": {
+        "known": 9,
+        "required": 10,
+        "strength": 0.72
+      },
+      "frame_version": 4,
+      "gates": {
+        "g_afford": [
+          "pass",
+          0.2288
+        ],
+        "g_ptr": [
+          "fail",
+          21.8254
+        ],
+        "g_reserve": [
+          "pass",
+          8
+        ],
+        "g_stay": [
+          "pass",
+          7
+        ]
+      },
+      "metrics": {
+        "all_in_monthly": 82368.4445,
+        "all_in_ratio": 0.2288,
+        "emi": 76368.4445,
+        "loan_principal": 8800000,
+        "price_to_rent": 21.8254
+      },
+      "pending_frame_proposal": true,
+      "risk": 44,
+      "superseded": [
+        3,
+        4,
+        7,
+        8,
+        9
+      ],
+      "system_confidence": "stable",
+      "totals": {
+        "buy": 67,
+        "rent": 81
+      },
+      "v": 10
+    }
+  ]
+}

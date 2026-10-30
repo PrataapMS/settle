@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settle response contract</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/kuat/styles.css">
+<link rel="stylesheet" href="ds/kuat/tokens/fonts.css">
+<link rel="stylesheet" href="ds/kuat/tokens/colors.css">
+<link rel="stylesheet" href="ds/kuat/tokens/semantic.css">
+<link rel="stylesheet" href="ds/kuat/tokens/typography.css">
+<link rel="stylesheet" href="ds/kuat/tokens/spacing.css">
+<link rel="stylesheet" href="ds/kuat/tokens/shadows.css">
+<link rel="stylesheet" href="ds/kuat/tokens/component-tokens.css">
+<link rel="stylesheet" href="ds/kuat/tokens/button-variables.css">
+<link rel="stylesheet" href="ds/kuat/tokens/base.css">
+<script src="ds/kuat/_ds_bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:var(--link)}a:hover{color:var(--primary)}
+.ey{font-family:var(--font-mono);font-size:11px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-foreground);margin:0}
+.tb{width:100%;border-collapse:collapse;font-size:13.5px;line-height:1.45}
+.tb th,.tb td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--border)}
+.tb thead th{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground)}
+.tb tbody th{font-weight:600}
+.tb code,.cd{font-family:var(--font-mono);font-size:12.5px}
+.q{color:var(--muted-foreground);font-family:var(--font-mono);font-size:12.5px}
+</style>
+</helmet>
+<div style="width:1120px;min-height:3639px;box-sizing:border-box;padding:56px;background:var(--background);color:var(--foreground);font-family:var(--font-sans);font-size:15px;line-height:1.6;display:flex;flex-direction:column;gap:30px">
+
+<div style="display:flex;flex-direction:column;gap:6px">
+<p class="ey" style="color:var(--primary)">Settle · for the tech-stack review</p>
+<h1 style="margin:0;font-size:32px;line-height:38px;font-weight:600;letter-spacing:-1px">Response contract</h1>
+<p style="margin:0;max-width:860px;color:var(--muted-foreground)">Every field in the current output has a home in Settle, plus the decision-specific parts it lacked: options, a weighted matrix, gates and per-turn deltas. The current output also has six defects. Settle fixes them in the engine rather than in the prompt, because a prompt cannot guarantee consistency.</p>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">Defects in the current /transparency output</p>
+<table class="tb">
+<thead><tr><th scope="col" style="width:170px">Defect</th><th scope="col">Evidence from the export</th><th scope="col" style="width:360px">Fix in Settle</th></tr></thead>
+<tbody>
+<tr><th scope="row">Topic bleed</th><td>The claim is about <span class="cd">/transparency</span>, but <span class="cd">blocking_unknowns</span>, <span class="cd">risk.failure_mode</span> and <span class="cd">physical_constraints</span> are still about the house.</td><td>Commands are meta turns. They are logged but never write the decision state, so a question about the analysis cannot overwrite the decision.</td></tr>
+<tr><th scope="row">Self-contradiction</th><td><span class="cd">risk.score 0.62</span> in the record, but <span class="cd">clearance.basis.risk 0.1</span> in the same object.</td><td>Risk is stored once and clearance reads it. An invariant check fails the turn if two fields disagree.</td></tr>
+<tr><th scope="row">Truncated text</th><td class="q">"...framing becomes too br" · "...rescue you from a ba"</td><td>No length cap on stored fields. The validator rejects strings cut mid-word; the UI shortens for display only.</td></tr>
+<tr><th scope="row">False precision</th><td><span class="cd">evidence.strength 0.748</span> for a one-word command.</td><td>Strength is computed as inputs known ÷ inputs required × source weight, shown in whole percent. The model does not supply it.</td></tr>
+<tr><th scope="row">Calibration that cannot move</th><td><span class="cd">0/0 confirmed (self-graded)</span> and <span class="cd">outcome: unknown</span> with no way to resolve.</td><td>One prediction per decision turn with a check date. You grade it as held, did not hold or too early; the model never grades itself.</td></tr>
+<tr><th scope="row">Ceiling without basis</th><td><span class="cd">ceiling: prepare</span> while every house gate is still unknown.</td><td>The ceiling comes from protective gates, risk and executability. Meta turns inherit the last decision's ceiling unchanged.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+<p class="ey">Who does what</p>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+<div style="border:1px solid var(--border);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:8px">
+<p class="ey" style="color:var(--transform-teal-700)">Jev · System 1 · every turn</p>
+<p style="margin:0;font-weight:600">Fast typed judgements</p>
+<ul style="margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:6px">
+<li><b>Turn check:</b> picks one of seven routes with a calibrated probability, before any reasoning runs.</li>
+<li><b>Record guard:</b> yes or no per field after Claude replies, such as "Is this blocking unknown about the current decision?" This catches topic bleed.</li>
+<li><b>Intuition check</b> (optional): rent, buy or unsure from the record. Shown beside the matrix; disagreement prompts you to look for an unstated factor and never overrides.</li>
+</ul>
+</div>
+<div style="border:1px solid var(--border);background:var(--card);padding:16px;display:flex;flex-direction:column;gap:8px">
+<p class="ey" style="color:var(--ee-blue-700)">Claude · System 2 · decision turns</p>
+<p style="margin:0;font-weight:600">Reasoning and writing</p>
+<ul style="margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:6px">
+<li>Reply prose, claim and direction.</li>
+<li>Matrix scores with their basis, input values for gates, assumptions and break conditions.</li>
+<li>Stress tests, next actions and the prediction to check.</li>
+</ul>
+</div>
+<div style="border:1px solid var(--primary);background:color-mix(in srgb,var(--primary) 8%,var(--card));padding:16px;display:flex;flex-direction:column;gap:8px">
+<p class="ey" style="color:var(--ee-blue-700)">Engine · plain code · every decision turn</p>
+<p style="margin:0;font-weight:600">Numbers nobody asserts</p>
+<ul style="margin:0;padding-left:18px;font-size:14px;display:flex;flex-direction:column;gap:6px">
+<li>Totals, gate status, evidence strength, ceiling, deltas.</li>
+<li>Invariant checks; a failure rejects the turn.</li>
+<li>Writes state v+1 and the hash link.</li>
+</ul>
+</div>
+</div>
+<table class="tb">
+<thead><tr><th scope="col" style="width:230px">Route (Jev picks one)</th><th scope="col">What happens</th><th scope="col" style="width:150px">Calls</th></tr></thead>
+<tbody>
+<tr><th scope="row">New decision · Adds evidence · Changes a preference · Challenges the analysis</th><td>Claude reasons with the current state; the engine validates and writes v+1; Jev guards the record.</td><td>Jev, Claude, Jev</td></tr>
+<tr><th scope="row">About the analysis</th><td>Answered from the state (assumptions, clearance, what changed). Logged as a meta turn; the state is untouched.</td><td>Jev; Claude only for free-form explanation</td></tr>
+<tr><th scope="row">Too vague to apply</th><td>Not applied. The reply asks you to expand and offers the open "Needs answers" questions as one-tap starters.</td><td>Jev only</td></tr>
+<tr><th scope="row">Not about this decision</th><td>Not applied. The reply says so and offers to start a new decision.</td><td>Jev only</td></tr>
+<tr><th scope="row">Top route below 70%</th><td>Asks "Should this update the decision?" with yes and no buttons instead of guessing.</td><td>Jev only</td></tr>
+</tbody>
+</table>
+<p style="margin:0;font-size:13px;color:var(--muted-foreground)">"Apply it anyway" is always offered on a turn that was not applied. Each override is logged, so misroutes become labelled examples for tuning. Jev is in early access: the published latency was measured from the US West Coast, and its pricing may be subsidised. Call it through an adapter with a small Claude classification call as a fallback.</p>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">Where each current field lives now</p>
+<table class="tb">
+<thead><tr><th scope="col">Current field</th><th scope="col">Settle field</th><th scope="col">Panel location</th><th scope="col">Set by</th></tr></thead>
+<tbody>
+<tr><td class="cd">claim</td><td class="cd">claim</td><td>Direction box · load-bearing claim</td><td>Model</td></tr>
+<tr><td class="cd">vectors.zeta_alignment_vector</td><td class="cd">direction</td><td>Direction box headline</td><td>Model</td></tr>
+<tr><td class="cd">evidence.strength / type / basis</td><td class="cd">evidence.{strength, type, observed, inferred}</td><td>Evidence tile · What changed</td><td>Engine (strength), model (rest)</td></tr>
+<tr><td class="cd">key_variables · blocking_unknowns</td><td class="cd">same</td><td>Needs answers</td><td>Model</td></tr>
+<tr><td class="cd">risk.score / irreversibility_window / failure_mode</td><td class="cd">scores.risk · risk.{irreversibility_window, failure_mode}</td><td>Risk tile · Stress tests</td><td>Model</td></tr>
+<tr><td class="cd">vectors.adversarial</td><td class="cd">adversarial</td><td>Stress tests</td><td>Model</td></tr>
+<tr><td class="cd">vectors.flourishing (+ next_72h_actions)</td><td class="cd">flourishing · next_72h</td><td>Flourishing · Next 72 hours checklist</td><td>Model</td></tr>
+<tr><td class="cd">vectors.forward_disclosure</td><td class="cd">forward_disclosure.{note, gap_category}</td><td>Would sharpen this analysis</td><td>Model</td></tr>
+<tr><td class="cd">falsifiability.*</td><td class="cd">falsifiability.{assumptions, break_conditions, what_would_change_this}</td><td>Stress tests and assumptions</td><td>Model</td></tr>
+<tr><td class="cd">physical_constraints.*</td><td class="cd">reality.{resists, resources, dependencies, executable_under_constraints}</td><td>Stress tests · Reality</td><td>Model</td></tr>
+<tr><td class="cd">action_bounds</td><td class="cd">action_bounds[{level, action}]</td><td>Clearance table</td><td>Model proposes, engine gates</td></tr>
+<tr><td class="cd">clearance.*</td><td class="cd">clearance.{ceiling, ladder}</td><td>Clearance ladder and basis</td><td>Engine only</td></tr>
+<tr><td class="cd">prediction_review · calibration</td><td class="cd">prediction · state.predictions · state.calibration</td><td>Predictions and calibration</td><td>Model writes, you grade</td></tr>
+<tr><td class="cd">coherence · system_confidence · stakes_register</td><td class="cd">same</td><td>Panel header tags</td><td>Model; engine for system confidence</td></tr>
+<tr><td class="cd">disclosure</td><td>fixed product rule</td><td>Panel footer</td><td>Not per turn</td></tr>
+<tr><td style="color:var(--muted-foreground)">not present</td><td class="cd">options · matrix · totals · gates · sensitivity · needs_answers · verdict · summary</td><td>Matrix, gates, turn card</td><td>Model; engine for totals</td></tr>
+</tbody>
+</table>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">Model returns (proposals)</p>
+<pre style="margin:0;font-family:var(--font-mono);font-size:12px;line-height:1.55;background:var(--muted);border:1px solid var(--border);padding:16px;white-space:pre-wrap">{
+  "verdict", "summary", "claim", "direction",
+  "scores": { "confidence": 0-100, "risk": 0-100 },
+  "risk": { "irreversibility_window", "failure_mode" },
+  "evidence": { "type", "observed", "inferred" },
+  "inputs": { "stay_years": 7, "expected_growth_pct": null, ... },
+  "matrix": [{ "criterion", "weight", "scores", "assumed", "basis" }],
+  "gates": [{ "gate", "threshold", "value", "protective", "evidence" }],
+  "needs_answers", "key_variables", "blocking_unknowns",
+  "adversarial": { "risk", "exploit_surface" },
+  "falsifiability": { "assumptions", "break_conditions", "what_would_change_this" },
+  "reality": { "resists", "resources", "dependencies", "executable_under_constraints" },
+  "action_bounds": [{ "level", "action" }],
+  "next_72h", "flourishing", "forward_disclosure",
+  "prediction": { "text", "check_after_hours" },
+  "coherence": { "level", "reason" },
+  "stakes_register", "suggested_followups"
+}</pre>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">Engine computes (never taken from the model)</p>
+<table class="tb">
+<thead><tr><th scope="col">Field</th><th scope="col">Rule</th></tr></thead>
+<tbody>
+<tr><th scope="row">Weighted totals</th><td>Sum of weight × score ÷ 5 per option; weights must sum to 100.</td></tr>
+<tr><th scope="row">Gate status</th><td>Value against threshold: pass, fail, partial, or unknown when the value is null.</td></tr>
+<tr><th scope="row">Evidence strength</th><td>Inputs known ÷ required × source weight (self-report 0.8, document 1.0).</td></tr>
+<tr><th scope="row">Ceiling</th><td>Prepare if protective gates pass, risk ≤ 50 and executable; Simulate if 3+ inputs known; else Recommend. Request go-ahead is always yours.</td></tr>
+<tr><th scope="row">System confidence</th><td>Stable when confidence moved under 15 points since the last state; else Evolving.</td></tr>
+<tr><th scope="row">Deltas</th><td>Every score, total, gate and the ceiling against the previous state.</td></tr>
+<tr><th scope="row">Invariants</th><td>Weights, score ranges, gate completeness, single-source risk, chain link. Any break rejects the turn.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px">
+<p class="ey">Open decisions for the next review</p>
+<table class="tb">
+<thead><tr><th scope="col">Decision</th><th scope="col">Options</th><th scope="col">What it hinges on</th></tr></thead>
+<tbody>
+<tr><th scope="row">Engine rules</th><td>A small TypeScript module, or a JSON-rules library</td><td>Whether rules must be user-editable or only versioned with the app</td></tr>
+<tr><th scope="row">Jev scope</th><td>Turn check only, plus record guard, plus intuition check</td><td>Start with the turn check; add the guard once real outputs show bleed</td></tr>
+<tr><th scope="row">Model</th><td>Claude or Gemini behind one adapter</td><td>Structured-output reliability on this schema; cost per turn</td></tr>
+<tr><th scope="row">Where the key lives</th><td>User's own key in the browser, or a thin proxy</td><td>No-login goal versus not exposing a shared key</td></tr>
+<tr><th scope="row">Command set</th><td>/transparency only, or also /assumptions, /what-changed, /rewind</td><td>Whether commands are typed or offered as buttons</td></tr>
+</tbody>
+</table>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1120,"height":3639}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

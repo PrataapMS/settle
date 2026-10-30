@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Settle turn check (router) output",
+  "type": "object",
+  "properties": {
+    "route": {
+      "type": "string",
+      "enum": [
+        "new_decision",
+        "adds_evidence",
+        "changes_preference",
+        "challenges_analysis",
+        "meta",
+        "too_vague",
+        "off_topic"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "description": "0-1"
+    },
+    "reason": {
+      "type": "string",
+      "description": "One short sentence"
+    }
+  },
+  "required": [
+    "route",
+    "confidence",
+    "reason"
+  ],
+  "additionalProperties": false,
+  "description": "Turn check output"
+}

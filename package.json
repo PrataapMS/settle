@@ -1,0 +1,29 @@
+{
+  "name": "settle",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@11.28.9",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "check:kit": "python3 -I tools/reference_engine.py --selftest && python3 -I tools/reference_engine.py --check fixtures/rent-or-buy/conversation.json fixtures/rent-or-buy/expected && python3 -I tools/reference_engine.py --check fixtures/rent-or-buy-edits/conversation.json fixtures/rent-or-buy-edits/expected && node tools/check_hashes.mjs fixtures/canonical-vectors.json"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.5"
+  }
+}

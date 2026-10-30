@@ -1,0 +1,47 @@
+{
+  "note": "Turn-check evaluation set. Each case gives the decision context the router sees and the route it should return. Run through the full routing path: messages starting with '/' go to the rule router, everything else to Jev or the fallback model. Target: 90%+ exact, and zero cases where a non-applied message is routed to an applied route with confidence above 0.7. Add every user override from real use as a new case.",
+  "context": {
+    "title": "Rent or buy a house",
+    "options": ["rent", "buy"],
+    "last_summary": "Savings make buying feasible. Rent stays the default until stay, cost and reserve are proven.",
+    "open_questions": [
+      "How much cash would remain after the down payment, stamp duty and registration?",
+      "What monthly rent have you found for comparable homes in the same area?",
+      "What is the minimum number of years you are confident you would stay?"
+    ]
+  },
+  "cases": [
+    {"text": "We'd stay at least 7 years, both jobs are here.", "expected": "adds_evidence"},
+    {"text": "Rent for a similar 3BHK nearby is about 42k a month.", "expected": "adds_evidence"},
+    {"text": "After paying everything we'd still have roughly 8 months of expenses saved.", "expected": "adds_evidence"},
+    {"text": "The bank quoted 8.5% for 20 years.", "expected": "adds_evidence"},
+    {"text": "My wife might get transferred to Bangalore in two years.", "expected": "adds_evidence"},
+    {"text": "I just found out the society maintenance is 9,000 a month, not 6,000.", "expected": "adds_evidence"},
+    {"text": "Honestly, owning matters more to me than the money.", "expected": "changes_preference"},
+    {"text": "I care more about flexibility than equity right now.", "expected": "changes_preference"},
+    {"text": "Can we weight monthly cost higher than equity?", "expected": "changes_preference"},
+    {"text": "We don't want to be dealing with landlords anymore, that's the main thing.", "expected": "changes_preference"},
+    {"text": "I don't think 35% of income is the right limit for us, we have no other loans.", "expected": "challenges_analysis"},
+    {"text": "Why are you assuming the down payment would earn 7%? FDs give 6.5%.", "expected": "challenges_analysis"},
+    {"text": "Your EMI number looks wrong to me.", "expected": "challenges_analysis"},
+    {"text": "That ignores rent going up every year.", "expected": "challenges_analysis"},
+    {"text": "/transparency", "expected": "meta"},
+    {"text": "How did you calculate the confidence score?", "expected": "meta"},
+    {"text": "What assumptions is this based on?", "expected": "meta"},
+    {"text": "What changed since your last answer?", "expected": "meta"},
+    {"text": "Why is the ceiling only 'recommend'?", "expected": "meta"},
+    {"text": "Hmm, okay", "expected": "too_vague"},
+    {"text": "ok", "expected": "too_vague"},
+    {"text": "not sure", "expected": "too_vague"},
+    {"text": "makes sense I guess", "expected": "too_vague"},
+    {"text": "what do you think?", "expected": "too_vague"},
+    {"text": "Something like that.", "expected": "too_vague"},
+    {"text": "Should I take the job offer from the startup?", "expected": "off_topic"},
+    {"text": "What's a good recipe for dinner tonight?", "expected": "off_topic"},
+    {"text": "Can you help me write an email to my manager?", "expected": "off_topic"},
+    {"text": "Which laptop should I buy for coding?", "expected": "off_topic"},
+    {"text": "Tell me a joke.", "expected": "off_topic"},
+    {"text": "Should I buy or lease a car instead?", "expected": "off_topic", "comment": "Same verb, different decision: must not be applied to the house decision."},
+    {"text": "Prices here went up about 6% a year over the last ten years, per registration data.", "expected": "adds_evidence"}
+  ]
+}
