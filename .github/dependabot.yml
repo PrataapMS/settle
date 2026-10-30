@@ -16,6 +16,9 @@ updates:
       # Held below 6.1 for typescript-eslint (D16)
       - dependency-name: typescript
         update-types: ['version-update:semver-major', 'version-update:semver-minor']
+      # Types track the Node major in .nvmrc (24)
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
       # Held on 4.x for @cloudflare/vitest-pool-workers (D20)
       - dependency-name: vitest
         update-types: ['version-update:semver-major']
