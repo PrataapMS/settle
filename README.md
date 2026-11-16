@@ -4,11 +4,28 @@
 
 **Talk it through. Watch it add up.**
 
-A decision helper that turns a conversation into a clear, auditable decision, with numbers you can trust.
+A local-first decision helper that turns a conversation into a clear, auditable decision, with numbers you can trust.
 
 [![CI](https://github.com/PrataapMS/settle/actions/workflows/ci.yml/badge.svg)](https://github.com/PrataapMS/settle/actions/workflows/ci.yml)
-![Status](https://img.shields.io/badge/status-in%20development-orange)
-![Stack](https://img.shields.io/badge/stack-React%20%C2%B7%20Vite%20%C2%B7%20Cloudflare%20Workers-blue)
+[![CodeQL](https://github.com/PrataapMS/settle/actions/workflows/codeql.yml/badge.svg)](https://github.com/PrataapMS/settle/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+![Status](https://img.shields.io/badge/status-pre--release-orange)
+[![Latest release](https://img.shields.io/github/v/release/PrataapMS/settle?include_prereleases&sort=semver)](https://github.com/PrataapMS/settle/releases)
+
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)
+![Node](https://img.shields.io/badge/node-%E2%89%A524-339933?logo=node.js&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-11-F69220?logo=pnpm&logoColor=white)
+
+[Features](#features) · [How it works](#how-it-works) · [Getting started](#getting-started) · [Roadmap](ROADMAP.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+
+<br>
+
+<img src="docs/assets/preview-midnight.png" alt="Settle: the conversation on the left, the live decision panel on the right, comparing renting and buying a house" width="900">
+
+<sub>Design preview (Midnight theme) built from the approved theme tokens and the golden fixture. The app is in active development.</sub>
 
 </div>
 
@@ -20,19 +37,16 @@ Big decisions rarely fail for lack of opinions. They fail because the reasoning 
 
 Settle keeps that reasoning in one place. You describe the decision in plain words on the left. On the right, a **live decision panel** builds up as you talk: the options, what matters to you and how much, the facts that are still missing, the checks each option must pass, and where things stand right now.
 
-```
-┌───────────────────────────────┬──────────────────────────────────────────┐
-│  Conversation                 │  Decision panel                    v3 ▸  │
-│                               │                                          │
-│  You: Should I rent or buy    │  Leaning: Rent        Confidence  ▓▓▓▓░  │
-│  in Pune? Flat is ₹1.1 Cr...  │  Rent 81  ·  Buy 67   Evidence    72%    │
-│                               │                                          │
-│  Settle: Here's how I'd frame │  Gates     ✓ stay   ✓ affordability      │
-│  it. Two things I still need: │            ✓ reserve  ✗ price-to-rent    │
-│  your reserve, and how long   │  Ceiling   Prepare                       │
-│  you'll stay...               │  Next 72 h  ☐ get a loan quote  ☐ ...    │
-└───────────────────────────────┴──────────────────────────────────────────┘
-```
+<table>
+<tr>
+<td width="68%"><img src="docs/assets/preview-light.png" alt="Settle in the Light theme"></td>
+<td width="32%"><img src="docs/assets/preview-phone.png" alt="Settle's decision panel on a phone"></td>
+</tr>
+<tr>
+<td align="center"><sub>Light theme</sub></td>
+<td align="center"><sub>Phone layout</sub></td>
+</tr>
+</table>
 
 ## Why it's different
 
@@ -114,7 +128,7 @@ pnpm dev
 
 Open http://localhost:5173.
 
-> **Project status:** Settle is being built phase by phase (see the roadmap below). Today `pnpm dev` serves the starter shell. A no-key mock mode (`pnpm dev:mock`) and live mode with your own development key arrive in phase 0.
+> **Project status:** Settle is being built phase by phase (see the [roadmap](ROADMAP.md)). Today `pnpm dev` serves the starter shell. A no-key mock mode (`pnpm dev:mock`) and live mode with your own development key arrive in phase 0.
 
 ### Live mode (from phase 0.4)
 
@@ -153,28 +167,29 @@ Start with [docs/README.md](docs/README.md) for a guided index.
 
 ## Roadmap
 
-| Phase | Goal | Status |
-|---|---|---|
-| P0 | Project setup, security baseline, CI, spikes | In progress |
-| P1 | Core engine in pure TypeScript, byte-identical to the golden fixtures | Planned |
-| P2 | Local storage, export and import, rewind | Planned |
-| P3 | Full UI with mock models, four themes, phone and desktop | Planned |
-| P4 | Live models through the Worker gateway | Planned |
-| P5 | Jev turn check (if it meets the bar) | Planned |
-| P6 | Evals, tuning and hardening | Planned |
-| P7 | Security review and release on Cloudflare | Planned |
+Settle is built in phases, from the core engine up to a public release. The current focus is **P0: setup, security baseline and spikes**.
 
-Feature-level detail: [ROADMAP.md](ROADMAP.md).
+| Phase | You get | Status |
+|---|---|---|
+| P0 | Project setup, security baseline, CI | 🚧 In progress |
+| P1 | The decision engine, exact and testable | Planned |
+| P2 | Your decisions saved locally, export and import, rewind | Planned |
+| P3 | The full app with a built-in demo model | Planned |
+| P4 | Real conversations with live AI models | Planned |
+| P5 | Faster, cheaper turn checks | Planned |
+| P6 | Scenario evals, offline PWA, polish | Planned |
+| P7 | Security review and **v1.0.0** | Planned |
+
+See [ROADMAP.md](ROADMAP.md) for the features in each phase, and the [issues](https://github.com/PrataapMS/settle/issues) for what's being worked on now.
 
 ## Contributing
 
-Work follows [CLAUDE.md](CLAUDE.md), which applies to people and coding agents alike:
-
-- One task per commit, message `P<phase>.<task>: <summary>`.
-- Tests first for anything in `src/core`; golden fixtures are the spec and are never edited by hand.
-- Rule, schema, prompt or dependency changes are explained in the pull request.
-- `pnpm lint`, `pnpm typecheck` and `pnpm test` must be green before merging.
+Bug reports, ideas and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first: it covers the branch and PR conventions, the checks that must pass and the few rules that keep the engine trustworthy.
 
 ## License
 
 [MIT](LICENSE)
+
+---
+
+<div align="center"><sub>Made for the decisions that keep you up at night. If Settle helps you, a ⭐ helps others find it.</sub></div>
