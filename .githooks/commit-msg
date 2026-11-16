@@ -1,0 +1,7 @@
+#!/bin/sh
+# Commits carry the author only: strip co-author and tool attribution trailers.
+msg="$1"
+tmp="$(mktemp)"
+grep -viE '^(co-authored-by:|🤖 generated with|generated with \[claude code\])' "$msg" > "$tmp" || true
+git stripspace < "$tmp" > "$msg"
+rm -f "$tmp"
