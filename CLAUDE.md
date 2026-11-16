@@ -1,6 +1,35 @@
 # Settle: instructions for the coding agent
 
-You are implementing Settle, a local-first decision helper: a conversation on the left, a live decision panel on the right. The design is approved. Your job is to build it phase by phase from `plan/PLAN.md`.
+## Project Overview
+
+- Purpose: Settle, a local-first decision helper: a conversation on the left, a live decision panel on the right, with a pure engine that owns every number.
+- Stack: TypeScript, React 19 + Vite, shadcn/ui on Tailwind, Zustand, Dexie (IndexedDB), Zod; one Cloudflare Worker serving the app and `/api/*` (model calls via OpenRouter / Jev); Vitest, Playwright; Python 3 reference engine in `tools/`. Package manager: pnpm, Node >= 24.
+- Key directories: `src/` browser app (`src/core` is the pure engine), `worker/` Cloudflare Worker, `prompts/` and `schemas/` what the model sees, `fixtures/` golden fixtures, `tools/` reference engine and checks, `docs/` specs, `plan/` phases and tasks, `evals/` router and scenario evals, `design/` approved design.
+
+You are implementing it phase by phase from `plan/PLAN.md`. The design is approved.
+
+## Commands
+
+- Install: `pnpm install`
+- Test: `pnpm test` (plus `pnpm test:e2e`, `pnpm check:kit`)
+- Lint/format: `pnpm lint`, `pnpm typecheck`
+- Build: `pnpm build`
+- After making code changes, run the test and lint commands before reporting the task as done.
+
+Full list (some scripts land in later phases; check `package.json`):
+
+| Command | Does |
+|---|---|
+| `pnpm dev` | Vite dev server with the Worker running in `workerd`, live models (needs `.dev.vars`) |
+| `pnpm dev:mock` | Same, with the Worker in `LLM_MODE=mock` (no keys needed) |
+| `pnpm test` | Vitest: unit, golden, schema parity, components |
+| `pnpm test:e2e` | Playwright with the mock LLM, plus axe checks |
+| `pnpm eval` | Router and scenario evals against live models (costs credits) |
+| `pnpm lint` / `pnpm typecheck` | ESLint, `tsc -b` |
+| `pnpm build` | `tsc -b` and `vite build` |
+| `pnpm check:kit` | Reference-engine selftest, both fixture checks, hash vectors |
+| `python3 tools/reference_engine.py --check <conv> <expected>` | Confirms expected fixtures are current |
+| `python3 tools/build_schemas.py` | Regenerates `/schemas` from their definitions |
 
 ## Read first, in this order
 
@@ -25,30 +54,6 @@ You are implementing Settle, a local-first decision helper: a conversation on th
 10. **Prompts** live in `/prompts` and are imported by the Worker with `?raw` (`worker/llm/prompts.ts`). Bump the version tag on every change.
 11. **Every model-backed endpoint goes through `withGuards`** (origin check, size cap, session, rate limits, quota reserve and settle). The browser sends data, never prompts, schemas, model parameters or non-allowlisted model ids. Security controls in `docs/10` are not optional; changing one needs a decisions-log entry.
 
-## Working style
-
-- Before coding a task, restate its acceptance criteria and list the files you will touch.
-- Write the tests first for anything in `src/core`.
-- Keep commits small, one task per commit, message `P<phase>.<task>: <summary>`.
-- Tick the task in `plan/PLAN.md` when its acceptance criteria pass, and note anything deferred under the task.
-- Ask before adding a dependency that isn't listed in `plan/PREREQUISITES.md`.
-- Ask before changing a public interface in `docs/02-architecture.md`, a schema or an engine rule.
-- When a doc is ambiguous, prefer the reference engine, then the prototype, then ask.
-
-## Commands (once the project exists)
-
-| Command | Does |
-|---|---|
-| `pnpm dev` | Vite dev server with the Worker running in `workerd`, live models (needs `.dev.vars`) |
-| `pnpm dev:mock` | Same, with the Worker in `LLM_MODE=mock` (no keys needed) |
-| `pnpm test` | Vitest: unit, golden, schema parity, components |
-| `pnpm test:e2e` | Playwright with the mock LLM, plus axe checks |
-| `pnpm eval` | Router and scenario evals against live models (costs credits) |
-| `pnpm lint` / `pnpm typecheck` | ESLint, `tsc -b` |
-| `pnpm check:kit` | Reference-engine selftest, both fixture checks, hash vectors |
-| `python3 tools/reference_engine.py --check <conv> <expected>` | Confirms expected fixtures are current |
-| `python3 tools/build_schemas.py` | Regenerates `/schemas` from their definitions |
-
 ## Definition of done (every task)
 
 - Acceptance criteria in `plan/PLAN.md` pass.
@@ -56,3 +61,14 @@ You are implementing Settle, a local-first decision helper: a conversation on th
 - New behaviour has tests; UI work is checked in all four themes at desktop width and at 390 px.
 - No secrets, no `console.log` left in, no unused exports.
 - Any new or changed `/api` behaviour has Worker tests for its security paths (`docs/09`, Worker and security).
+
+## Conventions
+
+- Before coding a task, restate its acceptance criteria and list the files you will touch.
+- Write the tests first for anything in `src/core`.
+- Follow `plan/WORKFLOW.md`: one branch and one PR per task (`p<phase>.<task>-<slug>`), never commit to `main`; commits and PR title `P<phase>.<task>: <summary>`; PR body has `Closes #<issue>`; squash-merge only when CI is green.
+- Each task has a GitHub issue (sub-issue of its phase epic) on the **Settle** project (`gh project view 2 --owner PrataapMS`). Move its Status to In Progress when you start, In Review when the PR opens; tick its AC checkboxes as they pass.
+- Tick the task in `plan/PLAN.md` when its acceptance criteria pass, and note anything deferred under the task with a new follow-up issue.
+- Ask before adding new dependencies (anything not listed in `plan/PREREQUISITES.md`).
+- Ask before changing a public interface in `docs/02-architecture.md`, a schema or an engine rule.
+- When a doc is ambiguous, prefer the reference engine, then the prototype, then ask.

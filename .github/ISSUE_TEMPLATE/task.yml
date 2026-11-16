@@ -1,0 +1,32 @@
+name: Task
+description: Work that is not already a plan task (a follow-up, a deferral, an extra step)
+title: "<id or area> <title>"
+labels: ["type:task"]
+projects: ["PrataapMS/2"]
+body:
+  - type: input
+    id: parent
+    attributes:
+      label: Phase or parent task
+      description: e.g. P1, or P1.5 (#24). Make this issue a sub-issue of the phase epic after creating it.
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: Task
+      description: What to build or change, and the docs to read first.
+    validations:
+      required: true
+  - type: textarea
+    id: ac
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes

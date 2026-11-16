@@ -1,0 +1,33 @@
+name: Bug
+description: Something behaves differently from the docs or the fixtures
+title: "Bug: "
+labels: ["bug"]
+projects: ["PrataapMS/2"]
+body:
+  - type: markdown
+    attributes:
+      value: Security problems go to the owner privately (see `SECURITY.md`), not here. Never paste keys, cookies or decision text.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen
+      description: Cite the doc, rule or fixture if there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Environment (local, staging, production), theme, width, browser
