@@ -17,5 +17,5 @@ Closes #
 - [ ] UI: checked in all four themes at desktop width and at 390 px (or n/a)
 - [ ] `/api`: Worker tests cover the security paths (or n/a)
 - [ ] No secrets, no `console.log`, no unused exports
-- [ ] Task ticked in `plan/PLAN.md`; deferrals noted under it with a follow-up issue
-- [ ] Decisions log entry if a rule, schema, interface or security control changed (or n/a)
+- [ ] Deferred work has a follow-up issue (or n/a)
+- [ ] Rule, schema, interface or security control changes explained above (or n/a)

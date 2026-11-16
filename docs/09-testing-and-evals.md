@@ -26,7 +26,7 @@ for (const dir of ['rent-or-buy', 'rent-or-buy-edits']) {
 }
 ```
 
-When a golden test fails, diff field by field and fix the TypeScript engine. Change the reference engine only if the rule itself is meant to change, and then regenerate the fixtures (`python3 tools/reference_engine.py <conv> <expected>`), update `docs/04-engine-rules.md` and add an entry to `docs/11-decisions-log.md`, all in the same commit.
+When a golden test fails, diff field by field and fix the TypeScript engine. Change the reference engine only if the rule itself is meant to change, and then regenerate the fixtures (`python3 tools/reference_engine.py <conv> <expected>`), update `docs/04-engine-rules.md` and explain the rule change in the pull request, all in the same commit.
 
 Add new golden fixtures for every engine bug found later: reproduce the bug as a conversation, generate expected files with the reference engine, then fix the TS engine.
 

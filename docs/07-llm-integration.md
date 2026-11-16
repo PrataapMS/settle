@@ -65,7 +65,7 @@ Confirm the exact meaning of each error code against OpenRouter's error-handling
 
 ### Where calls run and where keys live
 
-Every OpenRouter and Jev call is made by the Cloudflare Worker (`worker/llm/`). The browser calls same-origin `/api/*` endpoints (`02-architecture.md`, API) and never sees a key, a system prompt or an upstream response body. There is no OAuth, no pasted key and no key in IndexedDB (D18 supersedes D10).
+Every OpenRouter and Jev call is made by the Cloudflare Worker (`worker/llm/`). The browser calls same-origin `/api/*` endpoints (`02-architecture.md`, API) and never sees a key, a system prompt or an upstream response body. There is no OAuth, no pasted key and no key in IndexedDB.
 
 | Secret | Where it lives | Who reads it |
 |---|---|---|
@@ -110,7 +110,7 @@ Jev returns typed choices with calibrated probabilities instead of text, which f
 - Put it behind the `Router` interface (`worker/llm/router/jev.ts`). Its config: endpoint (a var), key (a secret), timeout 1.5 s.
 - If it is disabled, times out or errors, call `ModelRouter` (OpenRouter with `prompts/router.md` and `schemas/route.schema.json`). The user never sees the difference, but `route.source` records it.
 - The Jev key is a Worker secret, like the OpenRouter key. Jev calls are metered and rate limited like model calls.
-- Spike S3 confirms the request and response shape against TypeSafe's docs before any code depends on it, and decides whether Jev ships in v1 (D19). Jev becomes the default turn check only if, measured from the Worker: accuracy on `fixtures/router-cases.json` is at least 90%, p95 latency is at most 600 ms, cost per check is below the fallback model's, and TypeSafe's terms allow server-side use for anonymous public users. Otherwise `ModelRouter` stays the default and Jev stays behind a flag.
+- Spike S3 confirms the request and response shape against TypeSafe's docs before any code depends on it, and decides whether Jev ships in v1. Jev becomes the default turn check only if, measured from the Worker: accuracy on `fixtures/router-cases.json` is at least 90%, p95 latency is at most 600 ms, cost per check is below the fallback model's, and TypeSafe's terms allow server-side use for anonymous public users. Otherwise `ModelRouter` stays the default and Jev stays behind a flag.
 
 ## Context sent per turn
 

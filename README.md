@@ -145,7 +145,6 @@ settle/
 ├── fixtures/       golden conversations and expected states: the engine's spec
 ├── tools/          reference engine (Python), schema builder, hash checker
 ├── docs/           product, architecture, engine rules, security, deployment
-├── plan/           phased implementation plan and prerequisites
 ├── evals/          end-to-end scenarios and reports
 └── design/         theme tokens and the approved prototype
 ```
@@ -165,7 +164,7 @@ Start with [docs/README.md](docs/README.md) for a guided index.
 | P6 | Evals, tuning and hardening | Planned |
 | P7 | Security review and release on Cloudflare | Planned |
 
-Task-level detail and acceptance criteria: [plan/PLAN.md](plan/PLAN.md).
+Feature-level detail: [ROADMAP.md](ROADMAP.md).
 
 ## Contributing
 
@@ -173,9 +172,9 @@ Work follows [CLAUDE.md](CLAUDE.md), which applies to people and coding agents a
 
 - One task per commit, message `P<phase>.<task>: <summary>`.
 - Tests first for anything in `src/core`; golden fixtures are the spec and are never edited by hand.
-- Rule, schema, prompt or dependency changes get an entry in [docs/11-decisions-log.md](docs/11-decisions-log.md).
+- Rule, schema, prompt or dependency changes are explained in the pull request.
 - `pnpm lint`, `pnpm typecheck` and `pnpm test` must be green before merging.
 
 ## License
 
-Not licensed for reuse yet. All rights reserved by the repository owner.
+[MIT](LICENSE)
