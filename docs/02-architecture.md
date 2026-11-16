@@ -24,16 +24,16 @@ OpenRouter · TypeSafe Jev · Turnstile siteverify
 
 | Concern | Choice | Notes |
 |---|---|---|
-| App | React + TypeScript (strict) on Vite, as a PWA | Base: create-vite `react-ts` (D16) |
+| App | React + TypeScript (strict) on Vite, as a PWA | Base: create-vite `react-ts` |
 | UI | shadcn/ui on Tailwind CSS, lucide-react icons | Components copied into `src/components/ui` by the shadcn CLI |
 | Client state | Zustand for UI state; Dexie live queries for data | No global data cache beyond Dexie |
 | Storage | IndexedDB via Dexie | Stores: `decisions`, `log`, `ui`, `checks`, `telemetry` (`06-state-and-storage.md`) |
 | Validation | Zod | One source for types; JSON Schemas in `/schemas` mirror it for the model; the API request and response shapes live in `src/core/schema/api.ts` and are checked on both sides |
-| Hosting and API | Cloudflare Workers with static assets, on `*.workers.dev` | One Worker serves the app and `/api`; free plan (D17, `12-deployment-and-operations.md`) |
+| Hosting and API | Cloudflare Workers with static assets, on `*.workers.dev` | One Worker serves the app and `/api`; free plan (`12-deployment-and-operations.md`) |
 | Dev server | Vite with `@cloudflare/vite-plugin` | Runs the Worker in `workerd` inside `pnpm dev`, so dev and production run the same code |
-| Abuse control | Turnstile, Workers Rate Limiting bindings, Durable Objects (`QuotaDO`, `BudgetDO`) | Public, anonymous v1 (D18); details in `10-security-and-privacy.md` |
+| Abuse control | Turnstile, Workers Rate Limiting bindings, Durable Objects (`QuotaDO`, `BudgetDO`) | Public, anonymous v1; details in `10-security-and-privacy.md` |
 | Reasoning model | OpenRouter chat completions with `response_format: json_schema`, called by the Worker | Model chosen from a server-side allowlist; default `anthropic/claude-sonnet-5.5` |
-| Turn check | Jev (TypeSafe), fallback: small model via OpenRouter, both called by the Worker | Behind one `Router` interface; Jev only if spike S3 meets its bar (D19) |
+| Turn check | Jev (TypeSafe), fallback: small model via OpenRouter, both called by the Worker | Behind one `Router` interface; Jev only if spike S3 meets its bar |
 | Hashing | Web Crypto SHA-256 over canonical JSON (RFC 8785 style) | See `04-engine-rules.md` |
 | Tests | Vitest (unit, golden), Testing Library (components), `@cloudflare/vitest-pool-workers` (Worker, in `workerd`), Playwright (end to end) | |
 | PWA | vite-plugin-pwa | Precache app shell only, never `/api` |

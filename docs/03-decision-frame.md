@@ -80,7 +80,7 @@ functions  := pmt(rate_pct, years, principal) | min(a, b) | max(a, b)
 
 ## Not in v1
 
-Adding or removing an option or a criterion after the first turn. It changes what has to be scored and needs a schema extension (`add_options`, `add_criteria`, `remove_*` with full re-scoring). In v1, the panel ⋯ menu offers "Start a new decision from this one", which seeds a new frame-turn message with the current options and facts. Tracked as O6 in `11-decisions-log.md`.
+Adding or removing an option or a criterion after the first turn. It changes what has to be scored and needs a schema extension (`add_options`, `add_criteria`, `remove_*` with full re-scoring). In v1, the panel ⋯ menu offers "Start a new decision from this one", which seeds a new frame-turn message with the current options and facts. Tracked as a follow-up.
 
 ## Starter frames (v1.1)
 

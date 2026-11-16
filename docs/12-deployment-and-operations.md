@@ -1,6 +1,6 @@
 # 12 · Deployment and operations
 
-Settle runs as one Cloudflare Worker with static assets on the free plan (D17). This doc covers environments, configuration, secrets, CI/CD, the free-plan budget and what to do when something goes wrong. Security rules themselves are in `10-security-and-privacy.md`.
+Settle runs as one Cloudflare Worker with static assets on the free plan. This doc covers environments, configuration, secrets, CI/CD, the free-plan budget and what to do when something goes wrong. Security rules themselves are in `10-security-and-privacy.md`.
 
 ## Environments
 

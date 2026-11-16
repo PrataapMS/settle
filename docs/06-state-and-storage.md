@@ -90,4 +90,4 @@ Import steps:
 ## Migrations
 
 - `version` fields on state, log entry and export file. Increase them on any breaking change, and add a `migrate_vN_to_vN+1` function in `src/store/migrations.ts`.
-- Changing engine rules changes computed states, but never the log. After an engine change, states are simply recomputed. Golden fixtures must be regenerated with the reference engine in the same commit, and the change explained in `docs/11-decisions-log.md`.
+- Changing engine rules changes computed states, but never the log. After an engine change, states are simply recomputed. Golden fixtures must be regenerated with the reference engine in the same commit, and the rule change explained in the pull request.

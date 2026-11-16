@@ -1,6 +1,6 @@
 # 10 · Security and privacy
 
-v1 is public and anonymous (D18), and the Worker pays for every model call with Settle's keys. So the main risks are spend abuse and key exposure, then the usual web risks. Every control below has a test or a check in `12-deployment-and-operations.md`.
+v1 is public and anonymous, and the Worker pays for every model call with Settle's keys. So the main risks are spend abuse and key exposure, then the usual web risks. Every control below has a test or a check in `12-deployment-and-operations.md`.
 
 ## Threat model
 
