@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   build:
-    name: Typecheck, kit checks, build
+    name: Lint, typecheck, test, build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -30,7 +30,9 @@ jobs:
         with:
           python-version: '3.12'
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run --if-present lint
       - run: pnpm typecheck
+      - run: pnpm run --if-present test
       - run: pnpm check:kit
       - run: pnpm build
       - name: Scan build output for secrets
@@ -55,3 +57,20 @@ jobs:
           tar -xzf /tmp/gitleaks.tgz -C /tmp gitleaks
       - name: Scan full history
         run: /tmp/gitleaks git --config .gitleaks.toml --redact --no-banner --exit-code 1 .
+
+  dependency-review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: moderate
+          comment-summary-in-pr: on-failure

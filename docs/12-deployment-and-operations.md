@@ -8,8 +8,8 @@ Settle runs as one Cloudflare Worker with static assets on the free plan. This d
 |---|---|---|---|---|---|
 | Local, mock | (in Vite) | `localhost:5173` | `pnpm dev:mock` | none | n/a |
 | Local, live | (in Vite) | `localhost:5173` | `pnpm dev` | development key, $5 limit | $1 a day |
-| Staging | `settle-staging` | `settle-staging.<account>.workers.dev` | every push to `main` | development key | $1 a day, $5 a month |
-| Production | `settle` | `settle.<account>.workers.dev` | tags `v*` | production key, monthly limit ≥ global monthly budget | $5 a day, $25 a month |
+| Staging | `settle-staging` | `settle-staging.<account>.workers.dev` | manually, by the maintainer (`pnpm wrangler deploy --env staging`) | development key | $1 a day, $5 a month |
+| Production | `settle` | `settle.<account>.workers.dev` | major release tags `vX.0.0`, after approval | production key, monthly limit ≥ global monthly budget | $5 a day, $25 a month |
 
 - Each environment has its own Turnstile widget (hostname bound) and its own secrets.
 - `preview_urls: false` on both Workers: preview URLs would expose unreviewed code with real keys.
@@ -65,13 +65,22 @@ Locally, copy `.dev.vars.example` to `.dev.vars` and fill it in. `.dev.vars` is 
 
 | Workflow | Trigger | Steps |
 |---|---|---|
-| `ci.yml` | push, pull request | install (`--frozen-lockfile`), `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm check:kit`, `pnpm build`, scan `dist/` for secrets, gitleaks; `pnpm test:e2e` from P3 |
-| `deploy.yml` (P0.4) | push to `main` → staging; tag `v*` → production | `ci.yml` steps, then `wrangler deploy [--env staging]` via `cloudflare/wrangler-action` |
+| `ci.yml` | push to `main`, pull request | install (`--frozen-lockfile`), `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm check:kit`, `pnpm build`, scan `dist/` for secrets, gitleaks, dependency review (pull requests); `pnpm test:e2e` from P3 |
+| `codeql.yml` | push to `main`, pull request, weekly | CodeQL for TypeScript, Python and workflows |
+| `pr-title.yml` | pull request | title matches `P<phase>.<task>: …` or a `Fix:`, `Docs:`, `Chore:`, `Deps:`, `Release:` prefix |
+| `release.yml` | tag `vX.Y.Z` | tag must equal `package.json` version; `ci.yml` checks; GitHub Release with generated notes (`v0.*` marked pre-release); **deploy only for `vX.0.0` (X ≥ 1)**, after approval in the `production` environment, via `pnpm exec wrangler deploy` |
 | Dependabot | weekly | npm and Actions updates, grouped |
 
+### Releases and deploys
+
+- Minor and patch releases (`v1.2.0`, `v1.2.3`) publish a GitHub Release only. Nothing is deployed.
+- A major release deploys production: bump `package.json` to `X.0.0`, merge, tag `vX.0.0` on `main`, push the tag. The deploy job waits for the maintainer to approve it in the `production` environment.
+- Staging deploys are manual, from a maintainer's machine, and never automatic.
+- Settle deploys only to Cloudflare. No other host (Netlify, Vercel, …) is configured or used.
+
 - Actions are pinned by commit SHA; workflows run with `permissions: contents: read` unless a job needs more.
-- `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit, this account only) and `CLOUDFLARE_ACCOUNT_ID` are repository secrets, read only by `deploy.yml`.
-- Private repositories get 2,000 free Actions minutes a month; a CI run should stay under 5 minutes.
+- `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit, this account only) and `CLOUDFLARE_ACCOUNT_ID` are secrets of the `production` environment, so only the approved deploy job can read them.
+- Public repositories get free Actions minutes; a CI run should still stay under 5 minutes.
 - Local secret check: `brew install gitleaks`; the pre-commit hook in `.githooks/` runs it on staged changes (`pnpm install` sets `core.hooksPath`).
 
 ## Free-plan budget
