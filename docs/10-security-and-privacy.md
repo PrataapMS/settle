@@ -130,7 +130,11 @@ X-Frame-Options: DENY
 - `pnpm-lock.yaml` committed; CI installs with `--frozen-lockfile`.
 - `pnpm-workspace.yaml`: `minimumReleaseAge: 1440` (no package version younger than a day) and `onlyBuiltDependencies` listing only the packages allowed to run install scripts (pnpm blocks the rest).
 - Dependabot for npm and GitHub Actions, weekly, grouped. Actions pinned by commit SHA; workflows default to `permissions: contents: read`.
-- The repository is private on a free personal account, so GitHub branch protection, secret-scanning push protection and CodeQL aren't available. gitleaks in CI and a local pre-commit hook (`12`) replace the secret scanning; review every pull request before merging to `main`.
+- The repository is public. Secret scanning with push protection, Dependabot alerts and security updates, private vulnerability reporting and CodeQL (`codeql.yml`) are on. gitleaks also runs in CI over the full history and in the local pre-commit hook (`12`).
+- Ruleset **Protect main**: changes land through a pull request (squash only, conversations resolved) with every CI and CodeQL check green and the branch up to date; linear history; no force pushes or deletion; CodeQL high-severity alerts block merges. Only the repository owner can bypass.
+- Ruleset **Protect release tags**: only the repository owner can create, move or delete `v*` tags.
+- Environment `production`: the deploy job needs the owner's approval and runs only from `vX.0.0` tags. Cloudflare credentials are environment secrets.
+- Actions default to a read-only `GITHUB_TOKEN` and can't approve pull requests. Workflows from first-time contributors' forks need approval to run.
 - `SECURITY.md` explains how to report a vulnerability.
 
 ## Licences

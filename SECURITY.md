@@ -4,7 +4,7 @@ Settle handles people's private decisions and runs model calls on the project's 
 
 ## Reporting a vulnerability
 
-Please don't open a public issue. Contact the repository owner, `PrataapMS`, directly on GitHub, with:
+Please don't open a public issue. Report it privately through [GitHub private vulnerability reporting](https://github.com/PrataapMS/settle/security/advisories/new), with:
 
 - what you found and where (URL, endpoint or file),
 - steps to reproduce,
