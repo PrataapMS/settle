@@ -4,9 +4,9 @@
 
 - Purpose: Settle, a local-first decision helper: a conversation on the left, a live decision panel on the right, with a pure engine that owns every number.
 - Stack: TypeScript, React 19 + Vite, shadcn/ui on Tailwind, Zustand, Dexie (IndexedDB), Zod; one Cloudflare Worker serving the app and `/api/*` (model calls via OpenRouter / Jev); Vitest, Playwright; Python 3 reference engine in `tools/`. Package manager: pnpm, Node >= 24.
-- Key directories: `src/` browser app (`src/core` is the pure engine), `worker/` Cloudflare Worker, `prompts/` and `schemas/` what the model sees, `fixtures/` golden fixtures, `tools/` reference engine and checks, `docs/` specs, `plan/` phases and tasks, `evals/` router and scenario evals, `design/` approved design.
+- Key directories: `src/` browser app (`src/core` is the pure engine), `worker/` Cloudflare Worker, `prompts/` and `schemas/` what the model sees, `fixtures/` golden fixtures, `tools/` reference engine and checks, `docs/` specs, `plan/` phases and tasks (local only), `evals/` router and scenario evals, `design/` approved design.
 
-You are implementing it phase by phase from `plan/PLAN.md`. The design is approved.
+You are implementing it phase by phase from `plan/PLAN.md`. The design is approved. The repository is **public**; `plan/` and `docs/11-decisions-log.md` are local only (see Public and local).
 
 ## Commands
 
@@ -31,10 +31,22 @@ Full list (some scripts land in later phases; check `package.json`):
 | `python3 tools/reference_engine.py --check <conv> <expected>` | Confirms expected fixtures are current |
 | `python3 tools/build_schemas.py` | Regenerates `/schemas` from their definitions |
 
+## Starting a session
+
+Pick up where the last session stopped, without being asked:
+
+1. `git fetch --prune`, `git status`. If a task branch has uncommitted or unpushed work, finish that task first.
+2. `gh pr list --author @me --state open`: if a task PR is open, get its CI green, merge it (squash) and finish its bookkeeping.
+3. `gh project item-list 2 --owner PrataapMS --format json`: resume any item **In Progress**.
+4. Otherwise take the first unticked task in `plan/PLAN.md` (spikes S1 to S3 may run alongside P1) whose issue is not blocked by an open prereq. Find it with `gh issue list --search "<id> in:title"`.
+5. Tell the user in one line which task you are starting, then follow `plan/WORKFLOW.md`.
+
+Stop and ask when a task needs access you don't have (keys, accounts, `needs-access`), a new dependency, or a public interface, schema or engine-rule change.
+
 ## Read first, in this order
 
 1. `README.md` and `docs/README.md`: what Settle is, and what is in each folder
-2. `plan/PLAN.md`: phases and tasks; work on one task at a time, in order
+2. `plan/PLAN.md` and `plan/WORKFLOW.md` (local): phases, tasks and how work moves to `main`; one task at a time, in order. If `plan/` is missing (fresh clone), ask the user for it
 3. `docs/02-architecture.md`: stack, module layout, the turn sequence
 4. `docs/04-engine-rules.md`: the rules the engine must reproduce exactly
 5. `docs/10-security-and-privacy.md`: the security controls every API change must keep
@@ -53,6 +65,27 @@ Full list (some scripts land in later phases; check `package.json`):
 9. **Schemas:** keep the Zod schemas and `/schemas/*.json` in parity (there is a test). The JSON files are what the model sees.
 10. **Prompts** live in `/prompts` and are imported by the Worker with `?raw` (`worker/llm/prompts.ts`). Bump the version tag on every change.
 11. **Every model-backed endpoint goes through `withGuards`** (origin check, size cap, session, rate limits, quota reserve and settle). The browser sends data, never prompts, schemas, model parameters or non-allowlisted model ids. Security controls in `docs/10` are not optional; changing one needs a decisions-log entry.
+
+## Commits and pull requests
+
+- Commits carry the user's name only. **Never add `Co-Authored-By` or any AI attribution** to commits, and no "Generated with" line in PR bodies (`.githooks/commit-msg` strips them; `.claude/settings.json` turns attribution off).
+- Keep commits clean and short: subject `P<phase>.<task>: <summary>` (≤ 60 characters, imperative), then at most 2 to 3 lines saying what changed and why. No step-by-step narration.
+- PR bodies: `Closes #<n>`, a short "What changed" list and the ticked acceptance criteria.
+
+## Public and local
+
+- **Local only (gitignored), never commit or push:** `plan/` (PLAN, WORKFLOW, PREREQUISITES, DISTRIBUTION) and `docs/11-decisions-log.md`.
+- Public files, commits, issues and PRs never link to local files and never quote decision or open-item ids (D1, O2, …) or decision rationale. Describe the change, not the decision history.
+- Issues are public: a one-line user-facing goal plus acceptance criteria. Task detail stays in `plan/PLAN.md`.
+- `ROADMAP.md` is the public plan: features per phase with status. Update it (and the README roadmap table) when a phase starts or finishes or its features change.
+- Keep `README.md` in line with `plan/DISTRIBUTION.md` (badges, previews, topics, release notes).
+
+## Releases and deploys
+
+- Production deploys only through `release.yml` on a major tag `vX.0.0`, after approval in the `production` environment. Minor and patch tags publish a GitHub Release only.
+- Never create a release tag, approve a deployment or run `wrangler deploy` (staging included) without the user's explicit confirmation in the current session.
+- **Never deploy anything to Netlify** (or any other host) unless the user confirms in the current session.
+- Never push to `main` directly, even though the owner can bypass the ruleset. Every change goes through a PR.
 
 ## Definition of done (every task)
 
